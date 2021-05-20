@@ -11,6 +11,8 @@ class HubList {
   final List<String> hubIds;
   final Map<String, HubRef> hubRefs;
 
+  factory HubList.empty() => HubList(pagesCount: 0, hubIds: [], hubRefs: {});
+
   factory HubList.fromJson(String str) => HubList.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());

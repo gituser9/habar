@@ -7,6 +7,8 @@ class Profile {
 
   final ProfileData data;
 
+  factory Profile.empty() => Profile(data: ProfileData.empty());
+
   factory Profile.fromJson(String str) => Profile.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
@@ -60,6 +62,26 @@ class ProfileData {
   final String avatar;
   final double score;
   final double ratingPosition;
+
+  factory ProfileData.empty() => ProfileData(
+        id: '',
+        birthday: '',
+        descriptionHtml: '',
+        commonTags: [],
+        login: '',
+        timeRegistered: DateTime.now(),
+        fullname: '',
+        specializm: '',
+        rating: 0.0,
+        invitedByLogin: '',
+        displayChildren: false,
+        path: '',
+        counters: Counters.empty(),
+        badges: [],
+        avatar: '',
+        score: 0,
+        ratingPosition: 0,
+      );
 
   factory ProfileData.fromJson(String str) => ProfileData.fromMap(json.decode(str));
 
@@ -119,7 +141,7 @@ class Badge {
     required this.isDisabled,
   });
 
-  final String id;
+  final int id;
   final String title;
   final String alias;
   final String description;
@@ -132,7 +154,7 @@ class Badge {
   String toJson() => json.encode(toMap());
 
   factory Badge.fromMap(Map<String, dynamic> json) => Badge(
-        id: json["id"] == null ? '' : json["id"],
+        id: json["id"] == null ? 0 : json["id"],
         title: json["title"] == null ? '' : json["title"],
         alias: json["alias"] == null ? '' : json["alias"],
         description: json["description"] == null ? '' : json["description"],
@@ -186,10 +208,12 @@ class Counters {
   });
 
   final String posts;
-  final String comments;
+  final int comments;
   final String followed;
   final String followers;
   final String favorites;
+
+  factory Counters.empty() => Counters(posts: '', comments: 0, followed: '', followers: '', favorites: '');
 
   factory Counters.fromJson(String str) => Counters.fromMap(json.decode(str));
 
@@ -197,7 +221,7 @@ class Counters {
 
   factory Counters.fromMap(Map<String, dynamic> json) => Counters(
         posts: json["posts"] == null ? '' : json["posts"],
-        comments: json["comments"] == null ? '' : json["comments"],
+        comments: json["comments"] == null ? 0 : json["comments"],
         followed: json["followed"] == null ? '' : json["followed"],
         followers: json["followers"] == null ? '' : json["followers"],
         favorites: json["favorites"] == null ? '' : json["favorites"],

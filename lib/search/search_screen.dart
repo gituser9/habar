@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:habar/common/costants.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/no_data_widget.dart';
@@ -8,24 +9,14 @@ import 'package:habar/home/widgets/loading_widget.dart';
 import 'package:habar/model/search_post.dart';
 import 'package:habar/model/search_user.dart';
 import 'package:habar/profile/profile_screen.dart';
-import 'package:habar/search/search_bloc.dart';
+import 'package:habar/search/search_ctrl.dart';
 
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+class SearchScreen extends StatelessWidget {
+  final ctrl = Get.put(SearchCtrl());
 
-  @override
-  _SearchScreenState createState() => _SearchScreenState();
-}
-
-class _SearchScreenState extends State<SearchScreen> {
-  final _bloc = SearchBloc();
-  int _selectedIndex = 0;
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    _bloc.dispose();
+  SearchScreen({Key? key}) : super(key: key) {
+    ctrl.posts.value = SearchPostResponse.empty();
+    ctrl.users.value = SearchUserResponse.empty();
   }
 
   @override
@@ -39,12 +30,12 @@ class _SearchScreenState extends State<SearchScreen> {
               children: [
                 _getSearchField(),
                 const SizedBox(height: 4),
-                _getCurrentPage(),
+                Obx(() => _getCurrentPage(ctrl.selectedIndex.value)),
               ],
             ),
           ),
         ),
-        bottomNavigationBar: _getBottomBar(),
+        bottomNavigationBar: Obx(() => _getBottomBar(ctrl.selectedIndex.value)),
       ),
     );
   }
@@ -64,177 +55,139 @@ class _SearchScreenState extends State<SearchScreen> {
           fillColor: Colors.grey.shade200,
           filled: true,
         ),
-        onChanged: (data) => _bloc.queryStringStream.add(data),
+        onChanged: (data) => ctrl.queryStringStream.add(data),
         onSubmitted: (queryString) async {
-          _selectedIndex = 0;
-
-          _bloc.postPageStream.add(1);
-          _bloc.userPageStream.add(1);
+          ctrl.isLoading.value = true;
+          ctrl.selectedIndex.value = 0;
+          ctrl.postPage.value = 1;
+          ctrl.userPage.value = 1;
 
           await Future.wait([
-            _bloc.getPosts(),
-            _bloc.getUsers(),
+            ctrl.getPosts(),
+            ctrl.getUsers(),
           ]);
+          ctrl.isLoading.value = false;
         },
       ),
     );
   }
 
-  Widget _getCurrentPage() {
-    switch (_selectedIndex) {
+  Widget _getCurrentPage(int index) {
+    if (ctrl.isLoading.value) {
+      return LoadingWidget();
+    }
+
+    switch (index) {
       case 0:
-        return _buildPostList();
+        return _buildPostList(ctrl.posts.value);
       case 1:
-        return _buildUserList();
+        return _buildUserList(ctrl.users.value);
       default:
         return NoDataWidget();
     }
   }
 
-  Widget _buildPostList() {
-    return StreamBuilder<SearchPostResponse>(
-      stream: _bloc.postsStream,
-      builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container();
-        }
+  Widget _buildPostList(SearchPostResponse postResponse) {
+    return Column(
+      children: [
+        ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: postResponse.articleIds.length,
+            itemBuilder: (BuildContext context, int index) {
+              String postId = postResponse.articleIds[index];
+              final post = postResponse.articleRefs[postId]!;
+              final imgUrl = Util.getImgUrl(post.leadData.imageUrl, post.textHtml);
 
-        if (snapshot.connectionState != ConnectionState.waiting && !snapshot.hasData) {
-          return LoadingWidget();
-        }
-
-        final postResponse = snapshot.data!;
-
-        return Column(
-          children: [
-            ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: postResponse.articleIds.length,
-                itemBuilder: (BuildContext context, int index) {
-                  String postId = postResponse.articleIds[index];
-                  final post = postResponse.articleRefs[postId]!;
-                  final imgUrl = Util.getImgUrl(post.leadData.imageUrl, post.textHtml);
-
-                  return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    child: PostWidget(article: post, imageUrl: imgUrl),
-                  );
-                }),
-            const SizedBox(height: 4),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: StreamBuilder<int>(
-                  stream: _bloc.postPageStream,
-                  initialData: 1,
-                  builder: (context, pageSnapshot) {
-                    return Material(
-                      color: Colors.white,
-                      child: PaginationWidget(
-                        page: pageSnapshot.data!,
-                        pageCount: postResponse.pagesCount,
-                        callback: (int page) async {
-                          _bloc.postPageStream.add(page);
-                          await _bloc.getPosts();
-                        },
-                      ),
-                    );
-                  }),
-            )
-          ],
-        );
-      },
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 4),
+                child: PostWidget(article: post, imageUrl: imgUrl),
+              );
+            }),
+        const SizedBox(height: 4),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Obx(() => Material(
+                color: Colors.white,
+                child: PaginationWidget(
+                  page: ctrl.postPage.value,
+                  pageCount: postResponse.pagesCount,
+                  callback: (int page) async {
+                    ctrl.postPage.value = page;
+                    await ctrl.getPosts();
+                  },
+                ),
+              )),
+        )
+      ],
     );
   }
 
-  Widget _buildUserList() {
-    return StreamBuilder<SearchUserResponse>(
-      stream: _bloc.usersStream,
-      builder: (ctx, snapshot) {
-        if (!snapshot.hasData) {
-          return LoadingWidget();
-        }
+  Widget _buildUserList(SearchUserResponse userResponse) {
+    return Column(
+      children: [
+        ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: userResponse.userIds.length,
+            itemBuilder: (ctx, index) {
+              final userId = userResponse.userIds[index];
+              final user = userResponse.userRefs[userId]!;
 
-        final userResponse = snapshot.data!;
-
-        return Column(
-          children: [
-            ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: userResponse.userIds.length,
-                itemBuilder: (ctx, index) {
-                  final userId = userResponse.userIds[index];
-                  final user = userResponse.userRefs[userId]!;
-
-                  return ListTile(
-                    leading: Util.getAvatar(user.avatarUrl, 40),
-                    title: Row(
-                      children: [
-                        Text(user.fullname),
-                        Text(
-                          ' @' + user.alias,
-                          style: TextStyle(color: AppColors.primary),
-                        ),
-                      ],
+              return ListTile(
+                leading: Util.getAvatar(user.avatarUrl, 40),
+                title: Row(
+                  children: [
+                    Text(user.fullname),
+                    Text(
+                      ' @' + user.alias,
+                      style: TextStyle(color: AppColors.primary),
                     ),
-                    subtitle: Text(user.speciality),
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ProfileScreen(login: user.login)),
-                      );
-                    },
-                  );
-                }),
-            const SizedBox(height: 4),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: StreamBuilder<int>(
-                  stream: _bloc.userPageStream,
-                  initialData: 1,
-                  builder: (context, pageSnapshot) {
-                    return Material(
-                      color: Colors.white,
-                      child: PaginationWidget(
-                        page: pageSnapshot.data!,
-                        pageCount: userResponse.pagesCount,
-                        callback: (int page) async {
-                          _bloc.userPageStream.add(page);
-                          await _bloc.getUsers();
-                        },
-                      ),
-                    );
-                  }),
-            )
-          ],
-        );
-      },
+                  ],
+                ),
+                subtitle: Text(user.speciality),
+                onTap: () async {
+                  await Get.to(() => ProfileScreen(login: user.login));
+                },
+              );
+            }),
+        const SizedBox(height: 4),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Obx(
+            () => Material(
+              color: Colors.white,
+              child: PaginationWidget(
+                page: ctrl.userPage.value,
+                pageCount: userResponse.pagesCount,
+                callback: (int page) async {
+                  ctrl.userPage.value = page;
+                  await ctrl.getUsers();
+                },
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _getBottomBar() {
+  Widget _getBottomBar(int index) {
     return BottomNavigationBar(
       items: <BottomNavigationBarItem>[
         const BottomNavigationBarItem(
-          icon: const Icon(Icons.article, color: Colors.blue),
+          icon: const Icon(Icons.article),
           label: 'Публикации',
         ),
         const BottomNavigationBarItem(
-          icon: const Icon(Icons.person, color: Colors.blue),
+          icon: const Icon(Icons.person),
           label: 'Пользователи',
         ),
       ],
-      currentIndex: _selectedIndex,
-      unselectedLabelStyle: const TextStyle(color: Colors.blue),
-      fixedColor: Colors.blue,
-      onTap: _onItemTapped,
+      currentIndex: index,
+      unselectedLabelStyle: const TextStyle(color: Colors.grey),
+      // fixedColor: Colors.blue,
+      onTap: (int newIndex) => ctrl.selectedIndex.value = newIndex,
     );
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 }

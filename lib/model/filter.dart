@@ -1,8 +1,24 @@
+import 'package:get/get.dart';
+
 class Filter {
-  late FilterSortType sortType;
-  late Map<String, String> sortValue;
-  late ListFilter filterKey;
-  late ListHubFilter hubFilter;
+  var sortType = FilterSortType.newPost.obs;
+  var sortValue = listFilterData[ListFilter.all]!.obs;
+  var filterKey = ListFilter.all.obs;
+  var hubFilter = ListHubFilter.rateDesc.obs;
+
+  // Filter({
+  //   required this.sortType,
+  //   required this.sortValue,
+  //   required this.filterKey,
+  //   required this.hubFilter,
+  // });
+  //
+  // factory Filter.empty() => Filter(
+  //       sortType: FilterSortType.newPost,
+  //       sortValue: listFilterData[ListFilter.all]!,
+  //       filterKey: ListFilter.all,
+  //       hubFilter: ListHubFilter.rateDesc,
+  //     );
 }
 
 enum FilterSortType {

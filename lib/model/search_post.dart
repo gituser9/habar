@@ -20,6 +20,13 @@ class SearchPostResponse {
   List<String> articleIds;
   Map<String, ArticleRef> articleRefs;
 
+  factory SearchPostResponse.empty() => SearchPostResponse(
+        searchStatistics: SearchStatistics.empty(),
+        pagesCount: 0,
+        articleIds: [],
+        articleRefs: {},
+      );
+
   factory SearchPostResponse.fromJson(String str) => SearchPostResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
@@ -28,8 +35,9 @@ class SearchPostResponse {
         searchStatistics: SearchStatistics.fromMap(json["searchStatistics"]),
         pagesCount: json["pagesCount"] == null ? 0 : json["pagesCount"],
         articleIds: json["articleIds"] == null ? [] : List<String>.from(json["articleIds"].map((x) => x)),
-        articleRefs:
-            json["articleRefs"] == null ? {} : Map.from(json["articleRefs"]).map((k, v) => MapEntry<String, ArticleRef>(k, ArticleRef.fromMap(v))),
+        articleRefs: json["articleRefs"] == null
+            ? {}
+            : Map.from(json["articleRefs"]).map((k, v) => MapEntry<String, ArticleRef>(k, ArticleRef.fromMap(v))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -154,13 +162,23 @@ class Author extends BaseAuthor {
 
 enum Alias { POPSCI, DEVELOP, MANAGEMENT, MARKETING, ADMIN }
 
-final aliasValues = EnumValues(
-    {"admin": Alias.ADMIN, "develop": Alias.DEVELOP, "management": Alias.MANAGEMENT, "marketing": Alias.MARKETING, "popsci": Alias.POPSCI});
+final aliasValues = EnumValues({
+  "admin": Alias.ADMIN,
+  "develop": Alias.DEVELOP,
+  "management": Alias.MANAGEMENT,
+  "marketing": Alias.MARKETING,
+  "popsci": Alias.POPSCI
+});
 
 enum Title { EMPTY, TITLE, PURPLE, FLUFFY, TENTACLED }
 
-final titleValues = EnumValues(
-    {"Научпоп": Title.EMPTY, "Маркетинг": Title.FLUFFY, "Менеджмент": Title.PURPLE, "Администрирование": Title.TENTACLED, "Разработка": Title.TITLE});
+final titleValues = EnumValues({
+  "Научпоп": Title.EMPTY,
+  "Маркетинг": Title.FLUFFY,
+  "Менеджмент": Title.PURPLE,
+  "Администрирование": Title.TENTACLED,
+  "Разработка": Title.TITLE
+});
 
 class Hub {
   Hub({
@@ -276,6 +294,14 @@ class SearchStatistics {
   int hubsCount;
   int usersCount;
   int companiesCount;
+
+  factory SearchStatistics.empty() => SearchStatistics(
+        articlesCount: 0,
+        commentsCount: 0,
+        hubsCount: 0,
+        usersCount: 0,
+        companiesCount: 0,
+      );
 
   factory SearchStatistics.fromJson(String str) => SearchStatistics.fromMap(json.decode(str));
 

@@ -56,7 +56,21 @@ class Post extends BasePost {
   String status;
   String textHtml;
 
-  // todo: lead data to all posts
+  factory Post.empty() => Post(
+        id: '',
+        timePublished: DateTime.now(),
+        isCorporative: false,
+        lang: '',
+        titleHtml: '',
+        postType: '',
+        postLabels: [],
+        author: Author.empty(),
+        statistics: Statistics.empty(),
+        hubs: [],
+        textHtml: '',
+        status: '',
+        tags: [],
+      );
 
   factory Post.fromJson(String str) => Post.fromMap(json.decode(str));
 
@@ -69,7 +83,8 @@ class Post extends BasePost {
         lang: json["lang"] == null ? null : json["lang"],
         titleHtml: json["titleHtml"] == null ? '' : json["titleHtml"],
         postType: json["postType"] == null ? null : json["postType"],
-        postLabels: json["postLabels"] == null ? [] : List<PostLabel>.from(json["postLabels"].map((x) => PostLabel.fromMap(x))),
+        postLabels:
+            json["postLabels"] == null ? [] : List<PostLabel>.from(json["postLabels"].map((x) => PostLabel.fromMap(x))),
         author: Author.fromMap(json["author"]),
         statistics: Statistics.fromMap(json["statistics"]),
         hubs: json["hubs"] == null ? [] : List<Hub>.from(json["hubs"].map((x) => Hub.fromMap(x))),
@@ -114,6 +129,16 @@ class Author extends BaseAuthor {
   String avatarUrl;
   String speciality;
 
+  factory Author.empty() => Author(
+        scoreStats: ScoreStats.empty(),
+        id: '',
+        login: '',
+        alias: '',
+        fullname: '',
+        avatarUrl: '',
+        speciality: '',
+      );
+
   factory Author.fromJson(String str) => Author.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
@@ -147,6 +172,8 @@ class ScoreStats {
 
   double score;
   int votesCount;
+
+  factory ScoreStats.empty() => ScoreStats(score: 0.0, votesCount: 0);
 
   factory ScoreStats.fromJson(String str) => ScoreStats.fromMap(json.decode(str));
 
@@ -253,6 +280,14 @@ class Statistics extends BaseStatistic {
   int readingCount;
   int score;
   int votesCount;
+
+  factory Statistics.empty() => Statistics(
+        commentsCount: 0,
+        favoritesCount: 0,
+        readingCount: 0,
+        score: 0,
+        votesCount: 0,
+      );
 
   factory Statistics.fromJson(String str) => Statistics.fromMap(json.decode(str));
 

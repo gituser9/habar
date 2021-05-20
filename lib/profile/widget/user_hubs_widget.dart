@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:habar/common/costants.dart';
 import 'package:habar/hub/hub_screen.dart';
 import 'package:habar/model/hub_list.dart';
+import 'package:habar/profile/profile_ctrl.dart';
 
 class UserHubsWidget extends StatelessWidget {
-  final List<HubRef> hubs;
+  // final List<HubRef> hubs;
+  final String login;
+  final ProfileCtrl ctrl = Get.find();
 
-  const UserHubsWidget({Key? key, required this.hubs}) : super(key: key);
+  UserHubsWidget({Key? key, required this.login}) : super(key: key) {
+    ctrl.getProfileHubs(login);
+  }
 
   @override
   Widget build(BuildContext context) {
+    return Obx(() => _buildBody(ctrl.profileHubs));
+  }
+
+  Widget _buildBody(List<HubRef> hubs) {
+    if (hubs.isEmpty) {
+      return Container();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -21,38 +35,33 @@ class UserHubsWidget extends StatelessWidget {
             ],
           ),
         ),
-        Material(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Wrap(
-              children: [
-                for (final hub in hubs)
-                  InkWell(
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HubScreen(name: hub.alias)),
-                      );
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.all(4),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-                        child: Text(
-                          hub.titleHtml,
-                          style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade100,
-                        borderRadius: BorderRadius.circular(4),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Wrap(
+            children: [
+              for (final hub in hubs)
+                InkWell(
+                  onTap: () async {
+                    await Get.to(() => HubScreen(name: hub.alias));
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(4),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                      child: Text(
+                        hub.titleHtml,
+                        style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
                       ),
                     ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade100,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
-        ),
+        )
       ],
     );
   }

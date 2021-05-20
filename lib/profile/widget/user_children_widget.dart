@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:habar/common/costants.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/model/profile.dart';
-import 'package:habar/profile/profile_screen.dart';
+import 'package:habar/profile/profile_ctrl.dart';
 
 class UserChildrenWidget extends StatelessWidget {
-  final List<ProfileData> profiles;
+  final String login;
+  final ProfileCtrl ctrl = Get.find();
 
-  const UserChildrenWidget({Key? key, required this.profiles}) : super(key: key);
+  UserChildrenWidget({Key? key, required this.login}) : super(key: key) {
+    ctrl.getProfileChildren(login);
+  }
 
   @override
   Widget build(BuildContext context) {
+    return Obx(() => _buildBody(ctrl.profileChildren));
+  }
+
+  Widget _buildBody(List<ProfileData> profiles) {
+    if (profiles.isEmpty) {
+      return Container();
+    }
+
     return Column(
       children: [
         const Padding(
@@ -23,22 +35,25 @@ class UserChildrenWidget extends StatelessWidget {
             ),
           ),
         ),
-        for (final profile in profiles)
-          ListTile(
-            leading: Util.getAvatar(profile.avatar, 40),
-            title: Text(
-              '@' + profile.login,
-              style: const TextStyle(color: Colors.blue),
-            ),
-            onTap: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(login: profile.login),
-                ),
-              );
-            },
-          ),
+        ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: profiles.length,
+          itemBuilder: (ctx, index) {
+            final profile = profiles[index];
+
+            return ListTile(
+              leading: Util.getAvatar(profile.avatar, 40),
+              title: Text(
+                '@' + profile.login,
+                style: const TextStyle(color: Colors.blue),
+              ),
+              // onTap: () async {
+              //   await Get.to(() => ProfileScreen(login: profile.login));
+              // },
+            );
+          },
+        )
       ],
     );
   }

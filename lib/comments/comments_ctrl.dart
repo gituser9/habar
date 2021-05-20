@@ -1,20 +1,28 @@
+import 'package:get/get.dart';
 import 'package:habar/comments/comments_repository.dart';
 import 'package:habar/model/comment.dart';
 import 'package:habar/model/comment_list.dart';
-import 'package:rxdart/subjects.dart';
 
-class CommentsBloc {
-  final _repository = CommentsRepo();
-  final commentsStream = BehaviorSubject<List<StructuredComment>>();
-  final errorStream = BehaviorSubject<String>();
+class CommentsCtrl extends GetxController {
+  late CommentsRepo _repo;
+  final comments = List<StructuredComment>.empty().obs;
 
-  CommentsBloc() {
-    _repository.commentsStream.map(getStructuredComments).listen(commentsStream.add);
-    // _repository.errorStream.listen(errorStream.add);
+  @override
+  void onInit() {
+    super.onInit();
+
+    _repo = CommentsRepo();
+    _repo.commentsStream.map(getStructuredComments).listen((commentList) => comments.value = commentList);
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    _repo.dispose();
   }
 
   Future getAll(String postId) async {
-    await _repository.getAll(postId);
+    await _repo.getAll(postId);
   }
 
   List<StructuredComment> getStructuredComments(CommentList commentList) {
@@ -55,12 +63,7 @@ class CommentsBloc {
     });
 
     structComments.sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
-    return structComments;
-  }
 
-  void dispose() {
-    _repository.dispose();
-    commentsStream.close();
-    errorStream.close();
+    return structComments;
   }
 }

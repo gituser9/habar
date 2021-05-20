@@ -17,13 +17,22 @@ class SearchUserResponse {
   int pagesCount;
   SearchStatistics searchStatistics;
 
+  factory SearchUserResponse.empty() => SearchUserResponse(
+        userIds: [],
+        userRefs: {},
+        pagesCount: 0,
+        searchStatistics: SearchStatistics.empty(),
+      );
+
   factory SearchUserResponse.fromJson(String str) => SearchUserResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory SearchUserResponse.fromMap(Map<String, dynamic> json) => SearchUserResponse(
         userIds: json["userIds"] == null ? [] : List<String>.from(json["userIds"].map((x) => x)),
-        userRefs: json["userRefs"] == null ? {} : Map.from(json["userRefs"]).map((k, v) => MapEntry<String, UserRef>(k, UserRef.fromMap(v))),
+        userRefs: json["userRefs"] == null
+            ? {}
+            : Map.from(json["userRefs"]).map((k, v) => MapEntry<String, UserRef>(k, UserRef.fromMap(v))),
         pagesCount: json["pagesCount"] == null ? 0 : json["pagesCount"],
         searchStatistics: SearchStatistics.fromMap(json["searchStatistics"]),
       );
@@ -50,6 +59,14 @@ class SearchStatistics {
   int hubsCount;
   int usersCount;
   int companiesCount;
+
+  factory SearchStatistics.empty() => SearchStatistics(
+        articlesCount: 0,
+        commentsCount: 0,
+        hubsCount: 0,
+        usersCount: 0,
+        companiesCount: 0,
+      );
 
   factory SearchStatistics.fromJson(String str) => SearchStatistics.fromMap(json.decode(str));
 

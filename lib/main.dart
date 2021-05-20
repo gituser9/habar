@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+
 import 'home/home_screen.dart';
 
 void main() async {
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
       statusBarIconBrightness: Brightness.dark,
     ));
 
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Habar',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -28,5 +30,17 @@ class MyApp extends StatelessWidget {
       ),
       home: SafeArea(child: HomeScreen()),
     );
+
+    // return MaterialApp(
+    //   title: 'Habar',
+    //   theme: ThemeData(
+    //     primarySwatch: Colors.blue,
+    //     visualDensity: VisualDensity.adaptivePlatformDensity,
+    //     // textTheme: GoogleFonts.droidSansTextTheme(
+    //     //   Theme.of(context).textTheme,
+    //     // ),
+    //   ),
+    //   home: SafeArea(child: HomeScreen()),
+    // );
   }
 }

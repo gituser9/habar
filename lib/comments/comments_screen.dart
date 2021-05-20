@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:habar/comments/comments_bloc.dart';
+import 'package:get/get.dart';
+import 'package:habar/comments/comments_ctrl.dart';
 import 'package:habar/common/widgets/comment_widget.dart';
 import 'package:habar/common/widgets/footer_item_widget.dart';
 import 'package:habar/common/widgets/user_info_widget.dart';
@@ -7,11 +8,11 @@ import 'package:habar/model/comment.dart';
 import 'package:habar/model/post.dart';
 
 class CommentsScreen extends StatelessWidget {
-  final _bloc = CommentsBloc();
+  final ctrl = Get.put(CommentsCtrl());
   final BasePost post;
 
   CommentsScreen({required this.post}) {
-    _bloc.getAll(post.id);
+    ctrl.getAll(post.id);
   }
 
   @override
@@ -63,35 +64,29 @@ class CommentsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              StreamBuilder<List<StructuredComment>>(
-                  stream: _bloc.commentsStream,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return Container();
-                    }
-
-                    final structuredComment = snapshot.data!;
-
-                    return ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: structuredComment.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (!snapshot.hasData) {
-                          return Container();
-                        }
-
-                        var comment = structuredComment[index];
-
-                        return _buildCommentTree(comment);
-                      },
-                    );
-                  }),
+              Obx(() => _buildList(ctrl.comments)),
               const SizedBox(height: 200),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildList(List<StructuredComment> comments) {
+    if (comments.isEmpty) {
+      return Container();
+    }
+
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: comments.length,
+      itemBuilder: (BuildContext context, int index) {
+        var comment = comments[index];
+
+        return _buildCommentTree(comment);
+      },
     );
   }
 

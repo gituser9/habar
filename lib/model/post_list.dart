@@ -18,6 +18,8 @@ class PostList {
   List<String> articleIds;
   Map<String, ArticleRef> articleRefs;
 
+  factory PostList.empty() => PostList(pagesCount: 0, articleIds: [], articleRefs: {});
+
   factory PostList.fromJson(String str) => PostList.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());

@@ -17,6 +17,15 @@ class Hub {
   final String imageUrl;
   final Statistics statistics;
 
+  factory Hub.empty() => Hub(
+        alias: '',
+        titleHtml: '',
+        descriptionHtml: '',
+        fullDescriptionHtml: '',
+        imageUrl: '',
+        statistics: Statistics.empty(),
+      );
+
   factory Hub.fromJson(String str) => Hub.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
@@ -52,6 +61,13 @@ class Statistics {
   final double rating;
   final int authorsCount;
   final int postsCount;
+
+  factory Statistics.empty() => Statistics(
+        subscribersCount: 0,
+        rating: 0,
+        authorsCount: 0,
+        postsCount: 0,
+      );
 
   factory Statistics.fromJson(String str) => Statistics.fromMap(json.decode(str));
 
