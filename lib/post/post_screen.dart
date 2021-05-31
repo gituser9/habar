@@ -1,7 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/html_parser.dart';
-import 'package:flutter_html/style.dart';
 import 'package:get/get.dart';
 import 'package:habar/comments/comments_screen.dart';
 import 'package:habar/common/util.dart';
@@ -85,6 +84,24 @@ class PostScreen extends StatelessWidget {
             style: {
               'body': Style(fontSize: const FontSize(18)),
               'blockquote': Style(fontStyle: FontStyle.italic, fontSize: const FontSize(16)),
+              'pre': Style(
+                fontStyle: FontStyle.normal,
+                fontSize: const FontSize(16),
+                backgroundColor: Colors.grey.shade100,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              'figure': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
+              'img': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
+            },
+            customRender: {
+              'figure': (RenderContext context, Widget child) {
+                for (final tag in context.tree.children) {
+                  if (tag.name == 'img') {
+                    String imgUrl = tag.element!.attributes['data-src'] ?? '';
+                    return Image.network(imgUrl);
+                  }
+                }
+              }
             },
             onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, element) async {
               if (url != null) {
