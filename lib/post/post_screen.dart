@@ -103,6 +103,7 @@ class PostScreen extends StatelessWidget {
                 }
               }
             },
+            onImageTap: (String? url, RenderContext context, Map<String, String> attributes, element) {},
             onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, element) async {
               if (url != null) {
                 await Util.launchURL(url);
@@ -200,5 +201,18 @@ class PostScreen extends StatelessWidget {
       hubNames.join(', '),
       style: const TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold),
     );
+  }
+
+  Future _showImage(BuildContext context, String url) async {
+    await showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            content: Container(
+              color: Colors.transparent,
+              child: Image.network(url),
+            ),
+          );
+        });
   }
 }

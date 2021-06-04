@@ -21,9 +21,7 @@ class Util {
   }
 
   static launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    }
+    await launch(url);
   }
 
   static String dateToString(DateTime date, {String format = 'dd MMM yyyy'}) {
