@@ -43,6 +43,32 @@ class CommentWidget extends StatelessWidget {
               await Util.launchURL(url);
             }
           },
+          customRender: {
+            'figure': (RenderContext ctx, Widget child) {
+              for (final tag in ctx.tree.children) {
+                if (tag.name == 'img') {
+                  String imgUrl = tag.element!.attributes['data-src'] ?? '';
+
+                  return GestureDetector(
+                    child: Image.network(imgUrl),
+                    // onTap: () async => await _showImage(context, imgUrl),
+                  );
+                }
+              }
+            },
+            'img': (RenderContext ctx, Widget child) {
+              String? fullImg = ctx.tree.element?.attributes['data-src'];
+
+              if (fullImg == null || fullImg.isEmpty) {
+                fullImg = ctx.tree.element?.attributes['src'] ?? '';
+              }
+
+              return GestureDetector(
+                child: Image.network(fullImg),
+                // onTap: () async => await _showImage(context, fullImg ?? ''),
+              );
+            }
+          },
         ),
         Padding(
           padding: const EdgeInsets.only(left: 8.0),

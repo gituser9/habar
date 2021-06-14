@@ -6,6 +6,7 @@ class PostCtrl extends GetxController {
   late PostRepo _repo;
   final post = Post.empty().obs;
   final isLoading = true.obs;
+  final isImageLoading = false.obs;
 
   @override
   void onInit() {

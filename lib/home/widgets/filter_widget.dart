@@ -15,36 +15,38 @@ class FilterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      height: 400,
-      child: Column(
-        children: [
-          _getFilter(),
-          Expanded(child: Container()),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    Get.back();
+    return SingleChildScrollView(
+      child: Container(
+        margin: const EdgeInsets.all(16),
+        height: 400,
+        child: Column(
+          children: [
+            _getFilter(),
+            Expanded(child: Container()),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      Get.back();
 
-                    if (ctrl.pageMode == HomeMode.posts) {
-                      await ctrl.getAll(ctrl.postFilter.value.filterKey.value);
-                    } else {
-                      await ctrl.getHubs(filterKey: ctrl.postFilter.value.hubFilter.value);
-                    }
-                  },
-                  icon: const Icon(Icons.done_all, color: Colors.white),
-                  label: const Text('Применить', style: const TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    primary: AppColors.primary,
+                      if (ctrl.pageMode == HomeMode.posts) {
+                        await ctrl.getAll(ctrl.postFilter.value.filterKey.value);
+                      } else {
+                        await ctrl.getHubs(filterKey: ctrl.postFilter.value.hubFilter.value);
+                      }
+                    },
+                    icon: const Icon(Icons.done_all, color: Colors.white),
+                    label: const Text('Применить', style: const TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      primary: AppColors.primary,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -119,9 +121,7 @@ class FilterWidget extends StatelessWidget {
                                 ),
                           child: Text("Новые",
                               style: TextStyle(
-                                color: ctrl.postFilter.value.sortType.value == FilterSortType.newPost
-                                    ? Colors.white
-                                    : Colors.blue,
+                                color: ctrl.postFilter.value.sortType.value == FilterSortType.newPost ? Colors.white : Colors.blue,
                                 fontSize: 17,
                               )),
                         ))),
@@ -143,9 +143,7 @@ class FilterWidget extends StatelessWidget {
                                 ),
                           child: Text("Лучшие",
                               style: TextStyle(
-                                color: ctrl.postFilter.value.sortType.value == FilterSortType.bestPost
-                                    ? Colors.white
-                                    : Colors.blue,
+                                color: ctrl.postFilter.value.sortType.value == FilterSortType.bestPost ? Colors.white : Colors.blue,
                                 fontSize: 17,
                               )),
                         )))
@@ -235,8 +233,7 @@ class FilterWidget extends StatelessWidget {
               ),
               label: Text(
                 label,
-                style:
-                    TextStyle(color: ctrl.postFilter.value.hubFilter.value == filterKey ? Colors.white : Colors.black),
+                style: TextStyle(color: ctrl.postFilter.value.hubFilter.value == filterKey ? Colors.white : Colors.black),
               )),
         );
       }),
