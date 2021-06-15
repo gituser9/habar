@@ -90,9 +90,7 @@ class PostScreen extends StatelessWidget {
               'blockquote': Style(fontStyle: FontStyle.italic, fontSize: const FontSize(16)),
               'pre': Style(
                 fontStyle: FontStyle.normal,
-                fontSize: const FontSize(16),
-                backgroundColor: Colors.grey.shade100,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                fontSize: const FontSize(14),
               ),
               'figure': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
               'img': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
@@ -121,10 +119,25 @@ class PostScreen extends StatelessWidget {
                   child: Image.network(fullImg),
                   onTap: () async => await _showImage(context, fullImg ?? ''),
                 );
+              },
+              'pre': (RenderContext ctx, Widget child) {
+                return Scrollbar(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                          color: Colors.grey.shade100,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: child,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               }
-            },
-            onImageTap: (String? url, RenderContext context, Map<String, String> attributes, element) {
-              print('ddd');
             },
             onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, element) async {
               if (url != null) {
