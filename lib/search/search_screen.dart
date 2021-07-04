@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/costants.dart';
+import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/no_data_widget.dart';
 import 'package:habar/common/widgets/pagination_widget.dart';
@@ -13,6 +14,7 @@ import 'package:habar/search/search_ctrl.dart';
 
 class SearchScreen extends StatelessWidget {
   final ctrl = Get.put(SearchCtrl());
+  final SavedPostService _savedPostService = Get.find();
 
   SearchScreen({Key? key}) : super(key: key) {
     ctrl.posts.value = SearchPostResponse.empty();
@@ -101,7 +103,11 @@ class SearchScreen extends StatelessWidget {
 
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 4),
-                child: PostWidget(article: post, imageUrl: imgUrl),
+                child: Obx(() => PostWidget(
+                      article: post,
+                      imageUrl: imgUrl,
+                      isSaved: _savedPostService.isSaved(post.id),
+                    )),
               );
             }),
         const SizedBox(height: 4),

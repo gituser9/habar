@@ -1,4 +1,4 @@
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 import 'package:habar/hub/hub_repository.dart';
 import 'package:habar/model/hub.dart';
 import 'package:habar/model/hub_authors.dart';
@@ -16,7 +16,7 @@ class HubCtrl extends GetxController {
   final isLoading = true.obs;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
 
     _repo = HubRepository();

@@ -20,7 +20,7 @@ class ProfileCtrl extends GetxController {
   final isLoading = true.obs;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
 
     _repo = ProfileRepository();
@@ -29,17 +29,11 @@ class ProfileCtrl extends GetxController {
       isLoading.value = false;
     });
 
-    _repo.profileHubsStream
-        .map((hubList) => hubList.hubRefs.values.toList())
-        .listen((refs) => profileHubs.value = refs);
+    _repo.profileHubsStream.map((hubList) => hubList.hubRefs.values.toList()).listen((refs) => profileHubs.value = refs);
 
-    _repo.profileCompaniesStream
-        .map((companyList) => companyList.companies)
-        .listen((companies) => profileCompanies.value = companies);
+    _repo.profileCompaniesStream.map((companyList) => companyList.companies).listen((companies) => profileCompanies.value = companies);
 
-    _repo.profileChildrenStream
-        .map((profileList) => profileList.data)
-        .listen((children) => profileChildren.value = children);
+    _repo.profileChildrenStream.map((profileList) => profileList.data).listen((children) => profileChildren.value = children);
 
     _repo.postsStream.listen((postList) => posts.value = postList);
 
@@ -115,15 +109,13 @@ class ProfileCtrl extends GetxController {
             score: habrComment.score,
           ));
         });
-        structComment.children
-            .sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
+        structComment.children.sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
       }
 
       structComments.add(structComment);
     });
 
-    structComments
-        .sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
+    structComments.sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
     return structComments;
   }
 }

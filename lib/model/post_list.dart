@@ -16,7 +16,7 @@ class PostList {
 
   int pagesCount;
   List<String> articleIds;
-  Map<String, ArticleRef> articleRefs;
+  Map<String, Post> articleRefs;
 
   factory PostList.empty() => PostList(pagesCount: 0, articleIds: [], articleRefs: {});
 
@@ -27,8 +27,7 @@ class PostList {
   factory PostList.fromMap(Map<String, dynamic> json) => PostList(
         pagesCount: json["pagesCount"] == null ? 0 : json["pagesCount"],
         articleIds: json["articleIds"] == null ? [] : List<String>.from(json["articleIds"].map((x) => x)),
-        articleRefs:
-            json["articleRefs"] == null ? {} : Map.from(json["articleRefs"]).map((k, v) => MapEntry<String, ArticleRef>(k, ArticleRef.fromMap(v))),
+        articleRefs: json["articleRefs"] == null ? {} : Map.from(json["articleRefs"]).map((k, v) => MapEntry<String, Post>(k, Post.fromMap(v))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -38,6 +37,7 @@ class PostList {
       };
 }
 
+// todo: delete?
 class ArticleRef extends BasePost {
   ArticleRef({
     required this.id,

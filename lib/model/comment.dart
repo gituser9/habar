@@ -1,7 +1,7 @@
-import 'package:habar/model/author.dart';
+import 'package:habar/model/post.dart';
 
 class StructuredComment {
-  BaseAuthor author;
+  Author author;
   DateTime publishTime;
   String text;
   bool isPostAuthor;

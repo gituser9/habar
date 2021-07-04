@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:habar/common/util.dart';
-import 'package:habar/model/author.dart';
+import 'package:habar/model/post.dart';
 import 'package:habar/profile/profile_screen.dart';
 
 import '../costants.dart';
 
 class UserInfoWidget extends StatelessWidget {
   final DateTime publishTime;
-  final BaseAuthor author;
+  final Author author;
 
   UserInfoWidget({
     required this.publishTime,
@@ -17,27 +18,27 @@ class UserInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () async {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ProfileScreen(login: author.alias)),
-        );
-      },
+      onTap: () async => Get.to(() => ProfileScreen(login: author.alias)),
       child: Row(
         children: [
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
-            child: Util.getAvatar(author.avatarUrl, 20),
+            child: Util.getAvatar(author.avatarUrl, 30),
           ),
-          Text(
-            _getFullname(),
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue.shade800),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _getFullname(),
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue.shade800),
+              ),
+              Text(
+                _getTimeString(),
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+            ],
           ),
           const SizedBox(width: 10),
-          Text(
-            _getTimeString(),
-            style: const TextStyle(color: Colors.grey, fontSize: 12),
-          ),
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/pagination_widget.dart';
 import 'package:habar/common/widgets/post_widget.dart';
@@ -10,6 +11,7 @@ class PostsWidget extends StatelessWidget {
   // final ProfileBloc bloc;
   final String login;
   final ProfileCtrl ctrl = Get.find();
+  final SavedPostService _savedPostService = Get.find();
 
   PostsWidget({Key? key, required this.login}) : super(key: key) {
     ctrl.getProfileArticles(login);
@@ -37,7 +39,11 @@ class PostsWidget extends StatelessWidget {
 
               return Container(
                 margin: EdgeInsets.symmetric(vertical: 4),
-                child: PostWidget(article: articleRef, imageUrl: imgUrl),
+                child: PostWidget(
+                  article: articleRef,
+                  imageUrl: imgUrl,
+                  isSaved: _savedPostService.isSaved(articleRef.id),
+                ),
               );
             }),
         const SizedBox(height: 4),

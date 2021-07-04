@@ -35,7 +35,7 @@ class CommentWidget extends StatelessWidget {
           data: comment.text,
           shrinkWrap: true,
           style: {
-            'body': Style(fontSize: const FontSize(18)),
+            'body': Style(fontSize: const FontSize(18), textAlign: TextAlign.start),
             'blockquote': Style(fontStyle: FontStyle.italic, fontSize: const FontSize(16)),
           },
           onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, element) async {

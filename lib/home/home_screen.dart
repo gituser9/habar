@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/no_data_widget.dart';
 import 'package:habar/common/widgets/pagination_widget.dart';
@@ -8,16 +9,19 @@ import 'package:habar/home/home_ctrl.dart';
 import 'package:habar/home/widgets/filter_widget.dart';
 import 'package:habar/home/widgets/hub_widget.dart';
 import 'package:habar/home/widgets/loading_widget.dart';
+import 'package:habar/home/widgets/saved_widget.dart';
 import 'package:habar/model/home.dart';
 import 'package:habar/model/post_list.dart';
 import 'package:habar/search/search_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final ctrl = Get.put(HomeCtrl());
+  final _savedPostService = Get.put(SavedPostService());
   final Map<int, HomeMode> pageMode = {
     0: HomeMode.posts,
     1: HomeMode.news,
     2: HomeMode.hubs,
+    3: HomeMode.saved,
   };
 
   @override
@@ -53,6 +57,8 @@ class HomeScreen extends StatelessWidget {
                 );
               case HomeMode.hubs:
                 return HubWidget();
+              case HomeMode.saved:
+                return SavedWidget();
               default:
                 return NoDataWidget();
             }
@@ -77,7 +83,7 @@ class HomeScreen extends StatelessWidget {
           },
         ),
         Obx(() {
-          if (ctrl.homeMode.value == HomeMode.news) {
+          if (ctrl.homeMode.value == HomeMode.news || ctrl.homeMode.value == HomeMode.saved) {
             return Container();
           }
 
@@ -107,12 +113,13 @@ class HomeScreen extends StatelessWidget {
 
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 4),
-                child: PostWidget(
+                child: Obx(() => PostWidget(
                     article: articleRef,
+                    isSaved: _savedPostService.isSaved(articleRef.id),
                     imageUrl: Util.getImgUrl(
                       articleRef.leadData.imageUrl,
                       articleRef.textHtml,
-                    )),
+                    ))),
               );
             }),
         const SizedBox(height: 4),
@@ -146,13 +153,14 @@ class HomeScreen extends StatelessWidget {
           icon: const Icon(Icons.device_hub),
           label: 'Хабы',
         ),
-        // const BottomNavigationBarItem(
-        //   icon: const Icon(Icons.settings, color: Colors.blue),
-        //   label: 'Настройки',
-        // ),
+        const BottomNavigationBarItem(
+          icon: const Icon(Icons.save),
+          label: 'Сохраненные',
+        ),
       ],
       currentIndex: index,
       unselectedItemColor: Colors.grey,
+      selectedItemColor: Colors.blue,
       onTap: (int index) async {
         ctrl.selectedIndex.value = index;
 
@@ -161,10 +169,15 @@ class HomeScreen extends StatelessWidget {
         ctrl.homeMode.value = mode;
         ctrl.resetPage();
 
-        if (mode == HomeMode.hubs) {
-          await ctrl.getHubs();
-        } else {
-          await ctrl.getAll(ctrl.postFilter.value.filterKey.value);
+        switch (mode) {
+          case HomeMode.hubs:
+            await ctrl.getHubs();
+            break;
+          case HomeMode.saved:
+            ctrl.getSaved();
+            break;
+          default:
+            await ctrl.getAll(ctrl.postFilter.value.filterKey.value);
         }
       },
     );

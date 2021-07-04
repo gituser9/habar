@@ -9,7 +9,7 @@ import 'package:habar/model/post.dart';
 
 class CommentsScreen extends StatelessWidget {
   final ctrl = Get.put(CommentsCtrl());
-  final BasePost post;
+  final Post post;
 
   CommentsScreen({required this.post}) {
     ctrl.getAll(post.id);
@@ -64,7 +64,7 @@ class CommentsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Obx(() => _buildList(ctrl.comments)),
+              Expanded(child: Obx(() => _buildList(ctrl.comments))),
               const SizedBox(height: 200),
             ],
           ),

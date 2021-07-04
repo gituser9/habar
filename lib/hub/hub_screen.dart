@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/no_data_widget.dart';
 import 'package:habar/common/widgets/pagination_widget.dart';
@@ -13,6 +14,7 @@ import 'package:habar/hub/widget/hub_widget.dart';
 class HubScreen extends StatelessWidget {
   final String name;
   final ctrl = Get.put(HubCtrl());
+  final SavedPostService _savedPostService = Get.find();
 
   HubScreen({Key? key, required this.name}) : super(key: key) {
     ctrl.page.value = 1;
@@ -70,7 +72,11 @@ class HubScreen extends StatelessWidget {
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
-                child: PostWidget(article: articleRef, imageUrl: imgUrl),
+                child: Obx(() => PostWidget(
+                      article: articleRef,
+                      imageUrl: imgUrl,
+                      isSaved: _savedPostService.isSaved(articleRef.id),
+                    )),
               );
             },
           ),

@@ -1,10 +1,6 @@
-// To parse this JSON data, do
-//
-//     final commentList = commentListFromMap(jsonString);
-
 import 'dart:convert';
 
-import 'package:habar/model/author.dart';
+import 'package:habar/model/post.dart';
 
 class CommentList {
   CommentList({
@@ -122,38 +118,38 @@ class Comment {
       };
 }
 
-class Author extends BaseAuthor {
-  Author({
-    required this.id,
-    required this.login,
-    required this.alias,
-    required this.fullname,
-    required this.avatarUrl,
-  });
+// class Author extends BaseAuthor {
+//   Author({
+//     required this.id,
+//     required this.login,
+//     required this.alias,
+//     required this.fullname,
+//     required this.avatarUrl,
+//   });
 
-  String id;
-  String login;
-  String alias;
-  String fullname;
-  String avatarUrl;
+//   String id;
+//   String login;
+//   String alias;
+//   String fullname;
+//   String avatarUrl;
 
-  factory Author.fromJson(String str) => Author.fromMap(json.decode(str));
+//   factory Author.fromJson(String str) => Author.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
+//   String toJson() => json.encode(toMap());
 
-  factory Author.fromMap(Map<String, dynamic> json) => Author(
-        id: json["id"] == null ? 0 : json["id"],
-        login: json["login"] == null ? '' : json["login"],
-        alias: json["alias"] == null ? '' : json["alias"],
-        fullname: json["fullname"] == null ? '' : json["fullname"],
-        avatarUrl: json["avatarUrl"] == null ? '' : json["avatarUrl"],
-      );
+//   factory Author.fromMap(Map<String, dynamic> json) => Author(
+//         id: json["id"] == null ? 0 : json["id"],
+//         login: json["login"] == null ? '' : json["login"],
+//         alias: json["alias"] == null ? '' : json["alias"],
+//         fullname: json["fullname"] == null ? '' : json["fullname"],
+//         avatarUrl: json["avatarUrl"] == null ? '' : json["avatarUrl"],
+//       );
 
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "login": login,
-        "alias": alias,
-        "fullname": fullname,
-        "avatarUrl": avatarUrl,
-      };
-}
+//   Map<String, dynamic> toMap() => {
+//         "id": id,
+//         "login": login,
+//         "alias": alias,
+//         "fullname": fullname,
+//         "avatarUrl": avatarUrl,
+//       };
+// }

@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
+import 'package:get/get.dart';
 import 'package:habar/comments/comments_screen.dart';
 import 'package:habar/common/costants.dart';
+import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/footer_item_widget.dart';
 import 'package:habar/common/widgets/user_info_widget.dart';
 import 'package:habar/model/post.dart';
+import 'package:habar/post/post_ctrl.dart';
 import 'package:habar/post/post_screen.dart';
 import 'package:share/share.dart';
 
 class PostWidget extends StatelessWidget {
-  final BasePost article;
+  final SavedPostService _savedPostService = Get.find();
+  final _postCtrl = Get.put(PostCtrl());
+
+  final Post article;
   final String imageUrl;
+  final bool isSaved;
 
   PostWidget({
     required this.article,
     required this.imageUrl,
+    required this.isSaved,
   });
 
   @override
@@ -40,18 +48,40 @@ class PostWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   UserInfoWidget(author: article.author, publishTime: article.timePublished),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.share,
-                      color: Colors.grey,
-                      size: 20,
-                    ),
-                    onPressed: () async {
-                      await Share.share(
-                        'https://m.habr.com/ru/post/${article.id}/',
-                        subject: article.titleHtml,
-                      );
-                    },
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(isSaved ? Icons.delete : Icons.save, color: Colors.grey),
+                        onPressed: () async {
+                          String msg = '';
+
+                          if (isSaved) {
+                            msg = 'удален';
+                            await _savedPostService.deleteById(article.id);
+                          } else {
+                            msg = 'сохранен';
+                            await _postCtrl.getByID(article.id, false);
+                            await _savedPostService.save(_postCtrl.post.value);
+                          }
+
+                          final snackbar = SnackBar(content: Text('Пост успешно $msg'));
+                          ScaffoldMessenger.of(Get.context!).showSnackBar(snackbar);
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.share,
+                          color: Colors.grey,
+                          size: 20,
+                        ),
+                        onPressed: () async {
+                          await Share.share(
+                            'https://m.habr.com/ru/post/${article.id}/',
+                            subject: article.titleHtml,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -83,10 +113,7 @@ class PostWidget extends StatelessWidget {
         ),
       ),
       onTap: () async {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PostScreen(id: article.id)),
-        );
+        Get.to(() => PostScreen(id: article.id, isSaved: isSaved));
       },
     );
   }
@@ -120,12 +147,7 @@ class PostWidget extends StatelessWidget {
               splashRadius: 25,
               alignment: Alignment.centerRight,
               icon: Icon(Icons.mode_comment_rounded, color: AppColors.actionIcon, size: 15),
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CommentsScreen(post: article)),
-                );
-              },
+              onPressed: () async => Get.to(() => CommentsScreen(post: article)),
             ),
             Text(
               article.statistics.commentsCount.toString(),

@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:habar/model/author.dart';
+import 'package:hive/hive.dart';
+
+part 'post.g.dart';
 
 abstract class BaseStatistic {
   final int commentsCount = 0;
@@ -19,13 +22,12 @@ abstract class BasePost {
   final DateTime timePublished = DateTime.now();
   late BaseStatistic statistics;
   late BaseAuthor author;
+
+  Map<String, dynamic> toMap();
 }
 
-// To parse this JSON data, do
-//
-//     final post = postFromMap(jsonString);
-
-class Post extends BasePost {
+@HiveType(typeId: 1)
+class Post {
   Post({
     required this.id,
     required this.timePublished,
@@ -40,21 +42,37 @@ class Post extends BasePost {
     required this.textHtml,
     required this.status,
     required this.tags,
+    required this.leadData,
   });
 
+  @HiveField(0)
   String id;
+  @HiveField(1)
   DateTime timePublished;
+  @HiveField(2)
   bool isCorporative;
+  @HiveField(3)
   String lang;
+  @HiveField(4)
   String titleHtml;
+  @HiveField(5)
   String postType;
+  @HiveField(6)
   List<PostLabel> postLabels;
-  BaseAuthor author;
-  BaseStatistic statistics;
-  List<Hub> hubs;
+  @HiveField(7)
+  Author author;
+  @HiveField(8)
+  Statistics statistics;
+  @HiveField(9)
+  List<HubData> hubs;
+  @HiveField(10)
   List<Tag> tags;
+  @HiveField(11)
   String status;
+  @HiveField(12)
   String textHtml;
+  @HiveField(13)
+  LeadData leadData;
 
   factory Post.empty() => Post(
         id: '',
@@ -70,6 +88,7 @@ class Post extends BasePost {
         textHtml: '',
         status: '',
         tags: [],
+        leadData: LeadData.empty(),
       );
 
   factory Post.fromJson(String str) => Post.fromMap(json.decode(str));
@@ -77,20 +96,20 @@ class Post extends BasePost {
   String toJson() => json.encode(toMap());
 
   factory Post.fromMap(Map<String, dynamic> json) => Post(
-        id: json["id"] == null ? null : json["id"],
+        id: json["id"] == null ? '' : json["id"],
         timePublished: DateTime.parse(json["timePublished"]),
-        isCorporative: json["isCorporative"] == null ? null : json["isCorporative"],
-        lang: json["lang"] == null ? null : json["lang"],
+        isCorporative: json["isCorporative"] == null ? false : json["isCorporative"],
+        lang: json["lang"] == null ? '' : json["lang"],
         titleHtml: json["titleHtml"] == null ? '' : json["titleHtml"],
-        postType: json["postType"] == null ? null : json["postType"],
-        postLabels:
-            json["postLabels"] == null ? [] : List<PostLabel>.from(json["postLabels"].map((x) => PostLabel.fromMap(x))),
+        postType: json["postType"] == null ? '' : json["postType"],
+        postLabels: json["postLabels"] == null ? [] : List<PostLabel>.from(json["postLabels"].map((x) => PostLabel.fromMap(x))),
         author: Author.fromMap(json["author"]),
         statistics: Statistics.fromMap(json["statistics"]),
-        hubs: json["hubs"] == null ? [] : List<Hub>.from(json["hubs"].map((x) => Hub.fromMap(x))),
-        textHtml: json["textHtml"] == null ? null : json["textHtml"],
+        hubs: json["hubs"] == null ? [] : List<HubData>.from(json["hubs"].map((x) => HubData.fromMap(x))),
+        textHtml: json["textHtml"] == null ? '' : json["textHtml"],
         tags: json["tags"] == null ? [] : List<Tag>.from(json["tags"].map((x) => Tag.fromMap(x))),
-        status: json["status"] == null ? null : json["status"],
+        status: json["status"] == null ? '' : json["status"],
+        leadData: json["status"] == null ? LeadData.empty() : LeadData.fromMap(json["leadData"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -110,7 +129,9 @@ class Post extends BasePost {
       };
 }
 
-class Author extends BaseAuthor {
+// todo: separate file
+@HiveType(typeId: 2)
+class Author {
   Author({
     required this.scoreStats,
     required this.id,
@@ -121,12 +142,19 @@ class Author extends BaseAuthor {
     required this.speciality,
   });
 
+  @HiveField(0)
   ScoreStats scoreStats;
+  @HiveField(1)
   String id;
+  @HiveField(2)
   String login;
+  @HiveField(3)
   String alias;
+  @HiveField(4)
   String fullname;
+  @HiveField(5)
   String avatarUrl;
+  @HiveField(6)
   String speciality;
 
   factory Author.empty() => Author(
@@ -144,7 +172,7 @@ class Author extends BaseAuthor {
   String toJson() => json.encode(toMap());
 
   factory Author.fromMap(Map<String, dynamic> json) => Author(
-        scoreStats: ScoreStats.fromMap(json["scoreStats"]),
+        scoreStats: json["scoreStats"] == null ? ScoreStats.empty() : ScoreStats.fromMap(json["scoreStats"]),
         id: json["id"] == null ? 0 : json["id"],
         login: json["login"] == null ? '' : json["login"],
         alias: json["alias"] == null ? '' : json["alias"],
@@ -164,13 +192,16 @@ class Author extends BaseAuthor {
       };
 }
 
+@HiveType(typeId: 3)
 class ScoreStats {
   ScoreStats({
     required this.score,
     required this.votesCount,
   });
 
+  @HiveField(0)
   double score;
+  @HiveField(1)
   int votesCount;
 
   factory ScoreStats.empty() => ScoreStats(score: 0.0, votesCount: 0);
@@ -190,8 +221,9 @@ class ScoreStats {
       };
 }
 
-class Hub {
-  Hub({
+@HiveType(typeId: 4)
+class HubData {
+  HubData({
     required this.id,
     required this.alias,
     required this.type,
@@ -199,17 +231,22 @@ class Hub {
     required this.titleHtml,
   });
 
+  @HiveField(0)
   String id;
+  @HiveField(1)
   String alias;
+  @HiveField(2)
   String type;
+  @HiveField(3)
   String title;
+  @HiveField(4)
   String titleHtml;
 
-  factory Hub.fromJson(String str) => Hub.fromMap(json.decode(str));
+  factory HubData.fromJson(String str) => HubData.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Hub.fromMap(Map<String, dynamic> json) => Hub(
+  factory HubData.fromMap(Map<String, dynamic> json) => HubData(
         id: json["id"] == null ? '' : json["id"],
         alias: json["alias"] == null ? '' : json["alias"],
         type: json["type"] == null ? '' : json["type"],
@@ -226,6 +263,7 @@ class Hub {
       };
 }
 
+// todo: delete?
 class Img {
   Img({
     required this.url,
@@ -246,11 +284,13 @@ class Img {
       };
 }
 
+@HiveType(typeId: 5)
 class PostLabel {
   PostLabel({
     required this.type,
   });
 
+  @HiveField(0)
   String type;
 
   factory PostLabel.fromJson(String str) => PostLabel.fromMap(json.decode(str));
@@ -266,7 +306,8 @@ class PostLabel {
       };
 }
 
-class Statistics extends BaseStatistic {
+@HiveType(typeId: 6)
+class Statistics {
   Statistics({
     required this.commentsCount,
     required this.favoritesCount,
@@ -275,10 +316,15 @@ class Statistics extends BaseStatistic {
     required this.votesCount,
   });
 
+  @HiveField(0)
   int commentsCount;
+  @HiveField(1)
   int favoritesCount;
+  @HiveField(2)
   int readingCount;
+  @HiveField(3)
   int score;
+  @HiveField(4)
   int votesCount;
 
   factory Statistics.empty() => Statistics(
@@ -310,11 +356,13 @@ class Statistics extends BaseStatistic {
       };
 }
 
+@HiveType(typeId: 7)
 class Tag {
   Tag({
     required this.titleHtml,
   });
 
+  @HiveField(0)
   String titleHtml;
 
   factory Tag.fromJson(String str) => Tag.fromMap(json.decode(str));
@@ -327,5 +375,34 @@ class Tag {
 
   Map<String, dynamic> toMap() => {
         "titleHtml": titleHtml,
+      };
+}
+
+@HiveType(typeId: 8)
+class LeadData {
+  LeadData({
+    required this.textHtml,
+    required this.imageUrl,
+  });
+
+  @HiveField(0)
+  final String textHtml;
+  @HiveField(1)
+  final String imageUrl;
+
+  factory LeadData.empty() => LeadData(textHtml: '', imageUrl: '');
+
+  factory LeadData.fromJson(String str) => LeadData.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory LeadData.fromMap(Map<String, dynamic> json) => LeadData(
+        textHtml: json["textHtml"] == null ? '' : json["textHtml"],
+        imageUrl: json["imageUrl"] == null ? '' : json["imageUrl"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "textHtml": textHtml,
+        "imageUrl": imageUrl,
       };
 }

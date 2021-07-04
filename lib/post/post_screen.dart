@@ -17,10 +17,12 @@ import 'package:share/share.dart';
 
 class PostScreen extends StatelessWidget {
   final String id;
+  final bool isSaved;
   final ctrl = Get.put(PostCtrl());
 
-  PostScreen({Key? key, required this.id}) : super(key: key) {
-    ctrl.getByID(id);
+  PostScreen({Key? key, required this.id, required this.isSaved}) : super(key: key) {
+    ctrl.isSaved.value = this.isSaved;
+    ctrl.postId.value = this.id;
   }
 
   @override
@@ -47,19 +49,40 @@ class PostScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               UserInfoWidget(publishTime: post.timePublished, author: post.author),
-              IconButton(
-                splashRadius: 20,
-                icon: const Icon(
-                  Icons.share,
-                  color: Colors.grey,
-                  size: 20,
-                ),
-                onPressed: () async {
-                  await Share.share(
-                    'https://m.habr.com/ru/post/${post.id}/',
-                    subject: post.titleHtml,
-                  );
-                },
+              Row(
+                children: [
+                  Obx(() => IconButton(
+                        icon: Icon(ctrl.isSaved.value ? Icons.delete : Icons.save, color: Colors.grey),
+                        onPressed: () async {
+                          String msg = '';
+
+                          if (ctrl.isSaved.value) {
+                            msg = 'удален';
+                            await ctrl.delete();
+                          } else {
+                            msg = 'сохранен';
+                            await ctrl.save();
+                          }
+
+                          final snackbar = SnackBar(content: Text('Пост успешно $msg'));
+                          ScaffoldMessenger.of(Get.context!).showSnackBar(snackbar);
+                        },
+                      )),
+                  IconButton(
+                    splashRadius: 20,
+                    icon: const Icon(
+                      Icons.share,
+                      color: Colors.grey,
+                      size: 20,
+                    ),
+                    onPressed: () async {
+                      await Share.share(
+                        'https://m.habr.com/ru/post/${post.id}/',
+                        subject: post.titleHtml,
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -102,7 +125,10 @@ class PostScreen extends StatelessWidget {
                     String imgUrl = tag.element!.attributes['data-src'] ?? '';
 
                     return GestureDetector(
-                      child: Image.network(imgUrl),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Image.network(imgUrl),
+                      ),
                       onTap: () async => await _showImage(context, imgUrl),
                     );
                   }
@@ -116,7 +142,10 @@ class PostScreen extends StatelessWidget {
                 }
 
                 return GestureDetector(
-                  child: Image.network(fullImg),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5.0),
+                    child: Image.network(fullImg),
+                  ),
                   onTap: () async => await _showImage(context, fullImg ?? ''),
                 );
               },
@@ -268,9 +297,11 @@ class PostScreen extends StatelessWidget {
                   }),
                   Positioned(
                     bottom: 15,
-                    right: 5,
+                    width: Get.width,
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         IconButton(
                           icon: const Icon(Icons.download, color: Colors.white, size: 20),

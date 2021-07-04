@@ -13,11 +13,10 @@ class SearchCtrl extends GetxController {
   final selectedIndex = 0.obs;
   final queryStringStream = BehaviorSubject<String>();
   final isLoading = false.obs;
-  // final queryString = ''.obs;
   String _queryString = '';
 
   @override
-  void onInit() {
+  void onInit() async {
     _repo = SearchRepository();
     _repo.postsStream.listen((postList) => posts.value = postList);
     _repo.usersStream.listen((userList) => users.value = userList);

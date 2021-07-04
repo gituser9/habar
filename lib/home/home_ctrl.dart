@@ -1,17 +1,21 @@
 import 'package:get/get.dart';
 import 'package:habar/common/http_request.dart';
+import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/home/home_repository.dart';
 import 'package:habar/model/filter.dart';
 import 'package:habar/model/home.dart';
 import 'package:habar/model/hub_list.dart';
+import 'package:habar/model/post.dart';
 import 'package:habar/model/post_list.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeCtrl extends GetxController {
   final _repo = HomeRepo();
+  final _savedPostService = Get.put(SavedPostService());
   final posts = PostList.empty().obs;
   final hubs = HubList.empty().obs;
   final filter = ListFilter.all.obs;
+  final savedPosts = List<Post>.empty().obs;
   // final error = String();
   final hubSearchStream = BehaviorSubject<String>();
   final homeMode = HomeMode.posts.obs;
@@ -39,9 +43,7 @@ class HomeCtrl extends GetxController {
       isLoading.value = false;
     });
 
-    // _repo.errorStream.listen(errorStream.add);
-
-    hubSearchStream.debounceTime(Duration(seconds: 1)).listen((String searchString) async {
+    hubSearchStream.debounceTime(const Duration(seconds: 1)).listen((String searchString) async {
       if (searchString.isEmpty) {
         await getHubs();
         return;
@@ -64,6 +66,8 @@ class HomeCtrl extends GetxController {
 
   Future setup() async {
     pageMode = HomeMode.posts;
+
+    await _savedPostService.openBox();
     await getAll(postFilter.value.filterKey.value);
   }
 
@@ -95,6 +99,11 @@ class HomeCtrl extends GetxController {
   List<HubRef> getListOfHubs(HubList hubList) {
     _pageCount = hubList.pagesCount;
     return hubList.hubIds.map((String hubId) => hubList.hubRefs[hubId]!).toList();
+  }
+
+  void getSaved() {
+    final posts = _savedPostService.getAll();
+    savedPosts.value = posts;
   }
 
   void resetPage() {
