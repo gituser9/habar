@@ -6,13 +6,8 @@ class SavedPostService extends GetxService {
   final _hiveService = Get.put(HiveService());
   final _savedPostIds = List<String>.empty().obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
   Future openBox() async {
-    await _hiveService.openBoxes();
+    await _hiveService.openBoxes('posts');
 
     final posts = _hiveService.getAll<Post>(_hiveService.postBox);
     posts.sort((p1, p2) => p1.timePublished.isBefore(p2.timePublished) ? 1 : 0);

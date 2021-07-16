@@ -64,7 +64,7 @@ class CommentsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Expanded(child: Obx(() => _buildList(ctrl.comments))),
+              Obx(() => _buildList(ctrl.comments)),
               const SizedBox(height: 200),
             ],
           ),

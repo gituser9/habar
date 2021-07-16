@@ -4,6 +4,7 @@ import 'package:flutter_html/style.dart';
 import 'package:get/get.dart';
 import 'package:habar/comments/comments_screen.dart';
 import 'package:habar/common/costants.dart';
+import 'package:habar/common/services/post_position_service.dart';
 import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/footer_item_widget.dart';
@@ -15,6 +16,7 @@ import 'package:share/share.dart';
 
 class PostWidget extends StatelessWidget {
   final SavedPostService _savedPostService = Get.find();
+  final _positionService = Get.put(PostPositionService());
   final _postCtrl = Get.put(PostCtrl());
 
   final Post article;
@@ -39,7 +41,6 @@ class PostWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(4.0),
           border: Border.all(color: Colors.grey.shade300),
         ),
-        // color: Colors.white,
         child: Column(
           children: [
             Padding(
@@ -50,24 +51,40 @@ class PostWidget extends StatelessWidget {
                   UserInfoWidget(author: article.author, publishTime: article.timePublished),
                   Row(
                     children: [
-                      IconButton(
-                        icon: Icon(isSaved ? Icons.delete : Icons.save, color: Colors.grey),
-                        onPressed: () async {
-                          String msg = '';
+                      Obx(() {
+                        if (_postCtrl.savedIds.contains(article.id)) {
+                          return const Padding(
+                            padding: const EdgeInsets.only(right: 10.0),
+                            child: const SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: const CircularProgressIndicator(color: Colors.grey, strokeWidth: 2),
+                            ),
+                          );
+                        }
 
-                          if (isSaved) {
-                            msg = 'удален';
-                            await _savedPostService.deleteById(article.id);
-                          } else {
-                            msg = 'сохранен';
-                            await _postCtrl.getByID(article.id, false);
-                            await _savedPostService.save(_postCtrl.post.value);
-                          }
+                        return IconButton(
+                          icon: Icon(isSaved ? Icons.delete : Icons.save, color: Colors.grey),
+                          onPressed: () async {
+                            _postCtrl.savedIds.add(article.id);
+                            String msg = '';
 
-                          final snackbar = SnackBar(content: Text('Пост успешно $msg'));
-                          ScaffoldMessenger.of(Get.context!).showSnackBar(snackbar);
-                        },
-                      ),
+                            if (isSaved) {
+                              msg = 'удален';
+                              await _savedPostService.deleteById(article.id);
+                              await _positionService.deleteById(article.id);
+                            } else {
+                              msg = 'сохранен';
+                              await _postCtrl.getByID(article.id, false);
+                              await _savedPostService.save(_postCtrl.post.value);
+                            }
+
+                            _postCtrl.savedIds.remove(article.id);
+                            final snackbar = SnackBar(content: Text('Пост успешно $msg'));
+                            ScaffoldMessenger.of(Get.context!).showSnackBar(snackbar);
+                          },
+                        );
+                      }),
                       IconButton(
                         icon: const Icon(
                           Icons.share,
@@ -106,7 +123,7 @@ class PostWidget extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+              padding: const EdgeInsets.only(top: 16, bottom: 8, left: 8, right: 8),
               child: _buildFooterRow(context),
             ),
           ],

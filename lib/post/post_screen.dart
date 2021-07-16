@@ -27,9 +27,12 @@ class PostScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ctrl.setPosition(id);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
+        controller: ctrl.scrollCtrl,
         child: Obx(() => _buildBody(context, ctrl.post.value)),
       ),
     );
@@ -51,23 +54,38 @@ class PostScreen extends StatelessWidget {
               UserInfoWidget(publishTime: post.timePublished, author: post.author),
               Row(
                 children: [
-                  Obx(() => IconButton(
-                        icon: Icon(ctrl.isSaved.value ? Icons.delete : Icons.save, color: Colors.grey),
-                        onPressed: () async {
-                          String msg = '';
+                  Obx(() {
+                    if (ctrl.savedIds.contains(post.id)) {
+                      return const Padding(
+                        padding: const EdgeInsets.only(right: 10.0),
+                        child: const SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: const CircularProgressIndicator(color: Colors.grey, strokeWidth: 2),
+                        ),
+                      );
+                    }
 
-                          if (ctrl.isSaved.value) {
-                            msg = 'удален';
-                            await ctrl.delete();
-                          } else {
-                            msg = 'сохранен';
-                            await ctrl.save();
-                          }
+                    return IconButton(
+                      icon: Icon(ctrl.isSaved.value ? Icons.delete : Icons.save, color: Colors.grey),
+                      onPressed: () async {
+                        ctrl.savedIds.add(post.id);
+                        String msg = '';
 
-                          final snackbar = SnackBar(content: Text('Пост успешно $msg'));
-                          ScaffoldMessenger.of(Get.context!).showSnackBar(snackbar);
-                        },
-                      )),
+                        if (ctrl.isSaved.value) {
+                          msg = 'удален';
+                          await ctrl.delete();
+                        } else {
+                          msg = 'сохранен';
+                          await ctrl.save();
+                        }
+
+                        ctrl.savedIds.remove(post.id);
+                        final snackbar = SnackBar(content: Text('Пост успешно $msg'));
+                        ScaffoldMessenger.of(Get.context!).showSnackBar(snackbar);
+                      },
+                    );
+                  }),
                   IconButton(
                     splashRadius: 20,
                     icon: const Icon(

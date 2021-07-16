@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
 import 'package:habar/model/post.dart';
+import 'package:habar/model/post_position.dart';
 import 'package:hive/hive.dart';
 
 class HiveService extends GetxService {
   late Box postBox;
+  late Box postPositionBox;
 
   @override
   void onInit() async {
@@ -17,6 +19,7 @@ class HiveService extends GetxService {
     Hive.registerAdapter(StatisticsAdapter());
     Hive.registerAdapter(TagAdapter());
     Hive.registerAdapter(LeadDataAdapter());
+    Hive.registerAdapter(PostPositionAdapter());
   }
 
   @override
@@ -28,8 +31,15 @@ class HiveService extends GetxService {
     }
   }
 
-  Future openBoxes() async {
-    postBox = await Hive.openBox('posts');
+  Future openBoxes(String boxName) async {
+    switch (boxName) {
+      case 'posts':
+        postBox = await Hive.openBox(boxName);
+        break;
+      case 'post_position':
+        postPositionBox = await Hive.openBox(boxName);
+        break;
+    }
   }
 
   Future<int> clear(Box box) async {
