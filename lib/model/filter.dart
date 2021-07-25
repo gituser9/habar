@@ -5,20 +5,6 @@ class Filter {
   var sortValue = listFilterData[ListFilter.all]!.obs;
   var filterKey = ListFilter.all.obs;
   var hubFilter = ListHubFilter.rateDesc.obs;
-
-  // Filter({
-  //   required this.sortType,
-  //   required this.sortValue,
-  //   required this.filterKey,
-  //   required this.hubFilter,
-  // });
-  //
-  // factory Filter.empty() => Filter(
-  //       sortType: FilterSortType.newPost,
-  //       sortValue: listFilterData[ListFilter.all]!,
-  //       filterKey: ListFilter.all,
-  //       hubFilter: ListHubFilter.rateDesc,
-  //     );
 }
 
 enum FilterSortType {

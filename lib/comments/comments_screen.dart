@@ -4,6 +4,7 @@ import 'package:habar/comments/comments_ctrl.dart';
 import 'package:habar/common/widgets/comment_widget.dart';
 import 'package:habar/common/widgets/footer_item_widget.dart';
 import 'package:habar/common/widgets/user_info_widget.dart';
+import 'package:habar/home/widgets/loading_widget.dart';
 import 'package:habar/model/comment.dart';
 import 'package:habar/model/post.dart';
 
@@ -64,7 +65,13 @@ class CommentsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Obx(() => _buildList(ctrl.comments)),
+              Obx(() {
+                if (ctrl.isLoading.value) {
+                  return LoadingWidget();
+                }
+
+                return _buildList(ctrl.comments);
+              }),
               const SizedBox(height: 200),
             ],
           ),

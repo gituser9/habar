@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:get/get.dart';
 import 'package:habar/comments/comments_screen.dart';
+import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:habar/common/costants.dart';
 import 'package:habar/common/services/post_position_service.dart';
 import 'package:habar/common/services/saved_post_service.dart';
@@ -15,6 +17,7 @@ import 'package:habar/post/post_screen.dart';
 import 'package:share/share.dart';
 
 class PostWidget extends StatelessWidget {
+  final SettingsCtrl _settingsCtrl = Get.find();
   final SavedPostService _savedPostService = Get.find();
   final _positionService = Get.put(PostPositionService());
   final _postCtrl = Get.put(PostCtrl());
@@ -103,7 +106,7 @@ class PostWidget extends StatelessWidget {
                 ],
               ),
             ),
-            if (imgUrl.isNotEmpty)
+            if (imgUrl.isNotEmpty && _settingsCtrl.settings.value.isShowImage)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Image.network(imgUrl),
@@ -122,6 +125,31 @@ class PostWidget extends StatelessWidget {
                 ),
               ),
             ),
+            if (article.leadData.textHtml.isNotEmpty && _settingsCtrl.settings.value.isShowPostPreview)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Html(
+                    data: article.leadData.textHtml,
+                    shrinkWrap: true,
+                    style: {
+                      'body': Style(fontSize: const FontSize(16)),
+                      'blockquote': Style(fontStyle: FontStyle.italic, fontSize: const FontSize(16)),
+                      'a': Style(textDecoration: TextDecoration.none),
+                    },
+                    customRender: {
+                      'figure': (RenderContext ctx, Widget child) {
+                        return Container();
+                      },
+                      'img': (RenderContext ctx, Widget child) {
+                        return Container();
+                      },
+                    },
+                    onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, element) async {
+                      if (url != null) {
+                        await Util.launchURL(url);
+                      }
+                    }),
+              ),
             Padding(
               padding: const EdgeInsets.only(top: 16, bottom: 8, left: 8, right: 8),
               child: _buildFooterRow(context),
@@ -130,7 +158,7 @@ class PostWidget extends StatelessWidget {
         ),
       ),
       onTap: () async {
-        Get.to(() => PostScreen(id: article.id, isSaved: isSaved));
+        await Get.to(() => PostScreen(id: article.id, isSaved: isSaved));
       },
     );
   }
@@ -163,7 +191,7 @@ class PostWidget extends StatelessWidget {
             IconButton(
               splashRadius: 25,
               alignment: Alignment.centerRight,
-              icon: Icon(Icons.mode_comment_rounded, color: AppColors.actionIcon, size: 15),
+              icon: Icon(Icons.mode_comment_rounded, color: AppColors.actionIcon, size: 18),
               onPressed: () async => Get.to(() => CommentsScreen(post: article)),
             ),
             Text(

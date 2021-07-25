@@ -1,11 +1,13 @@
 import 'package:get/get.dart';
 import 'package:habar/model/post.dart';
 import 'package:habar/model/post_position.dart';
+import 'package:habar/model/settings.dart';
 import 'package:hive/hive.dart';
 
 class HiveService extends GetxService {
   late Box postBox;
   late Box postPositionBox;
+  late Box settingsBox;
 
   @override
   void onInit() async {
@@ -20,6 +22,7 @@ class HiveService extends GetxService {
     Hive.registerAdapter(TagAdapter());
     Hive.registerAdapter(LeadDataAdapter());
     Hive.registerAdapter(PostPositionAdapter());
+    Hive.registerAdapter(SettingsAdapter());
   }
 
   @override
@@ -35,6 +38,9 @@ class HiveService extends GetxService {
     switch (boxName) {
       case 'posts':
         postBox = await Hive.openBox(boxName);
+        break;
+      case 'settings':
+        settingsBox = await Hive.openBox(boxName);
         break;
       case 'post_position':
         postPositionBox = await Hive.openBox(boxName);

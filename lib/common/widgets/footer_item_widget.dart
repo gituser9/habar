@@ -36,7 +36,7 @@ class FooterItemWidget extends StatelessWidget {
       children: [
         Icon(
           icon,
-          size: 15,
+          size: 18,
           color: AppColors.actionIcon,
         ),
         const SizedBox(width: 5),

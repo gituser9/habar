@@ -18,7 +18,7 @@ class UserInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () async => Get.to(() => ProfileScreen(login: author.alias)),
+      onTap: () async => await Get.to(() => ProfileScreen(login: author.alias)),
       child: Row(
         children: [
           Padding(

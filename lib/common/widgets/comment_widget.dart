@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
 import 'package:flutter_html/style.dart';
 import 'package:get/get.dart';
+import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/footer_item_widget.dart';
 import 'package:habar/common/widgets/user_info_widget.dart';
@@ -14,6 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 
 class CommentWidget extends StatelessWidget {
+  final SettingsCtrl _settingsCtrl = Get.find();
   final StructuredComment comment;
 
   CommentWidget({
@@ -43,14 +45,17 @@ class CommentWidget extends StatelessWidget {
             data: comment.text,
             shrinkWrap: true,
             style: {
-              'div': Style(fontSize: const FontSize(18), textAlign: TextAlign.start),
-              'blockquote': Style(fontStyle: FontStyle.italic, fontSize: const FontSize(16)),
+              'div':
+                  Style(fontSize: FontSize(_settingsCtrl.settings.value.commentTextSize), textAlign: TextAlign.start),
+              'blockquote': Style(
+                  fontStyle: FontStyle.italic, fontSize: FontSize(_settingsCtrl.settings.value.commentTextSize - 2)),
               'pre': Style(
                 fontStyle: FontStyle.normal,
                 fontSize: const FontSize(14),
               ),
               'figure': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
               'img': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
+              'a': Style(textDecoration: TextDecoration.none),
             },
             onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, element) async {
               if (url != null) {

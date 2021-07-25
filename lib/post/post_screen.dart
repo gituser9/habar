@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:habar/comments/comments_screen.dart';
+import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/footer_item_widget.dart';
 import 'package:habar/common/widgets/user_info_widget.dart';
@@ -18,6 +19,7 @@ import 'package:share/share.dart';
 class PostScreen extends StatelessWidget {
   final String id;
   final bool isSaved;
+  final SettingsCtrl _settingsCtrl = Get.find();
   final ctrl = Get.put(PostCtrl());
 
   PostScreen({Key? key, required this.id, required this.isSaved}) : super(key: key) {
@@ -127,14 +129,16 @@ class PostScreen extends StatelessWidget {
             data: post.textHtml,
             shrinkWrap: true,
             style: {
-              'body': Style(fontSize: const FontSize(18)),
-              'blockquote': Style(fontStyle: FontStyle.italic, fontSize: const FontSize(16)),
+              'body': Style(fontSize: FontSize(_settingsCtrl.settings.value.postTextSize)),
+              'blockquote':
+                  Style(fontStyle: FontStyle.italic, fontSize: FontSize(_settingsCtrl.settings.value.postTextSize - 2)),
               'pre': Style(
                 fontStyle: FontStyle.normal,
                 fontSize: const FontSize(14),
               ),
               'figure': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
               'img': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
+              'a': Style(textDecoration: TextDecoration.none),
             },
             customRender: {
               'figure': (RenderContext ctx, Widget child) {

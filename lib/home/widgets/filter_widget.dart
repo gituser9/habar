@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_advanced_segment/flutter_advanced_segment.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/costants.dart';
 import 'package:habar/home/home_ctrl.dart';
@@ -7,6 +9,7 @@ import 'package:habar/model/home.dart';
 
 class FilterWidget extends StatelessWidget {
   final HomeCtrl ctrl = Get.find();
+  final _segmentCtrl = AdvancedSegmentController('all');
 
   static const textStyle = const TextStyle(
     fontWeight: FontWeight.bold,
@@ -15,6 +18,17 @@ class FilterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ctrl.postFilter.value.sortType.value = FilterSortType.newPost;
+
+    _segmentCtrl.addListener(() {
+      print(_segmentCtrl.value);
+      if (_segmentCtrl.value == 'new') {
+        ctrl.postFilter.value.sortType.value = FilterSortType.newPost;
+      } else {
+        ctrl.postFilter.value.sortType.value = FilterSortType.bestPost;
+      }
+    });
+
     return SingleChildScrollView(
       child: Container(
         margin: const EdgeInsets.all(16),
@@ -91,66 +105,16 @@ class FilterWidget extends StatelessWidget {
   Widget _buildTypeButtons() {
     return Padding(
       padding: const EdgeInsets.all(10),
-      child: Container(
-        alignment: Alignment.topCenter,
-        child: Obx(() {
-          return Container(
-            height: 40,
-            padding: const EdgeInsets.all(3.5),
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: const BorderRadius.all(const Radius.circular(15)),
-            ),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                    child: InkWell(
-                        onTap: () {
-                          ctrl.postFilter.value.sortType.value = FilterSortType.newPost;
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: ctrl.postFilter.value.sortType.value == FilterSortType.newPost
-                              ? null
-                              : const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: const BorderRadius.only(
-                                    bottomLeft: const Radius.circular(12),
-                                    topLeft: const Radius.circular(12),
-                                  ),
-                                ),
-                          child: Text("Новые",
-                              style: TextStyle(
-                                color: ctrl.postFilter.value.sortType.value == FilterSortType.newPost ? Colors.white : Colors.blue,
-                                fontSize: 17,
-                              )),
-                        ))),
-                Expanded(
-                    child: InkWell(
-                        onTap: () {
-                          ctrl.postFilter.value.sortType.value = FilterSortType.bestPost;
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: ctrl.postFilter.value.sortType.value == FilterSortType.bestPost
-                              ? null
-                              : const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: const BorderRadius.only(
-                                    bottomRight: const Radius.circular(12),
-                                    topRight: const Radius.circular(12),
-                                  ),
-                                ),
-                          child: Text("Лучшие",
-                              style: TextStyle(
-                                color: ctrl.postFilter.value.sortType.value == FilterSortType.bestPost ? Colors.white : Colors.blue,
-                                fontSize: 17,
-                              )),
-                        )))
-              ],
-            ),
-          );
-        }),
+      child: Align(
+        alignment: Alignment.center,
+        child: AdvancedSegment(
+          controller: _segmentCtrl,
+          segments: {
+            'new': '          Новые          ',
+            'best': 'Лучшие',
+          },
+          backgroundColor: Colors.grey.withOpacity(0.3),
+        ),
       ),
     );
   }
@@ -160,12 +124,12 @@ class FilterWidget extends StatelessWidget {
       return Center(
         child: Wrap(
           children: [
-            _buildScoreButton('Все', 80, ListFilter.all),
-            _buildScoreButton('>= 0', 80, ListFilter.top0),
-            _buildScoreButton('>= 10', 80, ListFilter.top10),
-            _buildScoreButton('>= 25', 80, ListFilter.top25),
-            _buildScoreButton('>= 50', 80, ListFilter.top50),
-            _buildScoreButton('>= 100', 80, ListFilter.top100),
+            _buildScoreButton('Все', 0, ListFilter.all),
+            _buildScoreButton('>= 0', 0, ListFilter.top0),
+            _buildScoreButton('>= 10', 0, ListFilter.top10),
+            _buildScoreButton('>= 25', 0, ListFilter.top25),
+            _buildScoreButton('>= 50', 0, ListFilter.top50),
+            _buildScoreButton('>= 100', 0, ListFilter.top100),
           ],
         ),
       );
@@ -174,11 +138,11 @@ class FilterWidget extends StatelessWidget {
     return Center(
       child: Wrap(
         children: [
-          _buildScoreButton('Сутки', 110, ListFilter.daily),
-          _buildScoreButton('Неделя', 110, ListFilter.weekly),
-          _buildScoreButton('Месяц', 110, ListFilter.monthly),
-          _buildScoreButton('Год', 110, ListFilter.yearly),
-          _buildScoreButton('Все время', 110, ListFilter.alltime),
+          _buildScoreButton('Сутки', 0, ListFilter.daily),
+          _buildScoreButton('Неделя', 0, ListFilter.weekly),
+          _buildScoreButton('Месяц', 0, ListFilter.monthly),
+          _buildScoreButton('Год', 0, ListFilter.yearly),
+          _buildScoreButton('Все время', 230, ListFilter.alltime),
         ],
       ),
     );
@@ -191,12 +155,11 @@ class FilterWidget extends StatelessWidget {
         final isChoosen = filterKey == ctrl.postFilter.value.filterKey.value;
 
         return Container(
-          width: width,
+          width: width == 0 ? (Get.width / 2) - 35 : Get.width - 55,
           height: 40,
           decoration: BoxDecoration(
-            color: isChoosen ? AppColors.primary : Colors.white,
-            borderRadius: const BorderRadius.all(const Radius.circular(12)),
-            border: Border.all(color: AppColors.primary),
+            color: isChoosen ? AppColors.primary : Colors.grey.withOpacity(0.2),
+            borderRadius: const BorderRadius.all(const Radius.circular(6)),
           ),
           child: TextButton(
               onPressed: () {
@@ -219,9 +182,8 @@ class FilterWidget extends StatelessWidget {
           width: 150,
           height: 40,
           decoration: BoxDecoration(
-            color: ctrl.postFilter.value.hubFilter.value == filterKey ? AppColors.primary : Colors.white,
-            borderRadius: const BorderRadius.all(const Radius.circular(12)),
-            border: Border.all(color: AppColors.primary),
+            color: ctrl.postFilter.value.hubFilter.value == filterKey ? AppColors.primary : Colors.grey.withOpacity(0.2),
+            borderRadius: const BorderRadius.all(const Radius.circular(6)),
           ),
           child: TextButton.icon(
               onPressed: () {

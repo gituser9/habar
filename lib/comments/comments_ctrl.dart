@@ -6,14 +6,17 @@ import 'package:habar/model/comment_list.dart';
 class CommentsCtrl extends GetxController {
   late CommentsRepo _repo;
   final comments = List<StructuredComment>.empty().obs;
-  // final isImageLoading = false.obs;
+  final isLoading = true.obs;
 
   @override
   void onInit() {
     super.onInit();
 
     _repo = CommentsRepo();
-    _repo.commentsStream.map(getStructuredComments).listen((commentList) => comments.value = commentList);
+    _repo.commentsStream.map(getStructuredComments).listen((commentList) {
+      comments.value = commentList;
+      isLoading.value = false;
+    });
   }
 
   @override
@@ -57,13 +60,15 @@ class CommentsCtrl extends GetxController {
           );
         }).toList();
 
-        structComment.children.sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
+        structComment.children
+            .sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
       }
 
       structComments.add(structComment);
     });
 
-    structComments.sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
+    structComments
+        .sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
 
     return structComments;
   }

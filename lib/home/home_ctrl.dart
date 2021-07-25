@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:habar/common/http_request.dart';
+import 'package:habar/common/services/post_position_service.dart';
 import 'package:habar/common/services/saved_post_service.dart';
+import 'package:habar/common/services/settings_service.dart';
 import 'package:habar/home/home_repository.dart';
 import 'package:habar/model/filter.dart';
 import 'package:habar/model/home.dart';
@@ -12,6 +14,8 @@ import 'package:rxdart/rxdart.dart';
 class HomeCtrl extends GetxController {
   final _repo = HomeRepo();
   final _savedPostService = Get.put(SavedPostService());
+  final _positionService = Get.put(PostPositionService());
+  final _settingsService = Get.put(SettingsService());
   final posts = PostList.empty().obs;
   final hubs = HubList.empty().obs;
   final filter = ListFilter.all.obs;
@@ -68,6 +72,7 @@ class HomeCtrl extends GetxController {
     pageMode = HomeMode.posts;
 
     await _savedPostService.openBox();
+    await _positionService.openBox();
     await getAll(postFilter.value.filterKey.value);
   }
 
@@ -77,7 +82,6 @@ class HomeCtrl extends GetxController {
     }
 
     if (page != 1 && page > _pageCount) {
-      // errorStream.add('invalid page');
       return;
     }
 

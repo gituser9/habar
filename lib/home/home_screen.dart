@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/no_data_widget.dart';
@@ -13,9 +14,11 @@ import 'package:habar/home/widgets/saved_widget.dart';
 import 'package:habar/model/home.dart';
 import 'package:habar/model/post_list.dart';
 import 'package:habar/search/search_screen.dart';
+import 'package:habar/settings/settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final ctrl = Get.put(HomeCtrl());
+  final _settingsCtrl = Get.put(SettingsCtrl());
   final _savedPostService = Get.put(SavedPostService());
   final Map<int, HomeMode> pageMode = {
     0: HomeMode.posts,
@@ -95,6 +98,12 @@ class HomeScreen extends StatelessWidget {
             ),
           );
         }),
+        IconButton(
+          icon: const Icon(Icons.settings, color: Colors.black),
+          onPressed: () async {
+            await Get.to(() => SettingsScreen());
+          },
+        ),
       ],
     );
   }
