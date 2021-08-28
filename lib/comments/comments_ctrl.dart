@@ -37,10 +37,12 @@ class CommentsCtrl extends GetxController {
     );
     List<StructuredComment> structComments = [];
 
-    commentList.comments.values.where((comment) => comment.level == 0).toList().forEach((comment) {
+    commentList.comments.values
+        .where((comment) => comment.level == 0 && comment.timePublished != null)
+        .forEach((comment) {
       final structComment = StructuredComment(
         author: comment.author,
-        publishTime: comment.timePublished,
+        publishTime: comment.timePublished!,
         text: comment.message,
         isPostAuthor: comment.isPostAuthor,
         level: comment.level,
@@ -52,7 +54,7 @@ class CommentsCtrl extends GetxController {
           final hComment = habrComment!;
           return StructuredComment(
             author: hComment.author,
-            publishTime: hComment.timePublished,
+            publishTime: hComment.timePublished!,
             text: hComment.message,
             isPostAuthor: hComment.isPostAuthor,
             level: hComment.level,

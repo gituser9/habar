@@ -1,5 +1,4 @@
 import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
@@ -17,25 +16,18 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 
 class PostScreen extends StatelessWidget {
-  final String id;
-  final bool isSaved;
   final SettingsCtrl _settingsCtrl = Get.find();
-  final ctrl = Get.put(PostCtrl());
-
-  PostScreen({Key? key, required this.id, required this.isSaved}) : super(key: key) {
-    ctrl.isSaved.value = this.isSaved;
-    ctrl.postId.value = this.id;
-  }
+  final PostCtrl ctrl = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    ctrl.setPosition(id);
+    ctrl.setPosition(ctrl.postId.value);
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         controller: ctrl.scrollCtrl,
-        child: Obx(() => _buildBody(context, ctrl.post.value)),
+        child: Container(child: Obx(() => _buildBody(context, ctrl.post.value))),
       ),
     );
   }
@@ -190,9 +182,9 @@ class PostScreen extends StatelessWidget {
                 );
               }
             },
-            onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, element) async {
+            onLinkTap: (String? url, RenderContext ctx, Map<String, String> attributes, element) async {
               if (url != null) {
-                await Util.launchURL(url);
+                await Util.launchInternal(url);
               }
             }),
         const Divider(),

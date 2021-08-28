@@ -45,10 +45,8 @@ class CommentWidget extends StatelessWidget {
             data: comment.text,
             shrinkWrap: true,
             style: {
-              'div':
-                  Style(fontSize: FontSize(_settingsCtrl.settings.value.commentTextSize), textAlign: TextAlign.start),
-              'blockquote': Style(
-                  fontStyle: FontStyle.italic, fontSize: FontSize(_settingsCtrl.settings.value.commentTextSize - 2)),
+              'div': Style(fontSize: FontSize(_settingsCtrl.settings.value.commentTextSize), textAlign: TextAlign.start),
+              'blockquote': Style(fontStyle: FontStyle.italic, fontSize: FontSize(_settingsCtrl.settings.value.commentTextSize - 2)),
               'pre': Style(
                 fontStyle: FontStyle.normal,
                 fontSize: const FontSize(14),
@@ -57,7 +55,7 @@ class CommentWidget extends StatelessWidget {
               'img': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
               'a': Style(textDecoration: TextDecoration.none),
             },
-            onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, element) async {
+            onLinkTap: (String? url, RenderContext ctx, Map<String, String> attributes, element) async {
               if (url != null) {
                 await Util.launchURL(url);
               }

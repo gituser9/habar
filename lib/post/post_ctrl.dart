@@ -7,11 +7,11 @@ import 'package:habar/model/post_position.dart';
 import 'package:habar/post/post_repository.dart';
 
 class PostCtrl extends GetxController {
-  late PostRepo _repo;
-  final SavedPostService _savedPostService = Get.find();
+  final _repo = PostRepo();
+  final _savedPostService = Get.put(SavedPostService());
   final _positionService = Get.put(PostPositionService());
   final post = Post.empty().obs;
-  final isLoading = true.obs;
+  final isLoading = false.obs;
   final isImageLoading = false.obs;
   final postId = ''.obs;
   final isSaved = false.obs;
@@ -20,42 +20,45 @@ class PostCtrl extends GetxController {
   final scrollCtrl = ScrollController();
 
   @override
-  void onInit() {
-    super.onInit();
+  void onInit() async {
+    await _positionService.openBox();
 
-    _repo = PostRepo();
     scrollCtrl.addListener(() {
       if (isSaved.value) {
         position.value = scrollCtrl.offset;
 
-        Future.delayed(Duration(seconds: 1), () {
+        Future.delayed(const Duration(seconds: 1), () async {
           if (position.value == 0) {
             return;
           }
 
-          _positionService.save(PostPosition(position: position.value, postId: postId.value));
+          await _positionService.save(PostPosition(position: position.value, postId: postId.value));
         });
       }
     });
 
-    ever(postId, (_) => getByID(postId.value, isSaved.value));
+    ever(postId, (_) async => await getByID(postId.value));
+
+    super.onInit();
   }
 
-  Future getByID(String id, bool isSaved) async {
+  Future getByID(String id) async {
     isLoading.value = true;
 
     if (id.isEmpty) {
       return;
     }
 
-    if (isSaved) {
-      await _positionService.openBox();
+    isSaved.value = _savedPostService.isSaved(id);
 
+    if (isSaved.value) {
       final postPosition = _positionService.getById(id);
       position.value = postPosition.position;
       post.value = _savedPostService.getById(id);
 
-      scrollCtrl.jumpTo(position.value);
+      await Future.delayed(const Duration(milliseconds: 100), () {
+        scrollCtrl.jumpTo(position.value);
+      });
     } else {
       post.value = await _repo.getById(id);
     }
@@ -83,11 +86,11 @@ class PostCtrl extends GetxController {
       return;
     }
 
-    await _positionService.openBox();
-
     final postPosition = _positionService.getById(id);
     position.value = postPosition.position;
 
-    scrollCtrl.jumpTo(position.value);
+    await Future.delayed(const Duration(milliseconds: 100), () {
+      scrollCtrl.jumpTo(position.value);
+    });
   }
 }

@@ -13,7 +13,6 @@ import 'package:habar/common/widgets/footer_item_widget.dart';
 import 'package:habar/common/widgets/user_info_widget.dart';
 import 'package:habar/model/post.dart';
 import 'package:habar/post/post_ctrl.dart';
-import 'package:habar/post/post_screen.dart';
 import 'package:share/share.dart';
 
 class PostWidget extends StatelessWidget {
@@ -78,7 +77,7 @@ class PostWidget extends StatelessWidget {
                               await _positionService.deleteById(article.id);
                             } else {
                               msg = 'сохранен';
-                              await _postCtrl.getByID(article.id, false);
+                              await _postCtrl.getByID(article.id);
                               await _savedPostService.save(_postCtrl.post.value);
                             }
 
@@ -144,7 +143,7 @@ class PostWidget extends StatelessWidget {
                         return Container();
                       },
                     },
-                    onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, element) async {
+                    onLinkTap: (String? url, RenderContext ctx, Map<String, String> attributes, element) async {
                       if (url != null) {
                         await Util.launchURL(url);
                       }
@@ -158,7 +157,7 @@ class PostWidget extends StatelessWidget {
         ),
       ),
       onTap: () async {
-        await Get.to(() => PostScreen(id: article.id, isSaved: isSaved));
+        await Get.toNamed('/post/${article.id}');
       },
     );
   }

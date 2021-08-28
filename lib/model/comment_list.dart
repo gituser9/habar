@@ -18,7 +18,9 @@ class CommentList {
   String toJson() => json.encode(toMap());
 
   factory CommentList.fromMap(Map<String, dynamic> json) => CommentList(
-        comments: json["comments"] == null ? {} : Map.from(json["comments"]).map((k, v) => MapEntry<String, Comment>(k, Comment.fromMap(v))),
+        comments: json["comments"] == null
+            ? {}
+            : Map.from(json["comments"]).map((k, v) => MapEntry<String, Comment>(k, Comment.fromMap(v))),
         commentAccess: json["commentAccess"] == null ? null : CommentAccess.fromMap(json["commentAccess"]),
         lastCommentTimestamp: json["lastCommentTimestamp"] == null ? null : json["lastCommentTimestamp"],
       );
@@ -76,7 +78,7 @@ class Comment {
   String id;
   String parentId;
   int level;
-  DateTime timePublished;
+  DateTime? timePublished;
   int score;
   int votesCount;
   String message;
@@ -93,11 +95,11 @@ class Comment {
         id: json["id"] == null ? '' : json["id"],
         parentId: json["parentId"] == null ? '' : json["parentId"],
         level: json["level"] == null ? 0 : json["level"],
-        timePublished: DateTime.parse(json["timePublished"]),
+        timePublished: json["timePublished"] == null ? null : DateTime.parse(json["timePublished"]),
         score: json["score"] == null ? 0 : json["score"],
         votesCount: json["votesCount"] == null ? 0 : json["votesCount"],
         message: json["message"] == null ? '' : json["message"],
-        author: Author.fromMap(json["author"]),
+        author: json["author"] == null ? Author.empty() : Author.fromMap(json["author"]),
         isAuthor: json["isAuthor"] == null ? false : json["isAuthor"],
         isPostAuthor: json["isPostAuthor"] == null ? false : json["isPostAuthor"],
         children: json["children"] == null ? [] : List<String>.from(json["children"].map((x) => x)),
@@ -107,7 +109,7 @@ class Comment {
         "id": id,
         "parentId": parentId,
         "level": level,
-        "timePublished": timePublished.toIso8601String(),
+        "timePublished": timePublished?.toIso8601String(),
         "score": score,
         "votesCount": votesCount,
         "message": message,

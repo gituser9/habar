@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:habar/profile/profile_screen.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,6 +24,22 @@ class Util {
 
   static launchURL(String url) async {
     await launch(url);
+  }
+
+  static Future launchInternal(String url) async {
+    if (url.contains('habr.com')) {
+      final id = getIdFromUrl(url);
+
+      if (url.contains('/post/')) {
+        await Get.toNamed('/post/$id');
+      } else if (url.contains('/news/')) {
+        await Get.toNamed('/post/$id');
+      } else if (url.contains('/users/')) {
+        await Get.to(() => ProfileScreen(login: id));
+      }
+    } else {
+      await launch(url);
+    }
   }
 
   static String dateToString(DateTime date, {String format = 'dd MMM yyyy'}) {
@@ -49,5 +67,10 @@ class Util {
     }
 
     return Icon(Icons.person, size: size);
+  }
+
+  static String getIdFromUrl(String url) {
+    var parts = url.split('/').where((element) => element.isNotEmpty);
+    return parts.last;
   }
 }
