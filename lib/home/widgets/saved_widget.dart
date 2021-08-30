@@ -11,39 +11,38 @@ class SavedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 4),
-        Obx(() {
-          final ids = _savedPostService.savedIds;
+    return Obx(() {
+      final ids = _savedPostService.savedIds;
 
-          if (ids.isEmpty) {
-            return _buildEmptyWidget();
-          }
+      if (ids.isEmpty) {
+        return _buildEmptyWidget();
+      }
 
-          return ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: ids.length,
-            itemBuilder: (BuildContext context, int index) {
-              final id = ids[index];
-              final post = _ctrl.savedPosts.firstWhere((item) => item.id == id);
+      return _buildBody();
+    });
+  }
 
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 4),
-                child: PostWidget(
-                    article: post,
-                    isSaved: true,
-                    imageUrl: Util.getImgUrl(
-                      post.leadData.imageUrl,
-                      post.textHtml,
-                    )),
-              );
-            },
+  Widget _buildBody() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: ListView.builder(
+        itemCount: _savedPostService.savedIds.length,
+        itemBuilder: (BuildContext context, int index) {
+          final id = _savedPostService.savedIds[index];
+          final post = _ctrl.savedPosts.firstWhere((item) => item.id == id);
+
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            child: PostWidget(
+                article: post,
+                isSaved: true,
+                imageUrl: Util.getImgUrl(
+                  post.leadData.imageUrl,
+                  post.textHtml,
+                )),
           );
-        }),
-        const SizedBox(height: 4),
-      ],
+        },
+      ),
     );
   }
 

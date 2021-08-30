@@ -154,6 +154,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             )),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Obx(() => SwitchListTile(
+                title: const Text('Использовать бесконечную прокрутку'),
+                value: _ctrl.settings.value.isInfinityScroll!,
+                onChanged: (bool newValue) {
+                  _ctrl.settings.value.isInfinityScroll = newValue;
+                  _ctrl.update();
+                  _ctrl.save();
+                },
+              )),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
           child: ElevatedButton(
             child: const Text('Сбросить настройки'),
             onPressed: () async {

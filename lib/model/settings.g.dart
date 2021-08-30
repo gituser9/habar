@@ -21,13 +21,14 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       isShowPostPreview: fields[1] as bool,
       postTextSize: fields[2] as double,
       commentTextSize: fields[3] as double,
+      isInfinityScroll: fields[4] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.isShowImage)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(2)
       ..write(obj.postTextSize)
       ..writeByte(3)
-      ..write(obj.commentTextSize);
+      ..write(obj.commentTextSize)
+      ..writeByte(4)
+      ..write(obj.isInfinityScroll);
   }
 
   @override
@@ -43,8 +46,5 @@ class SettingsAdapter extends TypeAdapter<Settings> {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SettingsAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      identical(this, other) || other is SettingsAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }

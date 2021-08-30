@@ -17,6 +17,8 @@ class SettingsService extends GetxService {
       return Settings.empty();
     }
 
+    data.setDefault();
+
     return data;
   }
 

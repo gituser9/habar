@@ -17,7 +17,7 @@ class PostCtrl extends GetxController {
   final isSaved = false.obs;
   final savedIds = RxSet<String>();
   final position = 0.0.obs;
-  final scrollCtrl = ScrollController();
+  var scrollCtrl = ScrollController();
 
   @override
   void onInit() async {
@@ -28,10 +28,12 @@ class PostCtrl extends GetxController {
         position.value = scrollCtrl.offset;
 
         Future.delayed(const Duration(seconds: 1), () async {
+          // print(position.value);
           if (position.value == 0) {
             return;
           }
 
+          // print(position.value);
           await _positionService.save(PostPosition(position: position.value, postId: postId.value));
         });
       }
@@ -92,5 +94,25 @@ class PostCtrl extends GetxController {
     await Future.delayed(const Duration(milliseconds: 100), () {
       scrollCtrl.jumpTo(position.value);
     });
+  }
+
+  void addPostListener() {
+    // scrollCtrl = ScrollController();
+    // scrollCtrl.addListener(() {
+    //   if (isSaved.value) {
+    //     position.value = scrollCtrl.offset;
+    //
+    //     Future.delayed(const Duration(seconds: 1), () async {
+    //       print(position.value);
+    //       if (position.value == 0) {
+    //         return;
+    //       }
+    //
+    //       print(position.value);
+    //       await _positionService.save(PostPosition(position: position.value, postId: postId.value));
+    //     });
+    //   }
+    // });
+    // setPosition(postId.value);
   }
 }

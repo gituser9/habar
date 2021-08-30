@@ -21,7 +21,9 @@ class PostScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ctrl.scrollCtrl = ScrollController();
     ctrl.setPosition(ctrl.postId.value);
+    // print('ctor');
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -184,6 +186,7 @@ class PostScreen extends StatelessWidget {
             },
             onLinkTap: (String? url, RenderContext ctx, Map<String, String> attributes, element) async {
               if (url != null) {
+                print(url);
                 await Util.launchInternal(url);
               }
             }),

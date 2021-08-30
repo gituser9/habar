@@ -30,6 +30,36 @@ class HomeRepo {
     postsStream.add(posts);
   }
 
+  Future loadMore(ListFilter filterKey, int page, bool isNews, PostList list) async {
+    Map<String, String> params = {
+      'page': page.toString(),
+    };
+    params.addAll(listFilterData[filterKey]!);
+
+    if (isNews) {
+      params['news'] = isNews.toString();
+    }
+
+    String json = await HttpRequest.get('/articles', params: params);
+
+    if (json.isEmpty) {
+      return;
+    }
+
+    final posts = PostList.fromJson(json);
+    final newList = PostList(
+      articleIds: list.articleIds,
+      articleRefs: list.articleRefs,
+      pagesCount: list.pagesCount,
+    );
+
+    newList.articleIds.addAll(posts.articleIds);
+    newList.articleRefs.addAll(posts.articleRefs);
+    // list.pagesCount += posts.pagesCount;
+
+    postsStream.add(newList);
+  }
+
   Future getHubs(int page, {ListHubFilter? filterKey}) async {
     filterKey ??= ListHubFilter.rateDesc;
 

@@ -48,6 +48,7 @@ class MyApp extends StatelessWidget {
           if (routing?.current.startsWith('/post') ?? false) {
             String id = routing?.current.split('/').last ?? '';
             ctrl.postId.value = id;
+            ctrl.addPostListener();
           }
         });
   }

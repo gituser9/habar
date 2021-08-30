@@ -12,7 +12,6 @@ import 'package:habar/home/widgets/hub_widget.dart';
 import 'package:habar/home/widgets/loading_widget.dart';
 import 'package:habar/home/widgets/saved_widget.dart';
 import 'package:habar/model/home.dart';
-import 'package:habar/model/post_list.dart';
 import 'package:habar/search/search_screen.dart';
 import 'package:habar/settings/settings_screen.dart';
 
@@ -35,40 +34,35 @@ class HomeScreen extends StatelessWidget {
         onRefresh: () async {
           await ctrl.getAll(ctrl.postFilter.value.filterKey.value);
         },
-        child: _buildBody(),
+        child: Obx(() {
+          if (ctrl.isLoading.value) {
+            return LoadingWidget();
+          }
+
+          return _buildBody();
+        }),
       ),
       bottomNavigationBar: Obx(() => _getBottomBar(ctrl.selectedIndex.value)),
     );
   }
 
   Widget _buildBody() {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Obx(() {
-            if (ctrl.isLoading.value) {
-              return LoadingWidget();
-            }
-            switch (ctrl.homeMode.value) {
-              case HomeMode.posts:
-              case HomeMode.news:
-                return Container(
-                  color: Colors.grey.shade200,
-                  child: _buildList(ctrl.posts.value),
-                );
-              case HomeMode.hubs:
-                return HubWidget();
-              case HomeMode.saved:
-                return SavedWidget();
-              default:
-                return NoDataWidget();
-            }
-          }),
-        ],
-      ),
-    );
+    switch (ctrl.homeMode.value) {
+      case HomeMode.posts:
+      case HomeMode.news:
+        return Container(
+          color: Colors.grey.shade200,
+          child: _buildList(),
+        );
+      case HomeMode.hubs:
+        return SingleChildScrollView(
+          child: HubWidget(),
+        );
+      case HomeMode.saved:
+        return SavedWidget();
+      default:
+        return NoDataWidget();
+    }
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
@@ -108,43 +102,68 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildList(PostList postList) {
-    return Column(
-      children: [
-        const SizedBox(height: 4),
-        ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: postList.articleIds.length,
-            itemBuilder: (BuildContext context, int index) {
-              final postId = postList.articleIds[index];
-              final articleRef = postList.articleRefs[postId]!;
+  Widget _buildList() {
+    if (_settingsCtrl.settings.value.isInfinityScroll!) {
+      return _buildPostList(scrollCtrl: ctrl.scrollCtrl);
+    }
 
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 4),
-                child: Obx(() => PostWidget(
-                    article: articleRef,
-                    isSaved: _savedPostService.isSaved(articleRef.id),
-                    imageUrl: Util.getImgUrl(
-                      articleRef.leadData.imageUrl,
-                      articleRef.textHtml,
-                    ))),
-              );
-            }),
-        const SizedBox(height: 4),
-        Material(
-          color: Colors.white,
-          child: PaginationWidget(
-            page: ctrl.page.value,
-            pageCount: postList.pagesCount,
-            callback: (int page) async {
-              ctrl.page.value = page;
-              await ctrl.getAll(ctrl.postFilter.value.filterKey.value, page: page);
-            },
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 4),
+          _buildPostList(physics: NeverScrollableScrollPhysics(), shrinkWrap: true),
+          const SizedBox(height: 4),
+          Material(
+            color: Colors.white,
+            child: PaginationWidget(
+              page: ctrl.page.value,
+              pageCount: ctrl.posts.value.pagesCount,
+              callback: (int page) async {
+                ctrl.page.value = page;
+                await ctrl.getAll(ctrl.postFilter.value.filterKey.value, page: page);
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
+  }
+
+  Widget _buildPostList({ScrollPhysics? physics, ScrollController? scrollCtrl, bool shrinkWrap = false}) {
+    return ListView.builder(
+        physics: physics,
+        shrinkWrap: shrinkWrap,
+        controller: scrollCtrl,
+        itemCount: shrinkWrap ? ctrl.posts.value.articleIds.length : ctrl.posts.value.articleIds.length + 1,
+        itemBuilder: (BuildContext context, int index) {
+          if (index >= ctrl.posts.value.articleIds.length) {
+            return Container(
+              height: 48,
+              child: Align(
+                alignment: Alignment.center,
+                child: const SizedBox(
+                  height: 16,
+                  width: 16,
+                  child: const CircularProgressIndicator(color: Colors.grey, strokeWidth: 2),
+                ),
+              ),
+            );
+          }
+
+          final postId = ctrl.posts.value.articleIds[index];
+          final articleRef = ctrl.posts.value.articleRefs[postId]!;
+
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            child: Obx(() => PostWidget(
+                article: articleRef,
+                isSaved: _savedPostService.isSaved(articleRef.id),
+                imageUrl: Util.getImgUrl(
+                  articleRef.leadData.imageUrl,
+                  articleRef.textHtml,
+                ))),
+          );
+        });
   }
 
   Widget _getBottomBar(int index) {

@@ -16,11 +16,15 @@ class Settings {
   @HiveField(3)
   double commentTextSize;
 
+  @HiveField(4)
+  bool? isInfinityScroll;
+
   Settings({
-    required this.isShowImage,
-    required this.isShowPostPreview,
-    required this.postTextSize,
-    required this.commentTextSize,
+    this.isShowImage = true,
+    this.isShowPostPreview = false,
+    this.postTextSize = 18,
+    this.commentTextSize = 18,
+    this.isInfinityScroll = false,
   });
 
   factory Settings.empty() => Settings(
@@ -28,5 +32,12 @@ class Settings {
         isShowPostPreview: false,
         postTextSize: 18,
         commentTextSize: 18,
+        isInfinityScroll: false,
       );
+
+  void setDefault() {
+    if (isInfinityScroll == null) {
+      isInfinityScroll = false;
+    }
+  }
 }

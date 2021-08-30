@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/http_request.dart';
 import 'package:habar/common/services/post_position_service.dart';
 import 'package:habar/common/services/saved_post_service.dart';
-import 'package:habar/common/services/settings_service.dart';
 import 'package:habar/home/home_repository.dart';
 import 'package:habar/model/filter.dart';
 import 'package:habar/model/home.dart';
@@ -15,18 +15,18 @@ class HomeCtrl extends GetxController {
   final _repo = HomeRepo();
   final _savedPostService = Get.put(SavedPostService());
   final _positionService = Get.put(PostPositionService());
-  final _settingsService = Get.put(SettingsService());
   final posts = PostList.empty().obs;
   final hubs = HubList.empty().obs;
   final filter = ListFilter.all.obs;
   final savedPosts = List<Post>.empty().obs;
-  // final error = String();
   final hubSearchStream = BehaviorSubject<String>();
   final homeMode = HomeMode.posts.obs;
   final page = 1.obs;
   final selectedIndex = 0.obs;
   final isLoading = true.obs;
+  final isLoadMore = false.obs;
   var postFilter = Filter().obs;
+  final scrollCtrl = ScrollController();
 
   int _page = 1;
   int _pageCount = 0;
@@ -40,6 +40,7 @@ class HomeCtrl extends GetxController {
       posts.value = postList;
       _pageCount = postList.pagesCount;
       isLoading.value = false;
+      isLoadMore.value = false;
     });
 
     _repo.hubsStream.listen((HubList hubList) {
@@ -55,6 +56,16 @@ class HomeCtrl extends GetxController {
 
       isLoading.value = true;
       await _repo.searchHubs(searchString);
+    });
+
+    scrollCtrl.addListener(() async {
+      bool isEnd = scrollCtrl.offset == scrollCtrl.position.maxScrollExtent;
+
+      if (isEnd) {
+        isLoadMore.value = true;
+        _page = _page + 1;
+        await _repo.loadMore(filter.value, _page, pageMode == HomeMode.news, posts.value);
+      }
     });
 
     setup();

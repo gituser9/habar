@@ -29,10 +29,13 @@ class Util {
   static Future launchInternal(String url) async {
     if (url.contains('habr.com')) {
       final id = getIdFromUrl(url);
+      print(id);
 
       if (url.contains('/post/')) {
         await Get.toNamed('/post/$id');
       } else if (url.contains('/news/')) {
+        await Get.toNamed('/post/$id');
+      } else if (url.contains('/blog/')) {
         await Get.toNamed('/post/$id');
       } else if (url.contains('/users/')) {
         await Get.to(() => ProfileScreen(login: id));

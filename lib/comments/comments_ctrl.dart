@@ -50,7 +50,8 @@ class CommentsCtrl extends GetxController {
       );
 
       if (comment.children.isNotEmpty) {
-        structComment.children = comment.children.map((id) => commentsMap[id]).map((habrComment) {
+        structComment.children =
+            comment.children.map((id) => commentsMap[id]).where((c) => c?.timePublished != null).map((habrComment) {
           final hComment = habrComment!;
           return StructuredComment(
             author: hComment.author,
