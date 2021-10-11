@@ -12,7 +12,7 @@ class PostCtrl extends GetxController {
   final _positionService = Get.put(PostPositionService());
   final post = Post.empty().obs;
   final isLoading = false.obs;
-  final isImageLoading = false.obs;
+
   final postId = ''.obs;
   final isSaved = false.obs;
   final savedIds = RxSet<String>();
@@ -56,10 +56,13 @@ class PostCtrl extends GetxController {
     if (isSaved.value) {
       final postPosition = _positionService.getById(id);
       position.value = postPosition.position;
-      post.value = _savedPostService.getById(id);
 
-      await Future.delayed(const Duration(milliseconds: 100), () {
-        scrollCtrl.jumpTo(position.value);
+      await Future.delayed(const Duration(milliseconds: 50), () async {
+        post.value = _savedPostService.getById(id);
+
+        await Future.delayed(const Duration(milliseconds: 100), () {
+          scrollCtrl.jumpTo(position.value);
+        });
       });
     } else {
       post.value = await _repo.getById(id);

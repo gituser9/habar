@@ -12,7 +12,7 @@ class HubInfoWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 16),
       child: Container(
-        color: Colors.white,
+        // color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

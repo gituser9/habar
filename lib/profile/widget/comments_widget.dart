@@ -15,7 +15,7 @@ class CommentsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey.shade200,
+      // color: Colors.grey.shade200,
       child: Obx(() => _buildList(ctrl.comments)),
     );
   }
@@ -27,7 +27,7 @@ class CommentsWidget extends StatelessWidget {
       itemCount: comments.length,
       itemBuilder: (ctx, index) {
         return Container(
-          color: Colors.white,
+          // color: Colors.white,
           margin: const EdgeInsets.symmetric(vertical: 4),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),

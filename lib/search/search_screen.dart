@@ -25,7 +25,7 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Get.isDarkMode ? null : Colors.white,
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
@@ -54,7 +54,8 @@ class SearchScreen extends StatelessWidget {
           floatingLabelBehavior: FloatingLabelBehavior.never,
           labelText: 'Поиск',
           suffixIcon: const Icon(Icons.search),
-          fillColor: Colors.grey.shade200,
+          fillColor:
+              Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade200,
           filled: true,
         ),
         onChanged: (data) => ctrl.queryStringStream.add(data),
@@ -99,7 +100,8 @@ class SearchScreen extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               String postId = postResponse.articleIds[index];
               final post = postResponse.articleRefs[postId]!;
-              final imgUrl = Util.getImgUrl(post.leadData.imageUrl, post.textHtml);
+              final imgUrl =
+                  Util.getImgUrl(post.leadData.imageUrl, post.textHtml);
 
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 4),

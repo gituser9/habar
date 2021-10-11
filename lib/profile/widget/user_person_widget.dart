@@ -13,7 +13,7 @@ class UserPersonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),
-      color: Colors.white,
+      // color: Colors.white,
       child: Column(
         children: [
           if (profile.data.avatar.isNotEmpty)

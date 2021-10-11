@@ -19,7 +19,6 @@ class CommentsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -44,7 +43,7 @@ class CommentsScreen extends StatelessWidget {
               ),
               Container(
                 height: 40,
-                color: Colors.grey.shade200,
+                color: Get.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
                 child: Row(
                   children: [
                     const SizedBox(width: 8),

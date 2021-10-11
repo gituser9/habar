@@ -23,6 +23,7 @@ class HiveService extends GetxService {
     Hive.registerAdapter(LeadDataAdapter());
     Hive.registerAdapter(PostPositionAdapter());
     Hive.registerAdapter(SettingsAdapter());
+    Hive.registerAdapter(AppThemeTypeAdapter());
   }
 
   @override

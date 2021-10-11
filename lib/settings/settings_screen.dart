@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/controllers/settings_ctrl.dart';
+import 'package:habar/common/themes.dart';
 import 'package:habar/model/settings.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -15,8 +16,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text('Настройки', style: TextStyle(color: Colors.black)),
+        title: Text('Настройки', style: TextStyle(color: Get.isDarkMode ? Colors.grey : Colors.black)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -25,7 +25,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           builder: (_) => _buildBody(),
         ),
       ),
-      // body: _buildBody(),
     );
   }
 
@@ -89,7 +88,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
+                            color: _ctrl.settings.value.theme == AppThemeType.dark
+                                ? Colors.grey.shade800
+                                : Colors.grey.shade200,
                             borderRadius: const BorderRadius.all(const Radius.circular(4)),
                           ),
                           child: Padding(
@@ -134,7 +135,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
+                            color: _ctrl.settings.value.theme == AppThemeType.dark
+                                ? Colors.grey.shade800
+                                : Colors.grey.shade200,
                             borderRadius: const BorderRadius.all(const Radius.circular(4)),
                           ),
                           child: Padding(
@@ -159,6 +162,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 value: _ctrl.settings.value.isInfinityScroll!,
                 onChanged: (bool newValue) {
                   _ctrl.settings.value.isInfinityScroll = newValue;
+                  _ctrl.update();
+                  _ctrl.save();
+                },
+              )),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Obx(() => SwitchListTile(
+                title: const Text('Темная тема'),
+                value: _ctrl.settings.value.theme == AppThemeType.dark,
+                onChanged: (bool isDark) {
+                  if (isDark) {
+                    _ctrl.settings.value.theme = AppThemeType.dark;
+                    Get.changeTheme(AppTheme.dark);
+                  } else {
+                    _ctrl.settings.value.theme = AppThemeType.light;
+                    Get.changeTheme(AppTheme.light);
+                  }
+
                   _ctrl.update();
                   _ctrl.save();
                 },

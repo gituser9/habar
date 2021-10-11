@@ -98,18 +98,30 @@ class Post {
   factory Post.fromMap(Map<String, dynamic> json) => Post(
         id: json["id"] == null ? '' : json["id"],
         timePublished: DateTime.parse(json["timePublished"]),
-        isCorporative: json["isCorporative"] == null ? false : json["isCorporative"],
+        isCorporative:
+            json["isCorporative"] == null ? false : json["isCorporative"],
         lang: json["lang"] == null ? '' : json["lang"],
         titleHtml: json["titleHtml"] == null ? '' : json["titleHtml"],
         postType: json["postType"] == null ? '' : json["postType"],
-        postLabels: json["postLabels"] == null ? [] : List<PostLabel>.from(json["postLabels"].map((x) => PostLabel.fromMap(x))),
-        author: Author.fromMap(json["author"]),
+        postLabels: json["postLabels"] == null
+            ? []
+            : List<PostLabel>.from(
+                json["postLabels"].map((x) => PostLabel.fromMap(x))),
+        author: json["author"] == null
+            ? Author.empty()
+            : Author.fromMap(json["author"]),
         statistics: Statistics.fromMap(json["statistics"]),
-        hubs: json["hubs"] == null ? [] : List<HubData>.from(json["hubs"].map((x) => HubData.fromMap(x))),
+        hubs: json["hubs"] == null
+            ? []
+            : List<HubData>.from(json["hubs"].map((x) => HubData.fromMap(x))),
         textHtml: json["textHtml"] == null ? '' : json["textHtml"],
-        tags: json["tags"] == null ? [] : List<Tag>.from(json["tags"].map((x) => Tag.fromMap(x))),
+        tags: json["tags"] == null
+            ? []
+            : List<Tag>.from(json["tags"].map((x) => Tag.fromMap(x))),
         status: json["status"] == null ? '' : json["status"],
-        leadData: json["status"] == null ? LeadData.empty() : LeadData.fromMap(json["leadData"]),
+        leadData: json["status"] == null
+            ? LeadData.empty()
+            : LeadData.fromMap(json["leadData"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -172,7 +184,9 @@ class Author {
   String toJson() => json.encode(toMap());
 
   factory Author.fromMap(Map<String, dynamic> json) => Author(
-        scoreStats: json["scoreStats"] == null ? ScoreStats.empty() : ScoreStats.fromMap(json["scoreStats"]),
+        scoreStats: json["scoreStats"] == null
+            ? ScoreStats.empty()
+            : ScoreStats.fromMap(json["scoreStats"]),
         id: json["id"] == null ? 0 : json["id"],
         login: json["login"] == null ? '' : json["login"],
         alias: json["alias"] == null ? '' : json["alias"],
@@ -206,7 +220,8 @@ class ScoreStats {
 
   factory ScoreStats.empty() => ScoreStats(score: 0.0, votesCount: 0);
 
-  factory ScoreStats.fromJson(String str) => ScoreStats.fromMap(json.decode(str));
+  factory ScoreStats.fromJson(String str) =>
+      ScoreStats.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
@@ -335,13 +350,16 @@ class Statistics {
         votesCount: 0,
       );
 
-  factory Statistics.fromJson(String str) => Statistics.fromMap(json.decode(str));
+  factory Statistics.fromJson(String str) =>
+      Statistics.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory Statistics.fromMap(Map<String, dynamic> json) => Statistics(
-        commentsCount: json["commentsCount"] == null ? 0 : json["commentsCount"],
-        favoritesCount: json["favoritesCount"] == null ? 0 : json["favoritesCount"],
+        commentsCount:
+            json["commentsCount"] == null ? 0 : json["commentsCount"],
+        favoritesCount:
+            json["favoritesCount"] == null ? 0 : json["favoritesCount"],
         readingCount: json["readingCount"] == null ? 0 : json["readingCount"],
         score: json["score"] == null ? 0 : json["score"],
         votesCount: json["votesCount"] == null ? 0 : json["votesCount"],

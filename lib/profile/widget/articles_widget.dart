@@ -20,7 +20,7 @@ class PostsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey.shade200,
+      // color: Colors.grey.shade200,
       child: Obx(() => _buildList(ctrl.posts.value)),
     );
   }
@@ -35,7 +35,8 @@ class PostsWidget extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               String postId = postList.articleIds[index];
               final articleRef = postList.articleRefs[postId]!;
-              final imgUrl = Util.getImgUrl(articleRef.leadData.imageUrl, articleRef.textHtml);
+              final imgUrl = Util.getImgUrl(
+                  articleRef.leadData.imageUrl, articleRef.textHtml);
 
               return Container(
                 margin: EdgeInsets.symmetric(vertical: 4),

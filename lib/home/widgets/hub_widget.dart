@@ -27,7 +27,7 @@ class HubWidget extends StatelessWidget {
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 labelText: 'Поиск',
                 suffixIcon: const Icon(Icons.search),
-                fillColor: Colors.grey.shade200,
+                fillColor: Get.isDarkMode ? null : Colors.grey.shade200,
                 filled: true,
               ),
               onChanged: (data) => ctrl.hubSearchStream.add(data),
@@ -107,7 +107,7 @@ class HubWidget extends StatelessWidget {
         ),
         Container(
           height: 8,
-          color: Colors.grey.shade200,
+          color: Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade200,
         ),
         PaginationWidget(
           page: ctrl.page.value,

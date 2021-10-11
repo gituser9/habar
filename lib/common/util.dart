@@ -53,7 +53,7 @@ class Util {
   }
 
   static Widget getAvatar(String avatarUrl, double size) {
-    if (avatarUrl.isNotEmpty) {
+    if (avatarUrl.isNotEmpty && !avatarUrl.endsWith('.gif')) {
       String url = avatarUrl;
 
       if (!url.startsWith('https:')) {

@@ -1,12 +1,9 @@
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/html_parser.dart';
-import 'package:flutter_html/style.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/controllers/settings_ctrl.dart';
-import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/footer_item_widget.dart';
+import 'package:habar/common/widgets/html_text.dart';
 import 'package:habar/common/widgets/user_info_widget.dart';
 import 'package:habar/model/comment.dart';
 import 'package:http/http.dart' as http;
@@ -41,76 +38,7 @@ class CommentWidget extends StatelessWidget {
         ),
         Align(
           alignment: Alignment.centerLeft,
-          child: Html(
-            data: comment.text,
-            shrinkWrap: true,
-            style: {
-              'div': Style(fontSize: FontSize(_settingsCtrl.settings.value.commentTextSize), textAlign: TextAlign.start),
-              'blockquote': Style(fontStyle: FontStyle.italic, fontSize: FontSize(_settingsCtrl.settings.value.commentTextSize - 2)),
-              'pre': Style(
-                fontStyle: FontStyle.normal,
-                fontSize: const FontSize(14),
-              ),
-              'figure': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
-              'img': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
-              'a': Style(textDecoration: TextDecoration.none),
-            },
-            onLinkTap: (String? url, RenderContext ctx, Map<String, String> attributes, element) async {
-              if (url != null) {
-                await Util.launchURL(url);
-              }
-            },
-            customRender: {
-              'figure': (RenderContext ctx, Widget child) {
-                for (final tag in ctx.tree.children) {
-                  if (tag.name == 'img') {
-                    String imgUrl = tag.element!.attributes['data-src'] ?? '';
-
-                    return GestureDetector(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: Image.network(imgUrl),
-                      ),
-                      onTap: () async => await _showImage(context, imgUrl),
-                    );
-                  }
-                }
-              },
-              'img': (RenderContext ctx, Widget child) {
-                String? fullImg = ctx.tree.element?.attributes['data-src'];
-
-                if (fullImg == null || fullImg.isEmpty) {
-                  fullImg = ctx.tree.element?.attributes['src'] ?? '';
-                }
-
-                return GestureDetector(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0),
-                    child: Image.network(fullImg),
-                  ),
-                  onTap: () async => await _showImage(context, fullImg ?? ''),
-                );
-              },
-              'pre': (RenderContext ctx, Widget child) {
-                return Scrollbar(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                          color: Colors.grey.shade100,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: child,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            },
-          ),
+          child: HtmlText(htmlText: comment.text),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 8.0),

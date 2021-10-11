@@ -16,7 +16,7 @@ class HubCompanyListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      // color: Colors.white,
       margin: const EdgeInsets.only(top: 16),
       child: Obx(() => _buildBody(ctrl.hubCompanies.value)),
     );

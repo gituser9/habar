@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_advanced_segment/flutter_advanced_segment.dart';
 import 'package:get/get.dart';
+import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:habar/common/costants.dart';
 import 'package:habar/home/home_ctrl.dart';
 import 'package:habar/model/filter.dart';
 import 'package:habar/model/home.dart';
+import 'package:habar/model/settings.dart';
 
 class FilterWidget extends StatelessWidget {
   final HomeCtrl ctrl = Get.find();
+  final SettingsCtrl _settingsCtrl = Get.find();
   final _segmentCtrl = AdvancedSegmentController('all');
 
   static const textStyle = const TextStyle(
@@ -21,7 +24,6 @@ class FilterWidget extends StatelessWidget {
     ctrl.postFilter.value.sortType.value = FilterSortType.newPost;
 
     _segmentCtrl.addListener(() {
-      print(_segmentCtrl.value);
       if (_segmentCtrl.value == 'new') {
         ctrl.postFilter.value.sortType.value = FilterSortType.newPost;
       } else {
@@ -45,13 +47,16 @@ class FilterWidget extends StatelessWidget {
                       Get.back();
 
                       if (ctrl.pageMode == HomeMode.posts) {
-                        await ctrl.getAll(ctrl.postFilter.value.filterKey.value);
+                        await ctrl
+                            .getAll(ctrl.postFilter.value.filterKey.value);
                       } else {
-                        await ctrl.getHubs(filterKey: ctrl.postFilter.value.hubFilter.value);
+                        await ctrl.getHubs(
+                            filterKey: ctrl.postFilter.value.hubFilter.value);
                       }
                     },
                     icon: const Icon(Icons.done_all, color: Colors.white),
-                    label: const Text('Применить', style: const TextStyle(color: Colors.white)),
+                    label: const Text('Применить',
+                        style: const TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       primary: AppColors.primary,
                     ),
@@ -66,7 +71,9 @@ class FilterWidget extends StatelessWidget {
   }
 
   Widget _getFilter() {
-    return ctrl.pageMode == HomeMode.posts ? _buildPostsFilter() : _buildHubFilter();
+    return ctrl.pageMode == HomeMode.posts
+        ? _buildPostsFilter()
+        : _buildHubFilter();
   }
 
   Widget _buildPostsFilter() {
@@ -94,8 +101,10 @@ class FilterWidget extends StatelessWidget {
             _buildHubFilterButton(false, 'Название', ListHubFilter.titleAsc),
             _buildHubFilterButton(true, 'Рейтинг', ListHubFilter.rateDesc),
             _buildHubFilterButton(false, 'Рейтинг', ListHubFilter.rateAsc),
-            _buildHubFilterButton(true, 'Подписчики', ListHubFilter.subscribersDesc),
-            _buildHubFilterButton(false, 'Подписчики', ListHubFilter.subscribersAsc),
+            _buildHubFilterButton(
+                true, 'Подписчики', ListHubFilter.subscribersDesc),
+            _buildHubFilterButton(
+                false, 'Подписчики', ListHubFilter.subscribersAsc),
           ],
         ),
       ],
@@ -114,6 +123,11 @@ class FilterWidget extends StatelessWidget {
             'best': 'Лучшие',
           },
           backgroundColor: Colors.grey.withOpacity(0.3),
+          inactiveStyle: TextStyle(color: _getButtonTextColor()),
+          activeStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
@@ -167,14 +181,16 @@ class FilterWidget extends StatelessWidget {
               },
               child: Text(
                 value,
-                style: TextStyle(color: isChoosen ? Colors.white : Colors.black),
+                style: TextStyle(
+                    color: isChoosen ? Colors.white : _getButtonTextColor()),
               )),
         );
       }),
     );
   }
 
-  Widget _buildHubFilterButton(bool isDown, String label, ListHubFilter filterKey) {
+  Widget _buildHubFilterButton(
+      bool isDown, String label, ListHubFilter filterKey) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Obx(() {
@@ -182,7 +198,9 @@ class FilterWidget extends StatelessWidget {
           width: 150,
           height: 40,
           decoration: BoxDecoration(
-            color: ctrl.postFilter.value.hubFilter.value == filterKey ? AppColors.primary : Colors.grey.withOpacity(0.2),
+            color: ctrl.postFilter.value.hubFilter.value == filterKey
+                ? AppColors.primary
+                : Colors.grey.withOpacity(0.2),
             borderRadius: const BorderRadius.all(const Radius.circular(6)),
           ),
           child: TextButton.icon(
@@ -191,14 +209,25 @@ class FilterWidget extends StatelessWidget {
               },
               icon: Icon(
                 isDown ? Icons.arrow_downward : Icons.arrow_upward,
-                color: ctrl.postFilter.value.hubFilter.value == filterKey ? Colors.white : AppColors.actionIcon,
+                color: ctrl.postFilter.value.hubFilter.value == filterKey
+                    ? Colors.white
+                    : AppColors.actionIcon,
               ),
               label: Text(
                 label,
-                style: TextStyle(color: ctrl.postFilter.value.hubFilter.value == filterKey ? Colors.white : Colors.black),
+                style: TextStyle(
+                    color: ctrl.postFilter.value.hubFilter.value == filterKey
+                        ? Colors.white
+                        : _getButtonTextColor()),
               )),
         );
       }),
     );
+  }
+
+  Color _getButtonTextColor() {
+    return _settingsCtrl.settings.value.theme == AppThemeType.dark
+        ? Colors.grey.shade400
+        : Colors.black;
   }
 }

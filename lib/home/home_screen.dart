@@ -51,7 +51,6 @@ class HomeScreen extends StatelessWidget {
       case HomeMode.posts:
       case HomeMode.news:
         return Container(
-          color: Colors.grey.shade200,
           child: _buildList(),
         );
       case HomeMode.hubs:
@@ -67,33 +66,31 @@ class HomeScreen extends StatelessWidget {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text(
-        'Habar',
-        style: const TextStyle(color: Colors.black),
-      ),
-      backgroundColor: Colors.white,
+      title: Text('Habar'),
       actions: [
         IconButton(
-          icon: const Icon(Icons.search, color: Colors.black),
+          icon: const Icon(Icons.search),
           onPressed: () async {
             await Get.to(() => SearchScreen());
           },
         ),
         Obx(() {
-          if (ctrl.homeMode.value == HomeMode.news || ctrl.homeMode.value == HomeMode.saved) {
+          if (ctrl.homeMode.value == HomeMode.news ||
+              ctrl.homeMode.value == HomeMode.saved) {
             return Container();
           }
 
           return IconButton(
-            icon: const Icon(Icons.tune, color: Colors.black),
+            icon: const Icon(Icons.tune),
             onPressed: () async => await Get.bottomSheet(
               FilterWidget(),
-              backgroundColor: Colors.white,
+              backgroundColor:
+                  Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
             ),
           );
         }),
         IconButton(
-          icon: const Icon(Icons.settings, color: Colors.black),
+          icon: const Icon(Icons.settings),
           onPressed: () async {
             await Get.to(() => SettingsScreen());
           },
@@ -111,16 +108,18 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 4),
-          _buildPostList(physics: NeverScrollableScrollPhysics(), shrinkWrap: true),
+          _buildPostList(
+              physics: NeverScrollableScrollPhysics(), shrinkWrap: true),
           const SizedBox(height: 4),
           Material(
-            color: Colors.white,
+            color: Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
             child: PaginationWidget(
               page: ctrl.page.value,
               pageCount: ctrl.posts.value.pagesCount,
               callback: (int page) async {
                 ctrl.page.value = page;
-                await ctrl.getAll(ctrl.postFilter.value.filterKey.value, page: page);
+                await ctrl.getAll(ctrl.postFilter.value.filterKey.value,
+                    page: page);
               },
             ),
           ),
@@ -129,12 +128,17 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPostList({ScrollPhysics? physics, ScrollController? scrollCtrl, bool shrinkWrap = false}) {
+  Widget _buildPostList(
+      {ScrollPhysics? physics,
+      ScrollController? scrollCtrl,
+      bool shrinkWrap = false}) {
     return ListView.builder(
         physics: physics,
         shrinkWrap: shrinkWrap,
         controller: scrollCtrl,
-        itemCount: shrinkWrap ? ctrl.posts.value.articleIds.length : ctrl.posts.value.articleIds.length + 1,
+        itemCount: shrinkWrap
+            ? ctrl.posts.value.articleIds.length
+            : ctrl.posts.value.articleIds.length + 1,
         itemBuilder: (BuildContext context, int index) {
           if (index >= ctrl.posts.value.articleIds.length) {
             return Container(
@@ -144,13 +148,19 @@ class HomeScreen extends StatelessWidget {
                 child: const SizedBox(
                   height: 16,
                   width: 16,
-                  child: const CircularProgressIndicator(color: Colors.grey, strokeWidth: 2),
+                  child: const CircularProgressIndicator(
+                      color: Colors.grey, strokeWidth: 2),
                 ),
               ),
             );
           }
 
           final postId = ctrl.posts.value.articleIds[index];
+
+          if (!ctrl.posts.value.articleRefs.containsKey(postId)) {
+            return Container();
+          }
+
           final articleRef = ctrl.posts.value.articleRefs[postId]!;
 
           return Container(

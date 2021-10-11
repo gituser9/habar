@@ -30,7 +30,8 @@ class HubScreen extends StatelessWidget {
           child: Column(
             children: [
               Obx(() => HubInfoWidget(hub: ctrl.hub.value)),
-              Flexible(child: Obx(() => _getCurrentPage(ctrl.selectedIndex.value))),
+              Flexible(
+                  child: Obx(() => _getCurrentPage(ctrl.selectedIndex.value))),
             ],
           ),
         ),
@@ -68,7 +69,8 @@ class HubScreen extends StatelessWidget {
             itemBuilder: (ctx, index) {
               String postId = ctrl.posts.value.articleIds[index];
               final articleRef = ctrl.posts.value.articleRefs[postId]!;
-              final imgUrl = Util.getImgUrl(articleRef.leadData.imageUrl, articleRef.textHtml);
+              final imgUrl = Util.getImgUrl(
+                  articleRef.leadData.imageUrl, articleRef.textHtml);
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
