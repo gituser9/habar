@@ -1,3 +1,4 @@
+import 'package:habar/model/filter.dart';
 import 'package:hive/hive.dart';
 
 part 'settings.g.dart';
@@ -31,6 +32,9 @@ class Settings {
   @HiveField(5)
   AppThemeType? theme;
 
+  @HiveField(6)
+  Filter? filters;
+
   Settings({
     this.isShowImage = true,
     this.isShowPostPreview = false,
@@ -38,6 +42,7 @@ class Settings {
     this.commentTextSize = 18,
     this.isInfinityScroll = false,
     this.theme = AppThemeType.light,
+    this.filters,
   });
 
   factory Settings.empty() => Settings(
@@ -47,6 +52,7 @@ class Settings {
         commentTextSize: 18,
         isInfinityScroll: false,
         theme: AppThemeType.light,
+        filters: null,
       );
 
   void setDefault() {
@@ -56,6 +62,10 @@ class Settings {
 
     if (theme == null) {
       theme = AppThemeType.light;
+    }
+
+    if (filters == null) {
+      filters = Filter();
     }
   }
 }

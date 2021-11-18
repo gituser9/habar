@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:habar/model/filter.dart';
 import 'package:habar/model/post.dart';
 import 'package:habar/model/post_position.dart';
 import 'package:habar/model/settings.dart';
@@ -24,6 +25,10 @@ class HiveService extends GetxService {
     Hive.registerAdapter(PostPositionAdapter());
     Hive.registerAdapter(SettingsAdapter());
     Hive.registerAdapter(AppThemeTypeAdapter());
+    Hive.registerAdapter(FilterAdapter());
+    Hive.registerAdapter(FilterSortTypeAdapter());
+    Hive.registerAdapter(ListFilterAdapter());
+    Hive.registerAdapter(ListHubFilterAdapter());
   }
 
   @override

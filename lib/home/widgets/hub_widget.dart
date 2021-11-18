@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/widgets/pagination_widget.dart';
 import 'package:habar/home/home_ctrl.dart';
@@ -60,12 +61,16 @@ class HubWidget extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageUrl: 'https:' + hub.imageUrl,
                     placeholder: (context, url) => const Icon(Icons.image),
-                    errorWidget: (context, url, error) => const Icon(Icons.image),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.image),
                   ),
                 ),
-                title: Text(
-                  hub.titleHtml,
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                title: Html(
+                  data: hub.titleHtml,
+                  style: {
+                    'body': Style(
+                        fontWeight: FontWeight.bold, margin: EdgeInsets.all(0)),
+                  },
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +85,8 @@ class HubWidget extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const Icon(Icons.group, color: Colors.grey, size: 16),
+                            const Icon(Icons.group,
+                                color: Colors.grey, size: 16),
                             const SizedBox(width: 5),
                             Text(hub.statistics.subscribersCount.toString()),
                           ],
@@ -89,7 +95,8 @@ class HubWidget extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const Icon(Icons.star_rate, color: Colors.grey, size: 16),
+                            const Icon(Icons.star_rate,
+                                color: Colors.grey, size: 16),
                             const SizedBox(width: 5),
                             Text(hub.statistics.rating.toString()),
                           ],

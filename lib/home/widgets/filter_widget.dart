@@ -47,16 +47,18 @@ class FilterWidget extends StatelessWidget {
                       Get.back();
 
                       if (ctrl.pageMode == HomeMode.posts) {
-                        await ctrl
-                            .getAll(ctrl.postFilter.value.filterKey.value);
+                        await ctrl.getAll(ctrl.postFilter.value.filterKey.value);
                       } else {
-                        await ctrl.getHubs(
-                            filterKey: ctrl.postFilter.value.hubFilter.value);
+                        await ctrl.getHubs(filterKey: ctrl.postFilter.value.hubFilter.value);
                       }
+
+                      _settingsCtrl.settings.value.filters!.filterKey = ctrl.postFilter.value.filterKey.value;
+                      _settingsCtrl.settings.value.filters!.hubFilter = ctrl.postFilter.value.hubFilter.value;
+
+                      await _settingsCtrl.save();
                     },
                     icon: const Icon(Icons.done_all, color: Colors.white),
-                    label: const Text('Применить',
-                        style: const TextStyle(color: Colors.white)),
+                    label: const Text('Применить', style: const TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       primary: AppColors.primary,
                     ),
@@ -71,9 +73,7 @@ class FilterWidget extends StatelessWidget {
   }
 
   Widget _getFilter() {
-    return ctrl.pageMode == HomeMode.posts
-        ? _buildPostsFilter()
-        : _buildHubFilter();
+    return ctrl.pageMode == HomeMode.posts ? _buildPostsFilter() : _buildHubFilter();
   }
 
   Widget _buildPostsFilter() {
@@ -101,10 +101,8 @@ class FilterWidget extends StatelessWidget {
             _buildHubFilterButton(false, 'Название', ListHubFilter.titleAsc),
             _buildHubFilterButton(true, 'Рейтинг', ListHubFilter.rateDesc),
             _buildHubFilterButton(false, 'Рейтинг', ListHubFilter.rateAsc),
-            _buildHubFilterButton(
-                true, 'Подписчики', ListHubFilter.subscribersDesc),
-            _buildHubFilterButton(
-                false, 'Подписчики', ListHubFilter.subscribersAsc),
+            _buildHubFilterButton(true, 'Подписчики', ListHubFilter.subscribersDesc),
+            _buildHubFilterButton(false, 'Подписчики', ListHubFilter.subscribersAsc),
           ],
         ),
       ],
@@ -181,16 +179,14 @@ class FilterWidget extends StatelessWidget {
               },
               child: Text(
                 value,
-                style: TextStyle(
-                    color: isChoosen ? Colors.white : _getButtonTextColor()),
+                style: TextStyle(color: isChoosen ? Colors.white : _getButtonTextColor()),
               )),
         );
       }),
     );
   }
 
-  Widget _buildHubFilterButton(
-      bool isDown, String label, ListHubFilter filterKey) {
+  Widget _buildHubFilterButton(bool isDown, String label, ListHubFilter filterKey) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Obx(() {
@@ -198,9 +194,7 @@ class FilterWidget extends StatelessWidget {
           width: 150,
           height: 40,
           decoration: BoxDecoration(
-            color: ctrl.postFilter.value.hubFilter.value == filterKey
-                ? AppColors.primary
-                : Colors.grey.withOpacity(0.2),
+            color: ctrl.postFilter.value.hubFilter.value == filterKey ? AppColors.primary : Colors.grey.withOpacity(0.2),
             borderRadius: const BorderRadius.all(const Radius.circular(6)),
           ),
           child: TextButton.icon(
@@ -209,16 +203,11 @@ class FilterWidget extends StatelessWidget {
               },
               icon: Icon(
                 isDown ? Icons.arrow_downward : Icons.arrow_upward,
-                color: ctrl.postFilter.value.hubFilter.value == filterKey
-                    ? Colors.white
-                    : AppColors.actionIcon,
+                color: ctrl.postFilter.value.hubFilter.value == filterKey ? Colors.white : AppColors.actionIcon,
               ),
               label: Text(
                 label,
-                style: TextStyle(
-                    color: ctrl.postFilter.value.hubFilter.value == filterKey
-                        ? Colors.white
-                        : _getButtonTextColor()),
+                style: TextStyle(color: ctrl.postFilter.value.hubFilter.value == filterKey ? Colors.white : _getButtonTextColor()),
               )),
         );
       }),
@@ -226,8 +215,6 @@ class FilterWidget extends StatelessWidget {
   }
 
   Color _getButtonTextColor() {
-    return _settingsCtrl.settings.value.theme == AppThemeType.dark
-        ? Colors.grey.shade400
-        : Colors.black;
+    return _settingsCtrl.settings.value.theme == AppThemeType.dark ? Colors.grey.shade400 : Colors.black;
   }
 }

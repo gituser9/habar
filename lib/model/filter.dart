@@ -1,28 +1,80 @@
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 
+part 'filter.g.dart';
+
+@HiveType(typeId: 12)
 class Filter {
+  @HiveField(0)
+  var sortType = FilterSortType.newPost;
+
+  @HiveField(1)
+  var sortValue = listFilterData[ListFilter.all]!;
+
+  @HiveField(2)
+  var filterKey = ListFilter.all;
+
+  @HiveField(3)
+  var hubFilter = ListHubFilter.rateDesc;
+}
+
+class UserFilter {
   var sortType = FilterSortType.newPost.obs;
   var sortValue = listFilterData[ListFilter.all]!.obs;
   var filterKey = ListFilter.all.obs;
   var hubFilter = ListHubFilter.rateDesc.obs;
+
+  UserFilter();
+
+  factory UserFilter.fromFilter(Filter filter) => UserFilter()
+    ..sortType = filter.sortType.obs
+    ..sortValue = filter.sortValue.obs
+    ..filterKey = filter.filterKey.obs
+    ..hubFilter = filter.hubFilter.obs;
 }
 
+@HiveType(typeId: 13)
 enum FilterSortType {
+  @HiveField(0)
   newPost,
+
+  @HiveField(1)
   bestPost,
 }
 
+@HiveType(typeId: 14)
 enum ListFilter {
+  @HiveField(0)
   all,
+
+  @HiveField(1)
   top0,
+
+  @HiveField(2)
   top10,
+
+  @HiveField(3)
   top25,
+
+  @HiveField(4)
   top50,
+
+  @HiveField(5)
   top100,
+
+  @HiveField(6)
   daily,
+
+  @HiveField(7)
   weekly,
+
+  @HiveField(8)
   monthly,
+
+  @HiveField(9)
   yearly,
+
+  @HiveField(10)
   alltime,
 }
 
@@ -40,12 +92,24 @@ final Map<ListFilter, Map<String, String>> listFilterData = {
   ListFilter.alltime: {'period': 'alltime', 'sort': 'date'},
 };
 
+@HiveType(typeId: 15)
 enum ListHubFilter {
+  @HiveField(0)
   subscribersAsc,
+
+  @HiveField(1)
   subscribersDesc,
+
+  @HiveField(2)
   rateAsc,
+
+  @HiveField(3)
   rateDesc,
+
+  @HiveField(4)
   titleAsc,
+
+  @HiveField(5)
   titleDesc,
 }
 

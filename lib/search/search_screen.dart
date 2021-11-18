@@ -53,9 +53,22 @@ class SearchScreen extends StatelessWidget {
           border: InputBorder.none,
           floatingLabelBehavior: FloatingLabelBehavior.never,
           labelText: 'Поиск',
-          suffixIcon: const Icon(Icons.search),
-          fillColor:
-              Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade200,
+          suffixIcon: GestureDetector(
+            child: const Icon(Icons.search),
+            onTap: () async {
+              ctrl.isLoading.value = true;
+              ctrl.selectedIndex.value = 0;
+              ctrl.postPage.value = 1;
+              ctrl.userPage.value = 1;
+
+              await Future.wait([
+                ctrl.getPosts(),
+                ctrl.getUsers(),
+              ]);
+              ctrl.isLoading.value = false;
+            },
+          ),
+          fillColor: Get.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
           filled: true,
         ),
         onChanged: (data) => ctrl.queryStringStream.add(data),
@@ -100,8 +113,7 @@ class SearchScreen extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               String postId = postResponse.articleIds[index];
               final post = postResponse.articleRefs[postId]!;
-              final imgUrl =
-                  Util.getImgUrl(post.leadData.imageUrl, post.textHtml);
+              final imgUrl = Util.getImgUrl(post.leadData.imageUrl, post.textHtml);
 
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 4),
@@ -116,7 +128,7 @@ class SearchScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Obx(() => Material(
-                color: Colors.white,
+                color: Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
                 child: PaginationWidget(
                   page: ctrl.postPage.value,
                   pageCount: postResponse.pagesCount,
@@ -155,7 +167,7 @@ class SearchScreen extends StatelessWidget {
                 ),
                 subtitle: Text(user.speciality),
                 onTap: () async {
-                  await Get.to(() => ProfileScreen(login: user.login));
+                  await Get.to(() => ProfileScreen(login: user.alias));
                 },
               );
             }),
@@ -164,7 +176,7 @@ class SearchScreen extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Obx(
             () => Material(
-              color: Colors.white,
+              color: Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
               child: PaginationWidget(
                 page: ctrl.userPage.value,
                 pageCount: userResponse.pagesCount,

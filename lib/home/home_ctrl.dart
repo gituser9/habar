@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:habar/common/http_request.dart';
 import 'package:habar/common/services/post_position_service.dart';
 import 'package:habar/common/services/saved_post_service.dart';
+import 'package:habar/common/services/settings_service.dart';
 import 'package:habar/home/home_repository.dart';
 import 'package:habar/model/filter.dart';
 import 'package:habar/model/home.dart';
@@ -15,6 +16,8 @@ class HomeCtrl extends GetxController {
   final _repo = HomeRepo();
   final _savedPostService = Get.put(SavedPostService());
   final _positionService = Get.put(PostPositionService());
+  final SettingsService _settingsService = Get.find();
+
   final posts = PostList.empty().obs;
   final hubs = HubList.empty().obs;
   final filter = ListFilter.all.obs;
@@ -25,7 +28,7 @@ class HomeCtrl extends GetxController {
   final selectedIndex = 0.obs;
   final isLoading = true.obs;
   final isLoadMore = false.obs;
-  var postFilter = Filter().obs;
+  var postFilter = UserFilter().obs;
   final scrollCtrl = ScrollController();
 
   int _page = 1;
@@ -35,6 +38,9 @@ class HomeCtrl extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    var filter = _settingsService.get().filters;
+    postFilter.value = filter == null ? UserFilter() : UserFilter.fromFilter(filter);
 
     _repo.postsStream.listen((PostList postList) {
       posts.value = postList;
@@ -64,11 +70,12 @@ class HomeCtrl extends GetxController {
       if (isEnd) {
         isLoadMore.value = true;
         _page = _page + 1;
-        await _repo.loadMore(filter.value, _page, pageMode == HomeMode.news, posts.value);
+        await _repo.loadMore(postFilter.value.filterKey.value, _page, pageMode == HomeMode.news, posts.value);
       }
     });
 
-    setup();
+    var sets = _settingsService.get();
+    setup(sets.filters!);
   }
 
   @override
@@ -79,12 +86,12 @@ class HomeCtrl extends GetxController {
     HttpRequest.close();
   }
 
-  Future setup() async {
+  Future setup(Filter filters) async {
     pageMode = HomeMode.posts;
 
     await _savedPostService.openBox();
     await _positionService.openBox();
-    await getAll(postFilter.value.filterKey.value);
+    await getAll(filters.filterKey);
   }
 
   Future getAll(ListFilter filterKey, {int? page}) async {
@@ -102,12 +109,10 @@ class HomeCtrl extends GetxController {
 
   Future getHubs({int page = 1, ListHubFilter? filterKey}) async {
     if (page <= 0) {
-      // errorStream.add('invalid _page');
       return;
     }
 
     isLoading.value = true;
-    // loadingStream.add(true);
     await _repo.getHubs(page, filterKey: filterKey);
   }
 
@@ -118,6 +123,8 @@ class HomeCtrl extends GetxController {
 
   void getSaved() {
     final posts = _savedPostService.getAll();
+
+    posts.sort((left, right) => left.timePublished.isBefore(right.timePublished) ? 1 : 0);
     savedPosts.value = posts;
   }
 

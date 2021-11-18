@@ -12,23 +12,26 @@ import 'package:share/share.dart';
 
 class PostScreen extends StatelessWidget {
   final SettingsCtrl _settingsCtrl = Get.find();
-  final PostCtrl ctrl = Get.find();
+  final PostCtrl _ctrl = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    ctrl.setPosition(ctrl.postId.value);
+    _ctrl.setPosition(_ctrl.postId.value);
 
     return Scaffold(
-      // backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        controller: ctrl.scrollCtrl,
-        child: Container(child: Obx(() => _buildBody(context, ctrl.post.value))),
+      body: Scrollbar(
+        controller: _ctrl.scrollCtrl,
+        interactive: true,
+        child: SingleChildScrollView(
+          controller: _ctrl.scrollCtrl,
+          child: Obx(() => _buildBody(context, _ctrl.post.value)),
+        ),
       ),
     );
   }
 
   Widget _buildBody(BuildContext context, Post post) {
-    if (ctrl.isLoading.value) {
+    if (_ctrl.isLoading.value) {
       return LoadingWidget();
     }
 
@@ -44,7 +47,7 @@ class PostScreen extends StatelessWidget {
               Row(
                 children: [
                   Obx(() {
-                    if (ctrl.savedIds.contains(post.id)) {
+                    if (_ctrl.savedIds.contains(post.id)) {
                       return const Padding(
                         padding: const EdgeInsets.only(right: 10.0),
                         child: const SizedBox(
@@ -56,22 +59,28 @@ class PostScreen extends StatelessWidget {
                     }
 
                     return IconButton(
-                      icon: Icon(ctrl.isSaved.value ? Icons.delete : Icons.save, color: Colors.grey),
+                      icon: Icon(_ctrl.isSaved.value ? Icons.delete : Icons.save, color: Colors.grey),
                       onPressed: () async {
-                        ctrl.savedIds.add(post.id);
+                        _ctrl.savedIds.add(post.id);
                         String msg = '';
 
-                        if (ctrl.isSaved.value) {
+                        if (_ctrl.isSaved.value) {
                           msg = 'удален';
-                          await ctrl.delete();
+                          await _ctrl.delete();
                         } else {
                           msg = 'сохранен';
-                          await ctrl.save();
+                          await _ctrl.save();
                         }
 
-                        ctrl.savedIds.remove(post.id);
-                        final snackbar = SnackBar(content: Text('Пост успешно $msg'));
-                        ScaffoldMessenger.of(Get.context!).showSnackBar(snackbar);
+                        _ctrl.savedIds.remove(post.id);
+                        final snackBar = SnackBar(
+                          content: Text('Пост успешно удален',
+                              style: TextStyle(
+                                color: Get.isDarkMode ? Colors.white : null,
+                              )),
+                          backgroundColor: Get.isDarkMode ? Colors.black : null,
+                        );
+                        ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
                       },
                     );
                   }),
@@ -118,6 +127,45 @@ class PostScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24),
           child: _buildFooterRow(post),
         ),
+        if (_ctrl.isSaved.isTrue)
+          Container(
+            color: Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade200,
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              color: Get.isDarkMode ? Colors.grey.shade800 : Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: TextButton.icon(
+                      onPressed: () async {
+                        await _ctrl.delete();
+                        _ctrl.savedIds.remove(post.id);
+                        _ctrl.isSaved.value = false;
+
+                        final snackBar = SnackBar(
+                          content: Text('Пост успешно удален',
+                              style: TextStyle(
+                                color: Get.isDarkMode ? Colors.white : null,
+                              )),
+                          backgroundColor: Get.isDarkMode ? Colors.black : null,
+                        );
+                        ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
+                      },
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.grey,
+                      ),
+                      label: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [const Text('Удалить')],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
         Container(
           color: Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade200,
           child: Container(

@@ -23,13 +23,14 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       commentTextSize: fields[3] as double,
       isInfinityScroll: fields[4] as bool?,
       theme: fields[5] as AppThemeType?,
+      filters: fields[6] as Filter?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.isShowImage)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(4)
       ..write(obj.isInfinityScroll)
       ..writeByte(5)
-      ..write(obj.theme);
+      ..write(obj.theme)
+      ..writeByte(6)
+      ..write(obj.filters);
   }
 
   @override

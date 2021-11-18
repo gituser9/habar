@@ -44,14 +44,9 @@ class PostWidget extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
-          color: _settingsCtrl.settings.value.theme == AppThemeType.dark
-              ? Colors.grey[850]
-              : Colors.white,
+          color: _settingsCtrl.settings.value.theme == AppThemeType.dark ? Colors.grey[850] : Colors.white,
           borderRadius: BorderRadius.circular(4.0),
-          border: Border.all(
-              color: _settingsCtrl.settings.value.theme == AppThemeType.dark
-                  ? Colors.grey.shade700
-                  : Colors.grey.shade300),
+          border: Border.all(color: _settingsCtrl.settings.value.theme == AppThemeType.dark ? Colors.grey.shade700 : Colors.grey.shade300),
         ),
         child: Column(
           children: [
@@ -60,9 +55,7 @@ class PostWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  UserInfoWidget(
-                      author: article.author,
-                      publishTime: article.timePublished),
+                  UserInfoWidget(author: article.author, publishTime: article.timePublished),
                   _buildAction(),
                 ],
               ),
@@ -80,22 +73,15 @@ class PostWidget extends StatelessWidget {
                   data: article.titleHtml,
                   shrinkWrap: true,
                   style: {
-                    'body': Style(
-                        fontSize: const FontSize(18),
-                        fontWeight: FontWeight.bold),
-                    'blockquote': Style(
-                        fontStyle: FontStyle.italic,
-                        fontSize: const FontSize(16)),
+                    'body': Style(fontSize: const FontSize(18), fontWeight: FontWeight.bold),
+                    'blockquote': Style(fontStyle: FontStyle.italic, fontSize: const FontSize(16)),
                   },
                 ),
               ),
             ),
-            if (article.leadData.textHtml.isNotEmpty &&
-                _settingsCtrl.settings.value.isShowPostPreview)
-              _buildTextPreview(),
+            if (article.leadData.textHtml.isNotEmpty && _settingsCtrl.settings.value.isShowPostPreview) _buildTextPreview(),
             Padding(
-              padding:
-                  const EdgeInsets.only(top: 16, bottom: 8, left: 8, right: 8),
+              padding: const EdgeInsets.only(top: 16, bottom: 8, left: 8, right: 8),
               child: _buildFooterRow(),
             ),
           ],
@@ -115,8 +101,7 @@ class PostWidget extends StatelessWidget {
           shrinkWrap: true,
           style: {
             'body': Style(fontSize: const FontSize(16)),
-            'blockquote': Style(
-                fontStyle: FontStyle.italic, fontSize: const FontSize(16)),
+            'blockquote': Style(fontStyle: FontStyle.italic, fontSize: const FontSize(16)),
             'a': Style(textDecoration: TextDecoration.none),
           },
           customRender: {
@@ -127,8 +112,7 @@ class PostWidget extends StatelessWidget {
               return Container();
             },
           },
-          onLinkTap: (String? url, RenderContext ctx,
-              Map<String, String> attributes, element) async {
+          onLinkTap: (String? url, RenderContext ctx, Map<String, String> attributes, element) async {
             if (url != null) {
               await Util.launchURL(url);
             }
@@ -146,8 +130,7 @@ class PostWidget extends StatelessWidget {
               child: const SizedBox(
                 height: 16,
                 width: 16,
-                child: const CircularProgressIndicator(
-                    color: Colors.grey, strokeWidth: 2),
+                child: const CircularProgressIndicator(color: Colors.grey, strokeWidth: 2),
               ),
             );
           }
@@ -169,14 +152,14 @@ class PostWidget extends StatelessWidget {
               }
 
               _postCtrl.savedIds.remove(article.id);
-              final snackbar = SnackBar(
+              final snackBar = SnackBar(
                 content: Text('Пост успешно $msg',
                     style: TextStyle(
                       color: Get.isDarkMode ? Colors.white : null,
                     )),
                 backgroundColor: Get.isDarkMode ? Colors.black : null,
               );
-              ScaffoldMessenger.of(Get.context!).showSnackBar(snackbar);
+              ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
             },
           );
         }),
@@ -218,19 +201,15 @@ class PostWidget extends StatelessWidget {
           isMinus: article.statistics.votesCount < 0,
           isPlus: article.statistics.votesCount > 0,
         ),
-        FooterItemWidget(
-            icon: Icons.visibility, value: article.statistics.readingCount),
-        FooterItemWidget(
-            icon: Icons.bookmark, value: article.statistics.favoritesCount),
+        FooterItemWidget(icon: Icons.visibility, value: article.statistics.readingCount),
+        FooterItemWidget(icon: Icons.bookmark, value: article.statistics.favoritesCount),
         Row(
           children: [
             IconButton(
               splashRadius: 25,
               alignment: Alignment.centerRight,
-              icon: Icon(Icons.mode_comment_rounded,
-                  color: AppColors.actionIcon, size: 18),
-              onPressed: () async =>
-                  Get.to(() => CommentsScreen(post: article)),
+              icon: Icon(Icons.mode_comment_rounded, color: AppColors.actionIcon, size: 18),
+              onPressed: () async => Get.to(() => CommentsScreen(post: article)),
             ),
             Text(
               article.statistics.commentsCount.toString(),

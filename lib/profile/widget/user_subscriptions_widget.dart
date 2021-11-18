@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/costants.dart';
 import 'package:habar/model/company_list.dart';
@@ -46,8 +47,18 @@ class UserSubscriptions extends StatelessWidget {
                 backgroundImage: NetworkImage(company.icon),
                 backgroundColor: Colors.transparent,
               ),
-              title: Text(company.name, style: const TextStyle(fontSize: 15)),
-              subtitle: Text(company.specializm, style: const TextStyle(fontSize: 13)),
+              title: Html(
+                data: company.name,
+                style: {
+                  'body': Style(fontWeight: FontWeight.bold, margin: EdgeInsets.all(0)),
+                },
+              ),
+              subtitle: Html(
+                data: company.specializm,
+                style: {
+                  'body': Style(margin: EdgeInsets.all(0), fontSize: FontSize(13)),
+                },
+              ),
               // onTap: () async {
               //   final login = company.path.replaceFirst(RegExp(r'(/company/)'), '');
               //   // login = login.replaceAll(RegExp(r'/'), '');
