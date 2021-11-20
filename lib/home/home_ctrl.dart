@@ -39,8 +39,8 @@ class HomeCtrl extends GetxController {
   void onInit() {
     super.onInit();
 
-    var filter = _settingsService.get().filters;
-    postFilter.value = filter == null ? UserFilter() : UserFilter.fromFilter(filter);
+    var sets = _settingsService.get();
+    postFilter.value = sets.filters == null ? UserFilter() : UserFilter.fromFilter(sets.filters!);
 
     _repo.postsStream.listen((PostList postList) {
       posts.value = postList;
@@ -74,8 +74,7 @@ class HomeCtrl extends GetxController {
       }
     });
 
-    var sets = _settingsService.get();
-    setup(sets.filters!);
+    setup(sets.filters ?? Filter());
   }
 
   @override

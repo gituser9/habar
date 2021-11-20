@@ -52,7 +52,7 @@ class Settings {
         commentTextSize: 18,
         isInfinityScroll: false,
         theme: AppThemeType.light,
-        filters: null,
+        filters: Filter(),
       );
 
   void setDefault() {
