@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:habar/model/search.dart';
 import 'package:habar/model/search_post.dart';
 import 'package:habar/model/search_user.dart';
 import 'package:habar/search/search_repository.dart';
@@ -13,6 +14,7 @@ class SearchCtrl extends GetxController {
   final selectedIndex = 0.obs;
   final queryStringStream = BehaviorSubject<String>();
   final isLoading = false.obs;
+  final searchFilter = SearchFilter.relevance.obs;
   String _queryString = '';
 
   @override
@@ -34,12 +36,30 @@ class SearchCtrl extends GetxController {
     super.onClose();
   }
 
+  Future search() async {
+    if (_queryString.isEmpty) {
+      return;
+    }
+
+    isLoading.value = true;
+    selectedIndex.value = 0;
+    postPage.value = 1;
+    userPage.value = 1;
+
+    await Future.wait([
+      getPosts(),
+      getUsers(),
+    ]);
+
+    isLoading.value = false;
+  }
+
   Future getPosts() async {
     if (_queryString.isEmpty) {
       return;
     }
 
-    await _repo.getPosts(_queryString, postPage.value);
+    await _repo.getPosts(_queryString, postPage.value, searchFilter.value.toShortString());
   }
 
   Future getUsers() async {
@@ -47,6 +67,6 @@ class SearchCtrl extends GetxController {
       return;
     }
 
-    await _repo.getUsers(_queryString, userPage.value);
+    await _repo.getUsers(_queryString, userPage.value, searchFilter.value.toShortString());
   }
 }

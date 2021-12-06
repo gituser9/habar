@@ -121,6 +121,7 @@ class HomeCtrl extends GetxController {
   }
 
   void getSaved() {
+    isLoading.value = false;
     final posts = _savedPostService.getAll();
 
     posts.sort((left, right) => left.timePublished.isBefore(right.timePublished) ? 1 : 0);

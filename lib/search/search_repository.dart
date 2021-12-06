@@ -7,10 +7,10 @@ class SearchRepository {
   final postsStream = BehaviorSubject<SearchPostResponse>();
   final usersStream = BehaviorSubject<SearchUserResponse>();
 
-  Future getPosts(String searchString, int page) async {
+  Future getPosts(String searchString, int page, String order) async {
     Map<String, String> params = {
       'query': searchString,
-      'order': 'relevance',
+      'order': order,
       'page': page.toString(),
     };
     final jsonString = await HttpRequest.get('/articles', params: params);
@@ -23,11 +23,12 @@ class SearchRepository {
     postsStream.add(searchResponse);
   }
 
-  Future getUsers(String searchString, int page) async {
+  Future getUsers(String searchString, int page, String order) async {
     Map<String, String> params = {
       'q': searchString,
       'page': page.toString(),
       'target_type': 'users',
+      'order': order,
     };
     final jsonString = await HttpRequest.get('/users/search', params: params);
 
