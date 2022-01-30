@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:habar/comments/comments_ctrl.dart';
 import 'package:habar/common/widgets/comment_widget.dart';
+import 'package:habar/common/widgets/empty_screen_widget.dart';
 import 'package:habar/common/widgets/footer_item_widget.dart';
 import 'package:habar/common/widgets/user_info_widget.dart';
 import 'package:habar/home/widgets/loading_widget.dart';
@@ -9,11 +10,11 @@ import 'package:habar/model/comment.dart';
 import 'package:habar/model/post.dart';
 
 class CommentsScreen extends StatelessWidget {
-  final ctrl = Get.put(CommentsCtrl());
+  final _ctrl = Get.put(CommentsCtrl());
   final Post post;
 
   CommentsScreen({Key? key, required this.post}) : super(key: key) {
-    ctrl.getAll(post.id);
+    _ctrl.getAll(post.id);
   }
 
   @override
@@ -65,11 +66,18 @@ class CommentsScreen extends StatelessWidget {
                 ),
               ),
               Obx(() {
-                if (ctrl.isLoading.value) {
+                if (_ctrl.isLoading.value) {
                   return const LoadingWidget();
                 }
 
-                return _buildList(ctrl.comments);
+                if (_ctrl.comments.isEmpty) {
+                  return const SizedBox(
+                    height: 160,
+                    child: EmptyScreenWidget(text: 'Комментариев пока нет'),
+                  );
+                }
+
+                return _buildList(_ctrl.comments);
               }),
               const SizedBox(height: 200),
             ],

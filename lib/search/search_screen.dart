@@ -4,6 +4,7 @@ import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:habar/common/costants.dart';
 import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/util.dart';
+import 'package:habar/common/widgets/empty_screen_widget.dart';
 import 'package:habar/common/widgets/no_data_widget.dart';
 import 'package:habar/common/widgets/pagination_widget.dart';
 import 'package:habar/common/widgets/post_widget.dart';
@@ -92,8 +93,15 @@ class SearchScreen extends StatelessWidget {
 
     switch (index) {
       case 0:
+        if (ctrl.posts.value.articleIds.isEmpty) {
+          return const EmptyScreenWidget(text: 'Ничего не найдено');
+        }
         return _buildPostList(ctrl.posts.value);
       case 1:
+        if (ctrl.users.value.userIds.isEmpty) {
+          return const EmptyScreenWidget(text: 'Ничего не найдено');
+        }
+
         return _buildUserList(ctrl.users.value);
       default:
         return NoDataWidget();
