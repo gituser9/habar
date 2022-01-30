@@ -76,7 +76,7 @@ class PostScreen extends StatelessWidget {
 
                         _ctrl.savedIds.remove(post.id);
                         final snackBar = SnackBar(
-                          content: Text('Пост успешно удален',
+                          content: Text('Пост успешно $msg',
                               style: TextStyle(
                                 color: Get.isDarkMode ? Colors.white : null,
                               )),
