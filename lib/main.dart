@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:habar/common/services/settings_service.dart';
 import 'package:habar/common/themes.dart';
 import 'package:habar/home/home_screen.dart';
 import 'package:habar/model/settings.dart';
 import 'package:habar/post/post_ctrl.dart';
 import 'package:habar/post/post_screen.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
@@ -25,7 +23,7 @@ class MyApp extends StatelessWidget {
   final ctrl = Get.put(PostCtrl());
   final AppThemeType theme;
 
-  MyApp({required this.theme});
+  MyApp({Key? key, required this.theme}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

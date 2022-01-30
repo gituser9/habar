@@ -27,29 +27,26 @@ class SearchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-        // backgroundColor: Get.isDarkMode ? null : Colors.white,
-        appBar: _buildAppBar(context),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _getSearchField(),
-                const SizedBox(height: 4),
-                Obx(() => _getCurrentPage(ctrl.selectedIndex.value)),
-              ],
-            ),
+    return Scaffold(
+      appBar: _buildAppBar(context),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _getSearchField(),
+              const SizedBox(height: 4),
+              Obx(() => _getCurrentPage(ctrl.selectedIndex.value)),
+            ],
           ),
         ),
-        bottomNavigationBar: Obx(() => _getBottomBar(ctrl.selectedIndex.value)),
       ),
+      bottomNavigationBar: Obx(() => _getBottomBar(ctrl.selectedIndex.value)),
     );
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: Text('Habar'),
+      title: const Text('Habar'),
       actions: [
         IconButton(
           icon: const Icon(Icons.tune),
@@ -74,7 +71,7 @@ class SearchScreen extends StatelessWidget {
         textInputAction: TextInputAction.search,
         decoration: InputDecoration(
           border: InputBorder.none,
-          contentPadding: EdgeInsets.only(top: 17, left: 8),
+          contentPadding: const EdgeInsets.only(top: 17, left: 8),
           suffixIcon: GestureDetector(
             child: const Icon(Icons.search),
             onTap: () async => await ctrl.search(),
@@ -90,7 +87,7 @@ class SearchScreen extends StatelessWidget {
 
   Widget _getCurrentPage(int index) {
     if (ctrl.isLoading.value) {
-      return LoadingWidget();
+      return const LoadingWidget();
     }
 
     switch (index) {
@@ -194,13 +191,13 @@ class SearchScreen extends StatelessWidget {
 
   Widget _getBottomBar(int index) {
     return BottomNavigationBar(
-      items: <BottomNavigationBarItem>[
-        const BottomNavigationBarItem(
-          icon: const Icon(Icons.article),
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.article),
           label: 'Публикации',
         ),
-        const BottomNavigationBarItem(
-          icon: const Icon(Icons.person),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
           label: 'Пользователи',
         ),
       ],
@@ -217,7 +214,7 @@ class SearchScreen extends StatelessWidget {
       child: Column(
         children: [
           // Text('Сортировка', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           _buildScoreButton('По релевантности', SearchFilter.relevance),
           _buildScoreButton('По времени', SearchFilter.date),
           _buildScoreButton('По рейтингу', SearchFilter.rating),
@@ -232,7 +229,7 @@ class SearchScreen extends StatelessWidget {
                     await ctrl.search();
                   },
                   icon: const Icon(Icons.done_all, color: Colors.white),
-                  label: const Text('Применить', style: const TextStyle(color: Colors.white)),
+                  label: const Text('Применить', style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     primary: AppColors.primary,
                   ),
@@ -256,7 +253,7 @@ class SearchScreen extends StatelessWidget {
           height: 40,
           decoration: BoxDecoration(
             color: isChosen ? AppColors.primary : Colors.grey.withOpacity(0.2),
-            borderRadius: const BorderRadius.all(const Radius.circular(6)),
+            borderRadius: const BorderRadius.all(Radius.circular(6)),
           ),
           child: TextButton(
               onPressed: () {

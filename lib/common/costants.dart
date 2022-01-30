@@ -16,11 +16,30 @@ class Constant {
     11: 'ноября',
     12: 'декабря',
   };
-  static const TextStyle profileHeadersStyle = const TextStyle(fontWeight: FontWeight.bold, fontSize: 20);
+  static const TextStyle profileHeadersStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 20);
+  static const List<InfoFlow> postFlows = [
+    InfoFlow(title: 'Все потоки', alias: ''),
+    InfoFlow(title: 'Разработка', alias: 'develop'),
+    InfoFlow(title: 'Администрирование', alias: 'admin'),
+    InfoFlow(title: 'Дизайн', alias: 'design'),
+    InfoFlow(title: 'Менеджмент', alias: 'management'),
+    InfoFlow(title: 'Маркетинг', alias: 'marketing'),
+    InfoFlow(title: 'Научпоп', alias: 'popsci'),
+  ];
 }
 
 class AppColors {
   static Color primary = Colors.blue;
   static Color accent = Colors.purpleAccent;
   static Color actionIcon = Colors.grey.shade600;
+}
+
+class InfoFlow {
+  final String title;
+  final String alias;
+
+  const InfoFlow({
+    required this.title,
+    required this.alias,
+  });
 }

@@ -78,6 +78,28 @@ enum ListFilter {
   alltime,
 }
 
+class FlowFilter {
+  String flow = '';
+  String? score = '';
+  String period = 'all';
+}
+
+final Map<ListFilter, String> flowScore = {
+  ListFilter.top0: '0',
+  ListFilter.top10: '10',
+  ListFilter.top25: '25',
+  ListFilter.top50: '50',
+  ListFilter.top100: '100',
+};
+
+final Map<ListFilter, String> flowPeriod = {
+  ListFilter.daily: 'daily',
+  ListFilter.weekly: 'weekly',
+  ListFilter.monthly: 'monthly',
+  ListFilter.yearly: 'yearly',
+  ListFilter.alltime: 'alltime',
+};
+
 final Map<ListFilter, Map<String, String>> listFilterData = {
   ListFilter.all: {'sort': 'rating'},
   ListFilter.top0: {'sort': 'rating', 'score': '0'},

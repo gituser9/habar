@@ -16,28 +16,26 @@ class HubWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Container(
-            height: 40,
-            margin: const EdgeInsets.only(left: 16, right: 16, top: 16),
-            child: TextField(
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                labelText: 'Поиск',
-                suffixIcon: const Icon(Icons.search),
-                fillColor: Get.isDarkMode ? null : Colors.grey.shade200,
-                filled: true,
-              ),
-              onChanged: (data) => ctrl.hubSearchStream.add(data),
+    return Column(
+      children: [
+        Container(
+          height: 40,
+          margin: const EdgeInsets.only(left: 16, right: 16, top: 16),
+          child: TextField(
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              labelText: 'Поиск',
+              suffixIcon: const Icon(Icons.search),
+              fillColor: Get.isDarkMode ? null : Colors.grey.shade200,
+              filled: true,
             ),
+            onChanged: (data) => ctrl.hubSearchStream.add(data),
           ),
-          const SizedBox(height: 16),
-          Obx(() => _buildBody(ctrl.hubs.value))
-        ],
-      ),
+        ),
+        const SizedBox(height: 16),
+        Obx(() => _buildBody(ctrl.hubs.value))
+      ],
     );
   }
 
@@ -61,15 +59,13 @@ class HubWidget extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageUrl: 'https:' + hub.imageUrl,
                     placeholder: (context, url) => const Icon(Icons.image),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.image),
+                    errorWidget: (context, url, error) => const Icon(Icons.image),
                   ),
                 ),
                 title: Html(
                   data: hub.titleHtml,
                   style: {
-                    'body': Style(
-                        fontWeight: FontWeight.bold, margin: EdgeInsets.all(0)),
+                    'body': Style(fontWeight: FontWeight.bold, margin: const EdgeInsets.all(0)),
                   },
                 ),
                 subtitle: Column(
@@ -85,8 +81,7 @@ class HubWidget extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const Icon(Icons.group,
-                                color: Colors.grey, size: 16),
+                            const Icon(Icons.group, color: Colors.grey, size: 16),
                             const SizedBox(width: 5),
                             Text(hub.statistics.subscribersCount.toString()),
                           ],
@@ -95,8 +90,7 @@ class HubWidget extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const Icon(Icons.star_rate,
-                                color: Colors.grey, size: 16),
+                            const Icon(Icons.star_rate, color: Colors.grey, size: 16),
                             const SizedBox(width: 5),
                             Text(hub.statistics.rating.toString()),
                           ],

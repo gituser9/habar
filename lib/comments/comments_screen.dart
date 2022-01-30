@@ -12,7 +12,7 @@ class CommentsScreen extends StatelessWidget {
   final ctrl = Get.put(CommentsCtrl());
   final Post post;
 
-  CommentsScreen({required this.post}) {
+  CommentsScreen({Key? key, required this.post}) : super(key: key) {
     ctrl.getAll(post.id);
   }
 
@@ -66,7 +66,7 @@ class CommentsScreen extends StatelessWidget {
               ),
               Obx(() {
                 if (ctrl.isLoading.value) {
-                  return LoadingWidget();
+                  return const LoadingWidget();
                 }
 
                 return _buildList(ctrl.comments);

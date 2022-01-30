@@ -14,6 +14,8 @@ class PostScreen extends StatelessWidget {
   final SettingsCtrl _settingsCtrl = Get.find();
   final PostCtrl _ctrl = Get.find();
 
+  PostScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     _ctrl.setPosition(_ctrl.postId.value);
@@ -32,7 +34,7 @@ class PostScreen extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, Post post) {
     if (_ctrl.isLoading.value) {
-      return LoadingWidget();
+      return const LoadingWidget();
     }
 
     return Column(
@@ -49,11 +51,11 @@ class PostScreen extends StatelessWidget {
                   Obx(() {
                     if (_ctrl.savedIds.contains(post.id)) {
                       return const Padding(
-                        padding: const EdgeInsets.only(right: 10.0),
-                        child: const SizedBox(
+                        padding: EdgeInsets.only(right: 10.0),
+                        child: SizedBox(
                           height: 16,
                           width: 16,
-                          child: const CircularProgressIndicator(color: Colors.grey, strokeWidth: 2),
+                          child: CircularProgressIndicator(color: Colors.grey, strokeWidth: 2),
                         ),
                       );
                     }
@@ -158,7 +160,7 @@ class PostScreen extends StatelessWidget {
                       ),
                       label: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: [const Text('Удалить')],
+                        children: const [Text('Удалить')],
                       ),
                     ),
                   )

@@ -30,6 +30,36 @@ class HomeRepo {
     postsStream.add(posts);
   }
 
+  Future getFlow(String flow, int page, String? score, String? period, bool? isFlowNews) async {
+    Map<String, String> params = {
+      'page': page.toString(),
+      'flow': flow,
+      'sort': 'all',
+    };
+
+    if (isFlowNews ?? false) {
+      params['flowNews'] = isFlowNews.toString();
+    }
+
+    if (score != null) {
+      params['score'] = score.toString();
+    }
+
+    if (period != null) {
+      params['period'] = period.toString();
+    }
+
+    String json = await HttpRequest.get('/articles', params: params);
+
+    if (json.isEmpty) {
+      return;
+    }
+
+    final posts = PostList.fromJson(json);
+
+    postsStream.add(posts);
+  }
+
   Future loadMore(ListFilter filterKey, int page, bool isNews, PostList list) async {
     Map<String, String> params = {
       'page': page.toString(),
@@ -55,7 +85,44 @@ class HomeRepo {
 
     newList.articleIds.addAll(posts.articleIds);
     newList.articleRefs.addAll(posts.articleRefs);
-    // list.pagesCount += posts.pagesCount;
+
+    postsStream.add(newList);
+  }
+
+  Future loadMoreFlow(String flow, int page, PostList list, {bool? isFlowNews, String? score, String? period}) async {
+    Map<String, String> params = {
+      'page': page.toString(),
+      'flow': flow,
+      'sort': 'all',
+    };
+
+    if (isFlowNews ?? false) {
+      params['flowNews'] = isFlowNews.toString();
+    }
+
+    if (score != null) {
+      params['score'] = score.toString();
+    }
+
+    if (period != null) {
+      params['period'] = period.toString();
+    }
+
+    String json = await HttpRequest.get('/articles', params: params);
+
+    if (json.isEmpty) {
+      return;
+    }
+
+    final posts = PostList.fromJson(json);
+    final newList = PostList(
+      articleIds: list.articleIds,
+      articleRefs: list.articleRefs,
+      pagesCount: list.pagesCount,
+    );
+
+    newList.articleIds.addAll(posts.articleIds);
+    newList.articleRefs.addAll(posts.articleRefs);
 
     postsStream.add(newList);
   }

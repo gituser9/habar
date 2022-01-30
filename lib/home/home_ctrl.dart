@@ -21,6 +21,7 @@ class HomeCtrl extends GetxController {
   final posts = PostList.empty().obs;
   final hubs = HubList.empty().obs;
   final filter = ListFilter.all.obs;
+  final flowFilter = FlowFilter().obs;
   final savedPosts = List<Post>.empty().obs;
   final hubSearchStream = BehaviorSubject<String>();
   final homeMode = HomeMode.posts.obs;
@@ -28,11 +29,14 @@ class HomeCtrl extends GetxController {
   final selectedIndex = 0.obs;
   final isLoading = true.obs;
   final isLoadMore = false.obs;
-  var postFilter = UserFilter().obs;
+  final postFilter = UserFilter().obs;
   final scrollCtrl = ScrollController();
 
   int _page = 1;
   int _pageCount = 0;
+  String currentFlow = '';
+  String? flowPeriod;
+  String? flowScore;
   HomeMode pageMode = HomeMode.posts;
 
   @override
@@ -70,7 +74,12 @@ class HomeCtrl extends GetxController {
       if (isEnd) {
         isLoadMore.value = true;
         _page = _page + 1;
-        await _repo.loadMore(postFilter.value.filterKey.value, _page, pageMode == HomeMode.news, posts.value);
+
+        if (currentFlow.isEmpty) {
+          await _repo.loadMore(postFilter.value.filterKey.value, _page, pageMode == HomeMode.news, posts.value);
+        } else {
+          await _repo.loadMoreFlow(currentFlow, _page, posts.value, score: flowScore, period: flowPeriod);
+        }
       }
     });
 
@@ -94,9 +103,7 @@ class HomeCtrl extends GetxController {
   }
 
   Future getAll(ListFilter filterKey, {int? page}) async {
-    if (page == null) {
-      page = _page;
-    }
+    page ??= _page;
 
     if (page != 1 && page > _pageCount) {
       return;
@@ -104,6 +111,17 @@ class HomeCtrl extends GetxController {
 
     isLoading.value = true;
     await _repo.getAll(filterKey, page, pageMode == HomeMode.news);
+  }
+
+  Future getFlow(String flow, {int? page, String? score, String? period, bool? isFlowNews}) async {
+    page ??= _page;
+
+    if (page != 1 && page > _pageCount) {
+      return;
+    }
+
+    isLoading.value = true;
+    await _repo.getFlow(flow, page, score, period, isFlowNews);
   }
 
   Future getHubs({int page = 1, ListHubFilter? filterKey}) async {

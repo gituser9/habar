@@ -9,6 +9,8 @@ class SavedWidget extends StatelessWidget {
   final HomeCtrl _ctrl = Get.find();
   final SavedPostService _savedPostService = Get.find();
 
+  SavedWidget({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {

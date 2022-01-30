@@ -5,9 +5,7 @@ class HttpRequest {
   static final _client = Client();
 
   static Future<String> get(String url, {Map<String, String>? params, int version = 2}) async {
-    if (params == null) {
-      params = {};
-    }
+    params ??= {};
 
     params['fl'] = 'ru';
     params['hl'] = 'ru';
