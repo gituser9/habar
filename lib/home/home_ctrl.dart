@@ -75,7 +75,7 @@ class HomeCtrl extends GetxController {
         isLoadMore.value = true;
         _page = _page + 1;
 
-        if (currentFlow.isEmpty) {
+        if (currentFlow == '') {
           await _repo.loadMore(postFilter.value.filterKey.value, _page, pageMode == HomeMode.news, posts.value);
         } else {
           await _repo.loadMoreFlow(currentFlow, _page, posts.value, score: flowScore, period: flowPeriod);

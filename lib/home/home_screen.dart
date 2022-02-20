@@ -130,10 +130,15 @@ class HomeScreen extends StatelessWidget {
               pageCount: _ctrl.posts.value.pagesCount,
               callback: (int page) async {
                 _ctrl.page.value = page;
-                await _ctrl.getAll(
-                  _settingsCtrl.settings.value.filters!.filterKey,
-                  page: page,
-                );
+
+                if (_ctrl.currentFlow == '') {
+                  await _ctrl.getAll(
+                    _settingsCtrl.settings.value.filters!.filterKey,
+                    page: page,
+                  );
+                } else {
+                  await _ctrl.getFlow(_ctrl.currentFlow, page: page);
+                }
               },
             ),
           ),
@@ -274,6 +279,7 @@ class HomeScreen extends StatelessWidget {
                       onTap: () async {
                         Get.back();
 
+                        _ctrl.resetPage();
                         _ctrl.currentFlow = flow.alias;
 
                         if (flow.alias == '') {
