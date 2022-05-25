@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:habar/common/services/settings_service.dart';
 import 'package:habar/common/themes.dart';
 import 'package:habar/home/home_screen.dart';
@@ -11,8 +12,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+
   var srv = Get.put(SettingsService());
   await srv.openBox();
+
   var setts = srv.get();
   setts.setDefault();
 
@@ -21,6 +24,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final ctrl = Get.put(PostCtrl());
+  final settingsCtrl = Get.put(SettingsCtrl());
   final AppThemeType theme;
 
   MyApp({Key? key, required this.theme}) : super(key: key);
@@ -46,15 +50,31 @@ class MyApp extends StatelessWidget {
         darkTheme: AppTheme.dark,
         // themeMode: ThemeMode.dark,
         themeMode: _getTheme(),
-        home: SafeArea(child: HomeScreen()),
         getPages: [
           GetPage(name: '/post/:id', page: () => PostScreen()),
+          GetPage(name: '/ru/post/:id/', page: () => PostScreen()),
+          GetPage(name: '/ru/news/:t/:id/', page: () => PostScreen()),
+          GetPage(name: '/', page: () => SafeArea(child: HomeScreen())),
         ],
+        initialRoute: "/",
+        opaqueRoute: true,
         routingCallback: (routing) {
-          if (routing?.current.startsWith('/post') ?? false) {
-            String id = routing?.current.split('/').last ?? '';
-            ctrl.postId.value = id;
-            ctrl.addPostListener();
+          if (routing == null) {
+            return;
+          }
+
+          if (routing.current == routing.previous) {
+            return;
+          }
+
+          if (routing.current.contains('/post/'.toString()) || routing.current.contains('/news/'.toString())) {
+            String id =
+                routing.current.split('/').where((e) => e.isNotEmpty).firstWhere((e) => int.tryParse(e) != null) ?? '';
+
+            if (id.isNotEmpty) {
+              ctrl.addPostListener();
+              ctrl.getByID(id);
+            }
           }
         });
   }

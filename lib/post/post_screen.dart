@@ -247,11 +247,7 @@ class PostScreen extends StatelessWidget {
   }
 
   Widget _buildHubRow(Post post) {
-    final hubNames = <String>[];
-
-    for (final hub in post.hubs) {
-      hubNames.add(hub.title);
-    }
+    final hubNames = post.hubs.map(((hub) => hub.title)).toList();
 
     return Text(
       hubNames.join(', '),

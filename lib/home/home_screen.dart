@@ -19,7 +19,7 @@ import 'package:habar/settings/settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final _ctrl = Get.put(HomeCtrl());
-  final _settingsCtrl = Get.put(SettingsCtrl());
+  final SettingsCtrl _settingsCtrl = Get.find();
   final _savedPostService = Get.put(SavedPostService());
   final Map<int, HomeMode> _pageMode = {
     0: HomeMode.posts,
