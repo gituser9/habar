@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
+import 'package:uri_to_file/uri_to_file.dart';
 
 class HtmlText extends StatelessWidget {
   final SettingsCtrl _settingsCtrl = Get.find();
@@ -77,7 +79,7 @@ class HtmlText extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                       color: Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
@@ -92,7 +94,6 @@ class HtmlText extends StatelessWidget {
         },
         onLinkTap: (String? url, RenderContext ctx, Map<String, String> attributes, element) async {
           if (url != null) {
-            print(url);
             await Util.launchInternal(url);
           }
         });
@@ -123,7 +124,7 @@ class HtmlText extends StatelessWidget {
                         : Positioned(
                             left: Get.width / 2,
                             top: 150,
-                            child: CircularProgressIndicator(color: Colors.white),
+                            child: const CircularProgressIndicator(color: Colors.white),
                           );
                   }),
                   Positioned(
@@ -134,6 +135,7 @@ class HtmlText extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        // save image button
                         IconButton(
                           icon: const Icon(Icons.download, color: Colors.white, size: 20),
                           onPressed: () async {
@@ -160,6 +162,8 @@ class HtmlText extends StatelessWidget {
                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           },
                         ),
+
+                        // share image button
                         IconButton(
                           icon: const Icon(Icons.share, color: Colors.white, size: 20),
                           onPressed: () async {
@@ -178,13 +182,21 @@ class HtmlText extends StatelessWidget {
                               name: 'habar_$hash',
                               quality: 100,
                             );
-                            var path = result['filePath'].toString().replaceAll(RegExp(r'file:'), '');
+                            File file = await toFile(result['filePath']);
 
                             _ctrl.isImageLoading.value = false;
 
-                            await Share.shareFiles([path]);
+                            await Share.shareFiles([file.path]);
+
+                            try {
+                              await file.delete();
+                            } catch (e) {
+                              print(e);
+                            }
                           },
                         ),
+
+                        // close button
                         IconButton(
                           icon: const Icon(Icons.clear, color: Colors.white),
                           onPressed: () => Get.back(),
