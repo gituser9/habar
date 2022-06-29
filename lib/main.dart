@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
           GetPage(name: '/post/:id', page: () => PostScreen()),
           GetPage(name: '/ru/post/:id/', page: () => PostScreen()),
           GetPage(name: '/ru/news/:t/:id/', page: () => PostScreen()),
+          GetPage(name: '/ru/company/:name/blog/:id/', page: () => PostScreen()),
           GetPage(name: '/', page: () => SafeArea(child: HomeScreen())),
         ],
         initialRoute: "/",
@@ -63,13 +64,17 @@ class MyApp extends StatelessWidget {
             return;
           }
 
+          print(routing.current);
+
           if (routing.current == routing.previous) {
             return;
           }
 
-          if (routing.current.contains('/post/'.toString()) || routing.current.contains('/news/'.toString())) {
+          if (routing.current.contains('/post/'.toString()) ||
+              routing.current.contains('/news/'.toString()) ||
+              routing.current.contains('/blog/'.toString())) {
             String id =
-                routing.current.split('/').where((e) => e.isNotEmpty).firstWhere((e) => int.tryParse(e) != null) ?? '';
+                routing.current.split('/').where((e) => e.isNotEmpty).firstWhere((e) => int.tryParse(e) != null);
 
             if (id.isNotEmpty) {
               ctrl.addPostListener();

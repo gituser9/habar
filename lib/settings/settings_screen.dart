@@ -5,6 +5,8 @@ import 'package:habar/common/themes.dart';
 import 'package:habar/model/settings.dart';
 
 class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({Key? key}) : super(key: key);
+
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
@@ -62,10 +64,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               )),
         ),
         const Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: const Align(
+          padding: EdgeInsets.only(left: 16.0),
+          child: Align(
             alignment: Alignment.centerLeft,
-            child: const Text('Размер текста в постах', style: const TextStyle(fontSize: 16)),
+            child: Text('Размер текста в постах', style: TextStyle(fontSize: 16)),
           ),
         ),
         Obx(() => Column(
@@ -91,7 +93,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: _ctrl.settings.value.theme == AppThemeType.dark
                                 ? Colors.grey.shade800
                                 : Colors.grey.shade200,
-                            borderRadius: const BorderRadius.all(const Radius.circular(4)),
+                            borderRadius: const BorderRadius.all(Radius.circular(4)),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -109,10 +111,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             )),
         const Padding(
-          padding: const EdgeInsets.only(left: 16.0, top: 16),
-          child: const Align(
+          padding: EdgeInsets.only(left: 16.0, top: 16),
+          child: Align(
             alignment: Alignment.centerLeft,
-            child: const Text('Размер текста в комментариях', style: const TextStyle(fontSize: 16)),
+            child: Text('Размер текста в комментариях', style: TextStyle(fontSize: 16)),
           ),
         ),
         Obx(() => Column(
@@ -138,7 +140,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: _ctrl.settings.value.theme == AppThemeType.dark
                                 ? Colors.grey.shade800
                                 : Colors.grey.shade200,
-                            borderRadius: const BorderRadius.all(const Radius.circular(4)),
+                            borderRadius: const BorderRadius.all(Radius.circular(4)),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -181,6 +183,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Get.changeTheme(AppTheme.light);
                   }
 
+                  _ctrl.update();
+                  _ctrl.save();
+                },
+              )),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Obx(() => SwitchListTile(
+                title: const Text('Скрывать картинки в постах'),
+                value: _ctrl.settings.value.isHidePostImages!,
+                onChanged: (bool newValue) {
+                  _ctrl.settings.value.isHidePostImages = newValue;
                   _ctrl.update();
                   _ctrl.save();
                 },

@@ -35,6 +35,9 @@ class Settings {
   @HiveField(6)
   Filter? filters;
 
+  @HiveField(7)
+  bool? isHidePostImages;
+
   Settings({
     this.isShowImage = true,
     this.isShowPostPreview = false,
@@ -43,6 +46,7 @@ class Settings {
     this.isInfinityScroll = false,
     this.theme = AppThemeType.light,
     this.filters,
+    this.isHidePostImages = false,
   });
 
   factory Settings.empty() => Settings(
@@ -53,19 +57,13 @@ class Settings {
         isInfinityScroll: false,
         theme: AppThemeType.light,
         filters: Filter(),
+        isHidePostImages: false,
       );
 
   void setDefault() {
-    if (isInfinityScroll == null) {
-      isInfinityScroll = false;
-    }
-
-    if (theme == null) {
-      theme = AppThemeType.light;
-    }
-
-    if (filters == null) {
-      filters = Filter();
-    }
+    isInfinityScroll ??= false;
+    theme ??= AppThemeType.light;
+    filters ??= Filter();
+    isHidePostImages ??= false;
   }
 }

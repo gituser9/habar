@@ -1,91 +1,105 @@
-import 'dart:async';
 import 'dart:io';
 
-import 'package:crypto/crypto.dart';
+import 'package:crypto/crypto.dart' show md5;
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/controllers/html_text_ctrl.dart';
 import 'package:habar/common/controllers/settings_ctrl.dart';
-import 'package:habar/common/util.dart';
-import 'package:habar/common/widgets/html_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 import 'package:uri_to_file/uri_to_file.dart';
 
-class HtmlText extends StatelessWidget {
+class HtmlImage extends StatefulWidget {
+  final String imageUrl;
+
+  const HtmlImage({Key? key, required this.imageUrl}) : super(key: key);
+
+  @override
+  State<HtmlImage> createState() => _HtmlImageState();
+}
+
+class _HtmlImageState extends State<HtmlImage> {
+  final _defaultHeight = 200.0;
+  final _defaultWidth = 200.0;
+
   final SettingsCtrl _settingsCtrl = Get.find();
-  final _ctrl = Get.put(HtmlTextCtrl());
+  final HtmlTextCtrl _ctrl = Get.find();
 
-  final String htmlText;
+  bool isImageHidden = false;
 
-  HtmlText({
-    Key? key,
-    required this.htmlText,
-  }) : super(key: key);
+  _HtmlImageState() {
+    isImageHidden = _settingsCtrl.settings.value.isHidePostImages ?? false;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Html(
-        data: htmlText,
-        shrinkWrap: true,
-        style: {
-          'body': Style(fontSize: FontSize(_settingsCtrl.settings.value.postTextSize)),
-          'blockquote':
-              Style(fontStyle: FontStyle.italic, fontSize: FontSize(_settingsCtrl.settings.value.postTextSize - 2)),
-          'pre': Style(
-            fontStyle: FontStyle.normal,
-            fontSize: const FontSize(14),
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: _defaultHeight),
+      child: isImageHidden ? _buildImageMock() : _buildImage(context),
+    );
+  }
+
+  Widget _buildImageMock() {
+    return GestureDetector(
+      child: Center(
+        child: SizedBox(
+          width: _defaultWidth,
+          height: _defaultHeight,
+          child: Stack(
+            children: [
+              Center(
+                child: Icon(
+                  Icons.image_outlined,
+                  size: _defaultHeight,
+                  color: Colors.grey.shade400,
+                ),
+              ),
+              const Center(
+                child: Icon(
+                  Icons.file_download,
+                  size: 50,
+                ),
+              ),
+            ],
           ),
-          'figure': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
-          'img': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
-          'a': Style(textDecoration: TextDecoration.none),
-        },
-        customRender: {
-          'figure': (RenderContext ctx, Widget child) {
-            for (final tag in ctx.tree.children) {
-              if (tag.name == 'img') {
-                String imgUrl = tag.element!.attributes['data-src'] ?? '';
+        ),
+      ),
+      onTap: () {
+        setState(() {
+          isImageHidden = false;
+        });
+      },
+    );
+  }
 
-                return HtmlImage(imageUrl: imgUrl);
+  Widget _buildImage(BuildContext context) {
+    return GestureDetector(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Image.network(
+            widget.imageUrl,
+            loadingBuilder: (ctx, child, progress) {
+              if (progress == null) {
+                return child;
               }
-            }
-          },
-          'img': (RenderContext ctx, Widget child) {
-            String? fullImg = ctx.tree.element?.attributes['data-src'];
 
-            if (fullImg == null || fullImg.isEmpty) {
-              fullImg = ctx.tree.element?.attributes['src'] ?? '';
-            }
-
-            return HtmlImage(imageUrl: fullImg);
-          },
-          'pre': (RenderContext ctx, Widget child) {
-            return Scrollbar(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                      color: Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: child,
-                      ),
+              return Center(
+                child: SizedBox(
+                  width: _defaultWidth,
+                  height: _defaultHeight,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      value: progress.expectedTotalBytes != null ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes! : null,
                     ),
                   ),
-                ],
-              ),
-            );
-          }
-        },
-        onLinkTap: (String? url, RenderContext ctx, Map<String, String> attributes, element) async {
-          if (url != null) {
-            await Util.launchInternal(url);
-          }
-        });
+                ),
+              );
+            },
+          ),
+        ),
+        onTap: () async => await _showImage(context, widget.imageUrl));
   }
 
   Future _showImage(BuildContext context, String url) async {
@@ -94,6 +108,8 @@ class HtmlText extends StatelessWidget {
         builder: (ctx) {
           return GestureDetector(
             onTap: () => Get.back(),
+
+            // image container
             child: Material(
               color: Colors.transparent,
               child: Stack(
@@ -116,6 +132,8 @@ class HtmlText extends StatelessWidget {
                             child: const CircularProgressIndicator(color: Colors.white),
                           );
                   }),
+
+                  // buttons container
                   Positioned(
                     bottom: 15,
                     width: Get.width,
@@ -130,14 +148,14 @@ class HtmlText extends StatelessWidget {
                           onPressed: () async {
                             _ctrl.isImageLoading.value = true;
 
-                            bool isGranted = await _checkPermission();
+                            bool isGranted = await _checkStoragePermission();
 
                             if (!isGranted) {
                               return;
                             }
 
                             var response = await http.get(Uri.parse(url));
-                            var hash = md5.convert(response.bodyBytes).toString();
+                            String hash = md5.convert(response.bodyBytes).toString();
                             var result = await ImageGallerySaver.saveImage(
                               response.bodyBytes,
                               name: 'habar_$hash',
@@ -148,7 +166,7 @@ class HtmlText extends StatelessWidget {
                             _ctrl.isImageLoading.value = false;
 
                             final snackBar = SnackBar(content: Text(snackText));
-                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
                           },
                         ),
 
@@ -158,14 +176,14 @@ class HtmlText extends StatelessWidget {
                           onPressed: () async {
                             _ctrl.isImageLoading.value = true;
 
-                            bool isGranted = await _checkPermission();
+                            bool isGranted = await _checkStoragePermission();
 
                             if (!isGranted) {
                               return;
                             }
 
                             var response = await http.get(Uri.parse(url));
-                            var hash = md5.convert(response.bodyBytes).toString();
+                            String hash = md5.convert(response.bodyBytes).toString();
                             var result = await ImageGallerySaver.saveImage(
                               response.bodyBytes,
                               name: 'habar_$hash',
@@ -175,9 +193,8 @@ class HtmlText extends StatelessWidget {
 
                             _ctrl.isImageLoading.value = false;
 
-                            await Share.shareFiles([file.path]);
-
                             try {
+                              await Share.shareFiles([file.path]);
                               await file.delete();
                             } catch (e) {
                               print(e);
@@ -200,7 +217,7 @@ class HtmlText extends StatelessWidget {
         });
   }
 
-  Future<bool> _checkPermission() async {
+  Future<bool> _checkStoragePermission() async {
     var status = await Permission.storage.status;
 
     if (status.isPermanentlyDenied) {
@@ -216,23 +233,5 @@ class HtmlText extends StatelessWidget {
     }
 
     return true;
-  }
-
-  FutureOr<dynamic> _downloadImage(String url) async {
-    bool isGranted = await _checkPermission();
-
-    if (!isGranted) {
-      return;
-    }
-
-    var response = await http.get(Uri.parse(url));
-    var hash = md5.convert(response.bodyBytes).toString();
-    var result = await ImageGallerySaver.saveImage(
-      response.bodyBytes,
-      name: 'habar_$hash',
-      quality: 100,
-    );
-
-    return result;
   }
 }

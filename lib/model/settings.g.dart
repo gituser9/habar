@@ -24,13 +24,14 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       isInfinityScroll: fields[4] as bool?,
       theme: fields[5] as AppThemeType?,
       filters: fields[6] as Filter?,
+      isHidePostImages: fields[7] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.isShowImage)
       ..writeByte(1)
@@ -44,7 +45,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(5)
       ..write(obj.theme)
       ..writeByte(6)
-      ..write(obj.filters);
+      ..write(obj.filters)
+      ..writeByte(7)
+      ..write(obj.isHidePostImages);
   }
 
   @override
