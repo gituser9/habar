@@ -44,7 +44,7 @@ class ProfileData {
     this.timeInvited,
   });
 
-  final String id;
+  final int id;
   final String birthday;
   final String descriptionHtml;
   final List<CommonTag> commonTags;
@@ -64,7 +64,7 @@ class ProfileData {
   final double ratingPosition;
 
   factory ProfileData.empty() => ProfileData(
-        id: '',
+        id: 0,
         birthday: '',
         descriptionHtml: '',
         commonTags: [],
@@ -88,22 +88,25 @@ class ProfileData {
   String toJson() => json.encode(toMap());
 
   factory ProfileData.fromMap(Map<String, dynamic> json) => ProfileData(
-        id: json["id"] == null ? 0 : json["id"],
-        birthday: json["birthday"] == null ? '' : json["birthday"],
-        descriptionHtml: json["description_html"] == null ? '' : json["description_html"],
-        commonTags: json["common_tags"] == null ? [] : List<CommonTag>.from(json["common_tags"].map((x) => CommonTag.fromMap(x))),
-        login: json["login"] == null ? '' : json["login"],
+        id: json["id"] ?? 0,
+        birthday: json["birthday"] ?? '',
+        descriptionHtml: json["description_html"] ?? '',
+        commonTags: json["common_tags"] == null
+            ? []
+            : List<CommonTag>.from(json["common_tags"].map((x) => CommonTag.fromMap(x))),
+        login: json["login"] ?? '',
         timeRegistered: DateTime.parse(json["time_registered"]),
         fullname: json["fullname"] == null ? "" : json['fullname'],
-        specializm: json["specializm"] == null ? '' : json["specializm"],
+        specializm: json["specializm"] ?? '',
         rating: json["rating"] == null ? 0.0 : json["rating"].toDouble(),
-        timeInvited: json["time_invited"] == null || json["time_invited"] == '' ? null : DateTime.parse(json["time_invited"]),
-        invitedByLogin: json["invited_by_login"] == null ? '' : json["invited_by_login"],
-        displayChildren: json["display_children"] == null ? false : json["display_children"],
-        path: json["path"] == null ? '' : json["path"],
+        timeInvited:
+            json["time_invited"] == null || json["time_invited"] == '' ? null : DateTime.parse(json["time_invited"]),
+        invitedByLogin: json["invited_by_login"] ?? '',
+        displayChildren: json["display_children"] ?? false,
+        path: json["path"] ?? '',
         counters: Counters.fromMap(json["counters"]),
         badges: json["badges"] == null ? [] : List<Badge>.from(json["badges"].map((x) => Badge.fromMap(x))),
-        avatar: json["avatar"] == null ? '' : json["avatar"],
+        avatar: json["avatar"] ?? '',
         score: json["score"] == null ? 0.0 : json["score"].toDouble(),
         ratingPosition: json["ratingPosition"] == null ? 0.0 : json["ratingPosition"].toDouble(),
       );
@@ -154,13 +157,13 @@ class Badge {
   String toJson() => json.encode(toMap());
 
   factory Badge.fromMap(Map<String, dynamic> json) => Badge(
-        id: json["id"] == null ? 0 : json["id"],
-        title: json["title"] == null ? '' : json["title"],
-        alias: json["alias"] == null ? '' : json["alias"],
-        description: json["description"] == null ? '' : json["description"],
+        id: json["id"] ?? 0,
+        title: json["title"] ?? '',
+        alias: json["alias"] ?? '',
+        description: json["description"] ?? '',
         url: json["url"] ?? '',
-        isRemovable: json["is_removable"] == null ? false : json["is_removable"],
-        isDisabled: json["is_disabled"] == null ? false : json["is_disabled"],
+        isRemovable: json["is_removable"] ?? false,
+        isDisabled: json["is_disabled"] ?? false,
       );
 
   Map<String, dynamic> toMap() => {
@@ -188,8 +191,8 @@ class CommonTag {
   String toJson() => json.encode(toMap());
 
   factory CommonTag.fromMap(Map<String, dynamic> json) => CommonTag(
-        name: json["name"] == null ? '' : json["name"],
-        count: json["count"] == null ? 0 : json["count"],
+        name: json["name"] ?? '',
+        count: json["count"] ?? 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -207,24 +210,24 @@ class Counters {
     required this.favorites,
   });
 
-  final String posts;
+  final int posts;
   final int comments;
-  final String followed;
-  final String followers;
-  final String favorites;
+  final int followed;
+  final int followers;
+  final int favorites;
 
-  factory Counters.empty() => Counters(posts: '', comments: 0, followed: '', followers: '', favorites: '');
+  factory Counters.empty() => Counters(posts: 0, comments: 0, followed: 0, followers: 0, favorites: 0);
 
   factory Counters.fromJson(String str) => Counters.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory Counters.fromMap(Map<String, dynamic> json) => Counters(
-        posts: json["posts"] == null ? '' : json["posts"],
-        comments: json["comments"] == null ? 0 : json["comments"],
-        followed: json["followed"] == null ? '' : json["followed"],
-        followers: json["followers"] == null ? '' : json["followers"],
-        favorites: json["favorites"] == null ? '' : json["favorites"],
+        posts: json["posts"] ?? '',
+        comments: json["comments"] ?? 0,
+        followed: json["followed"] ?? 0,
+        followers: json["followers"] ?? 0,
+        favorites: json["favorites"] ?? 0,
       );
 
   Map<String, dynamic> toMap() => {

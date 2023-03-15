@@ -43,10 +43,10 @@ class HubCompanyListWidget extends StatelessWidget {
             data: company.descriptionHtml,
             style: {
               'body': Style(
-                fontSize: const FontSize(13),
+                fontSize: FontSize(13),
                 color: Colors.grey,
                 padding: const EdgeInsets.all(0),
-                margin: const EdgeInsets.all(0),
+                margin: Margins.all(0),
               ),
             },
           ),

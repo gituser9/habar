@@ -55,9 +55,10 @@ class ProfileCtrl extends GetxController {
 
   Future setup(String login) async {
     await getProfile(login);
-    // await getProfileHubs(login);
-    // await getProfileCompanies(login);
-    // await getProfileChildren(login);
+    await getProfileHubs(login);
+    await getProfileCompanies(login);
+    await getProfileChildren(login);
+    await getProfileArticles(login);
   }
 
   Future getProfile(String login) async {
@@ -94,26 +95,12 @@ class ProfileCtrl extends GetxController {
     List<StructuredComment> structComments = [];
 
     commentList.comments.values.forEach((comment) {
-      final structComment = StructuredComment(
-        author: comment.author,
-        publishTime: comment.timePublished!,
-        text: comment.message,
-        isPostAuthor: comment.isPostAuthor,
-        level: comment.level,
-        score: comment.score,
-      );
+      final structComment = StructuredComment.fromComment(comment);
 
       if (comment.children.isNotEmpty) {
         comment.children.forEach((id) {
           Comment habrComment = commentsMap[id]!;
-          structComment.children.add(StructuredComment(
-            author: habrComment.author,
-            publishTime: habrComment.timePublished!,
-            text: habrComment.message,
-            isPostAuthor: habrComment.isPostAuthor,
-            level: habrComment.level,
-            score: habrComment.score,
-          ));
+          structComment.children.add(StructuredComment.fromComment(habrComment));
         });
         structComment.children
             .sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);

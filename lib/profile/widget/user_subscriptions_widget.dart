@@ -50,13 +50,13 @@ class UserSubscriptions extends StatelessWidget {
               title: Html(
                 data: company.name,
                 style: {
-                  'body': Style(fontWeight: FontWeight.bold, margin: EdgeInsets.all(0)),
+                  'body': Style(fontWeight: FontWeight.bold, margin: Margins.all(0)),
                 },
               ),
               subtitle: Html(
                 data: company.specializm,
                 style: {
-                  'body': Style(margin: EdgeInsets.all(0), fontSize: FontSize(13)),
+                  'body': Style(margin: Margins.all(0), fontSize: FontSize(13)),
                 },
               ),
               // onTap: () async {

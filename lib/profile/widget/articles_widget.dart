@@ -20,7 +20,7 @@ class PostsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (_ctrl.comments.isEmpty) {
+      if (_ctrl.posts.value.pagesCount == 0) {
         return const SizedBox(
           height: 200,
           child: EmptyScreenWidget(text: "публикаций пока нет"),
@@ -54,7 +54,7 @@ class PostsWidget extends StatelessWidget {
             }),
         const SizedBox(height: 4),
         Material(
-          color: Colors.white,
+          color: Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
           child: PaginationWidget(
             page: _ctrl.page.value,
             pageCount: _ctrl.posts.value.pagesCount,

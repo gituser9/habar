@@ -27,13 +27,13 @@ class PostCtrl extends GetxController {
       if (isSaved.value) {
         position.value = scrollCtrl.offset;
 
+        print(position);
+
         Future.delayed(const Duration(seconds: 1), () async {
-          // print(position.value);
           if (position.value == 0) {
             return;
           }
 
-          // print(position.value);
           await _positionService.save(PostPosition(position: position.value, postId: postId.value));
         });
       }
@@ -45,6 +45,8 @@ class PostCtrl extends GetxController {
   }
 
   Future getByID(String id) async {
+    postId.value = id;
+
     isLoading.value = true;
 
     if (id.isEmpty) {
@@ -56,14 +58,9 @@ class PostCtrl extends GetxController {
     if (isSaved.value) {
       final postPosition = _positionService.getById(id);
       position.value = postPosition.position;
+      post.value = _savedPostService.getById(id);
 
-      await Future.delayed(const Duration(milliseconds: 50), () async {
-        post.value = _savedPostService.getById(id);
-
-        await Future.delayed(const Duration(milliseconds: 100), () {
-          scrollCtrl.jumpTo(position.value);
-        });
-      });
+      await Future.delayed(const Duration(milliseconds: 100), () => scrollCtrl.jumpTo(position.value));
     } else {
       post.value = await _repo.getById(id);
     }
@@ -99,23 +96,4 @@ class PostCtrl extends GetxController {
     });
   }
 
-  void addPostListener() {
-    // scrollCtrl = ScrollController();
-    // scrollCtrl.addListener(() {
-    //   if (isSaved.value) {
-    //     position.value = scrollCtrl.offset;
-    //
-    //     Future.delayed(const Duration(seconds: 1), () async {
-    //       print(position.value);
-    //       if (position.value == 0) {
-    //         return;
-    //       }
-    //
-    //       print(position.value);
-    //       await _positionService.save(PostPosition(position: position.value, postId: postId.value));
-    //     });
-    //   }
-    // });
-    // setPosition(postId.value);
-  }
 }

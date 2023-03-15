@@ -4,7 +4,7 @@ class AppTheme {
   static final light = ThemeData.light().copyWith(
     // scaffoldBackgroundColor: Colors.white,
     bottomAppBarColor: Colors.white,
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
       iconTheme: IconThemeData(color: Colors.black),
       actionsIconTheme: IconThemeData(color: Colors.black),
@@ -18,7 +18,7 @@ class AppTheme {
 
   static final dark = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: Colors.grey.shade900,
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
         actionsIconTheme: IconThemeData(color: Colors.grey),
         titleTextStyle: TextStyle(
           color: Colors.grey,

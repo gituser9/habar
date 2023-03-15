@@ -31,6 +31,8 @@ class HomeCtrl extends GetxController {
   final isLoadMore = false.obs;
   final postFilter = UserFilter().obs;
   final scrollCtrl = ScrollController();
+  final currentFlowName = ''.obs;
+  final bottomOffset = 100;
 
   int _page = 1;
   int _pageCount = 0;
@@ -69,11 +71,11 @@ class HomeCtrl extends GetxController {
     });
 
     scrollCtrl.addListener(() async {
-      bool isEnd = scrollCtrl.offset == scrollCtrl.position.maxScrollExtent;
+      bool isEnd = (scrollCtrl.offset + bottomOffset) >= scrollCtrl.position.maxScrollExtent;
 
       if (isEnd) {
         isLoadMore.value = true;
-        _page = _page + 1;
+        ++_page;
 
         if (currentFlow == '') {
           await _repo.loadMore(postFilter.value.filterKey.value, _page, pageMode == HomeMode.news, posts.value);

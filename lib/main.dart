@@ -64,20 +64,19 @@ class MyApp extends StatelessWidget {
             return;
           }
 
-          print(routing.current);
-
           if (routing.current == routing.previous) {
             return;
           }
 
-          if (routing.current.contains('/post/'.toString()) ||
+          bool isPostRoute = routing.current.contains('/post/'.toString()) ||
               routing.current.contains('/news/'.toString()) ||
-              routing.current.contains('/blog/'.toString())) {
+              routing.current.contains('/blog/'.toString());
+
+          if (isPostRoute) {
             String id =
                 routing.current.split('/').where((e) => e.isNotEmpty).firstWhere((e) => int.tryParse(e) != null);
 
             if (id.isNotEmpty) {
-              ctrl.addPostListener();
               ctrl.getByID(id);
             }
           }

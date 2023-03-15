@@ -32,17 +32,17 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _getBottomBar(int selectedIndex) {
     return BottomNavigationBar(
-      items: <BottomNavigationBarItem>[
-        const BottomNavigationBarItem(
-          icon: const Icon(Icons.person),
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
           label: 'Профиль',
         ),
-        const BottomNavigationBarItem(
-          icon: const Icon(Icons.article),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.article),
           label: 'Публикации',
         ),
-        const BottomNavigationBarItem(
-          icon: const Icon(Icons.mode_comment_rounded),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.mode_comment_rounded),
           label: 'Комментарии',
         ),
       ],

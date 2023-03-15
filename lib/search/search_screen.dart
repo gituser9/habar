@@ -54,7 +54,8 @@ class SearchScreen extends StatelessWidget {
           onPressed: () async => await Get.bottomSheet(
             // FilterWidget(),
             _buildSearchOptions(),
-            backgroundColor: Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
+            backgroundColor:
+                Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
           ),
         )
       ],
@@ -77,7 +78,8 @@ class SearchScreen extends StatelessWidget {
             child: const Icon(Icons.search),
             onTap: () async => await ctrl.search(),
           ),
-          fillColor: Get.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+          fillColor:
+              Get.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
           filled: true,
         ),
         onChanged: (data) => ctrl.queryStringStream.add(data),
@@ -118,7 +120,8 @@ class SearchScreen extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               String postId = postResponse.articleIds[index];
               final post = postResponse.articleRefs[postId]!;
-              final imgUrl = Util.getImgUrl(post.leadData.imageUrl, post.textHtml);
+              final imgUrl =
+                  Util.getImgUrl(post.leadData.imageUrl, post.textHtml);
 
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 4),
@@ -237,7 +240,8 @@ class SearchScreen extends StatelessWidget {
                     await ctrl.search();
                   },
                   icon: const Icon(Icons.done_all, color: Colors.white),
-                  label: const Text('Применить', style: TextStyle(color: Colors.white)),
+                  label: const Text('Применить',
+                      style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     primary: AppColors.primary,
                   ),
@@ -269,7 +273,8 @@ class SearchScreen extends StatelessWidget {
               },
               child: Text(
                 value,
-                style: TextStyle(color: isChosen ? Colors.white : _getButtonTextColor()),
+                style: TextStyle(
+                    color: isChosen ? Colors.white : _getButtonTextColor()),
               )),
         );
       }),
@@ -278,6 +283,8 @@ class SearchScreen extends StatelessWidget {
 
   // todo: utils
   Color _getButtonTextColor() {
-    return _settingsCtrl.settings.value.theme == AppThemeType.dark ? Colors.grey.shade400 : Colors.black;
+    return _settingsCtrl.settings.value.theme == AppThemeType.dark
+        ? Colors.grey.shade400
+        : Colors.black;
   }
 }

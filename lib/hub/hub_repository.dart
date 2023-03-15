@@ -45,7 +45,8 @@ class HubRepository {
       'perPage': perPage.toString(),
     };
 
-    String json = await HttpRequest.get('/hubs/$hubName/authors', params: params);
+    String json =
+        await HttpRequest.get('/hubs/$hubName/authors', params: params);
 
     if (json.isEmpty) {
       return;
@@ -65,7 +66,8 @@ class HubRepository {
       'hubAlias': hubName,
     };
 
-    String json = await HttpRequest.get('/hubs/$hubName/companies', params: params);
+    String json =
+        await HttpRequest.get('/hubs/$hubName/companies', params: params);
 
     if (json.isEmpty) {
       return;

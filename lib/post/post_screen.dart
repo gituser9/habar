@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:habar/comments/comments_screen.dart';
-import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:habar/common/widgets/footer_item_widget.dart';
 import 'package:habar/common/widgets/html_text.dart';
 import 'package:habar/common/widgets/user_info_widget.dart';
@@ -11,15 +10,12 @@ import 'package:habar/post/post_ctrl.dart';
 import 'package:share/share.dart';
 
 class PostScreen extends StatelessWidget {
-  final SettingsCtrl _settingsCtrl = Get.find();
   final PostCtrl _ctrl = Get.find();
 
   PostScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    _ctrl.setPosition(_ctrl.postId.value);
-
     return Scaffold(
       body: Scrollbar(
         controller: _ctrl.scrollCtrl,
@@ -123,7 +119,7 @@ class PostScreen extends StatelessWidget {
             ),
           ),
         ),
-        HtmlText(htmlText: post.textHtml),
+        SelectionArea(child: HtmlText(htmlText: post.textHtml)),
         const Divider(),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24),

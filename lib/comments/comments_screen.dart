@@ -97,7 +97,7 @@ class CommentsScreen extends StatelessWidget {
       shrinkWrap: true,
       itemCount: comments.length,
       itemBuilder: (BuildContext context, int index) {
-        var comment = comments[index];
+        final comment = comments[index];
 
         return _buildCommentTree(comment);
       },
@@ -124,12 +124,26 @@ class CommentsScreen extends StatelessWidget {
           padding: const EdgeInsets.only(top: 16.0),
           child: CommentWidget(comment: comment),
         ),
-        for (final subComment in comment.children)
-          Padding(
-            padding: EdgeInsets.only(left: 40.0 * subComment.level, bottom: 16),
-            child: CommentWidget(comment: subComment),
-          ),
+        for (final subComment in comment.children) ..._buildChild(subComment)
       ],
     );
+  }
+
+  List<Widget> _buildChild(StructuredComment comment) {
+    List<Widget> widgets = [];
+
+    double paddingValue = comment.level > 3 ? 60 : 20.0 * comment.level;
+    final widget = Padding(
+      padding: EdgeInsets.only(left: paddingValue, bottom: 16),
+      child: CommentWidget(comment: comment),
+    );
+
+    widgets.add(widget);
+
+    for (final subComment in comment.children) {
+      widgets.addAll(_buildChild(subComment));
+    }
+
+    return widgets;
   }
 }

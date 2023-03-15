@@ -65,7 +65,10 @@ class HubWidget extends StatelessWidget {
                 title: Html(
                   data: hub.titleHtml,
                   style: {
-                    'body': Style(fontWeight: FontWeight.bold, margin: const EdgeInsets.all(0)),
+                    'body': Style(
+                      fontWeight: FontWeight.bold,
+                      margin: Margins.all(0),
+                    ),
                   },
                 ),
                 subtitle: Column(

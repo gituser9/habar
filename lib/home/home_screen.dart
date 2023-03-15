@@ -81,7 +81,18 @@ class HomeScreen extends StatelessWidget {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text('Habar'),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Habar'),
+          Obx(() => Text(
+                _ctrl.currentFlowName.value.isEmpty
+                    ? 'Все потоки'
+                    : _ctrl.currentFlowName.value,
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+              )),
+        ],
+      ),
       actions: [
         IconButton(
           icon: const Icon(Icons.search),
@@ -90,7 +101,8 @@ class HomeScreen extends StatelessWidget {
           },
         ),
         Obx(() {
-          if (_ctrl.homeMode.value == HomeMode.news || _ctrl.homeMode.value == HomeMode.saved) {
+          if (_ctrl.homeMode.value == HomeMode.news ||
+              _ctrl.homeMode.value == HomeMode.saved) {
             return Container();
           }
 
@@ -98,14 +110,15 @@ class HomeScreen extends StatelessWidget {
             icon: const Icon(Icons.tune),
             onPressed: () async => await Get.bottomSheet(
               FilterWidget(),
-              backgroundColor: Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
+              backgroundColor:
+                  Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
             ),
           );
         }),
         IconButton(
           icon: const Icon(Icons.settings),
           onPressed: () async {
-            await Get.to(() => SettingsScreen());
+            await Get.to(() => const SettingsScreen());
           },
         ),
       ],
@@ -121,7 +134,8 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 4),
-          _buildPostList(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true),
+          _buildPostList(
+              physics: const NeverScrollableScrollPhysics(), shrinkWrap: true),
           const SizedBox(height: 4),
           Material(
             color: Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
@@ -147,12 +161,17 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPostList({ScrollPhysics? physics, ScrollController? scrollCtrl, bool shrinkWrap = false}) {
+  Widget _buildPostList(
+      {ScrollPhysics? physics,
+      ScrollController? scrollCtrl,
+      bool shrinkWrap = false}) {
     return ListView.builder(
         physics: physics,
         shrinkWrap: shrinkWrap,
         controller: scrollCtrl,
-        itemCount: shrinkWrap ? _ctrl.posts.value.articleIds.length : _ctrl.posts.value.articleIds.length + 1,
+        itemCount: shrinkWrap
+            ? _ctrl.posts.value.articleIds.length
+            : _ctrl.posts.value.articleIds.length + 1,
         itemBuilder: (BuildContext context, int index) {
           if (index >= _ctrl.posts.value.articleIds.length) {
             return const SizedBox(
@@ -162,7 +181,8 @@ class HomeScreen extends StatelessWidget {
                 child: SizedBox(
                   height: 16,
                   width: 16,
-                  child: CircularProgressIndicator(color: Colors.grey, strokeWidth: 2),
+                  child: CircularProgressIndicator(
+                      color: Colors.grey, strokeWidth: 2),
                 ),
               ),
             );
@@ -239,6 +259,7 @@ class HomeScreen extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
+            //
             // user info
             Stack(
               children: [
@@ -259,8 +280,14 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 20),
+            // todo: login button
+            /*ElevatedButton(
+              onPressed: () async => await Get.to(() => UserProfileScreen()),
+              child: Text('Войти'),
+            ),
+            const SizedBox(height: 20),*/
 
+            //
             // info flows
             Row(
               children: const [
@@ -273,6 +300,8 @@ class HomeScreen extends StatelessWidget {
                 ),
               ],
             ),
+            //
+            // todo: list view
             ...Constant.postFlows
                 .map((flow) => ListTile(
                       title: Text(flow.title),
@@ -281,9 +310,11 @@ class HomeScreen extends StatelessWidget {
 
                         _ctrl.resetPage();
                         _ctrl.currentFlow = flow.alias;
+                        _ctrl.currentFlowName.value = flow.title;
 
                         if (flow.alias == '') {
-                          await _ctrl.getAll(_settingsCtrl.settings.value.filters!.filterKey);
+                          await _ctrl.getAll(
+                              _settingsCtrl.settings.value.filters!.filterKey);
                           _ctrl.posts.value = PostList.empty();
                         } else {
                           await _ctrl.getFlow(flow.alias, page: 1);

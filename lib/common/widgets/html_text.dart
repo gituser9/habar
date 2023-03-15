@@ -37,13 +37,66 @@ class HtmlText extends StatelessWidget {
               Style(fontStyle: FontStyle.italic, fontSize: FontSize(_settingsCtrl.settings.value.postTextSize - 2)),
           'pre': Style(
             fontStyle: FontStyle.normal,
-            fontSize: const FontSize(14),
+            fontSize: FontSize(14),
           ),
-          'figure': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
-          'img': Style(margin: const EdgeInsets.all(0), padding: const EdgeInsets.all(0)),
+          'figure': Style(
+              margin: Margins(top: Margin.zero(), right: Margin.zero(), bottom: Margin.zero(), left: Margin.zero()),
+              padding: const EdgeInsets.all(0)),
+          'img': Style(
+              margin: Margins(top: Margin.zero(), right: Margin.zero(), bottom: Margin.zero(), left: Margin.zero()),
+              padding: const EdgeInsets.all(0)),
           'a': Style(textDecoration: TextDecoration.none),
         },
-        customRender: {
+        customRenders: {
+          imgMatcher(): CustomRender.widget(widget: (ctx, buildChildren) {
+            String? fullImg = ctx.tree.element?.attributes['data-src'];
+
+            if (fullImg == null || fullImg.isEmpty) {
+              fullImg = ctx.tree.element?.attributes['src'] ?? '';
+            }
+
+            return HtmlImage(imageUrl: fullImg);
+          }),
+          figMatcher(): CustomRender.widget(widget: (ctx, buildChildren) {
+            for (final tag in ctx.tree.children) {
+              if (tag.name == 'img') {
+                String imgUrl = tag.element!.attributes['data-src'] ?? '';
+
+                return HtmlImage(imageUrl: imgUrl);
+              }
+            }
+
+            return Container();
+          }),
+          codeMatcher(): CustomRender.widget(widget: (ctx, buildChildren) {
+            var code = ctx.tree.element?.children.first.innerHtml ?? "";
+            code = code.replaceAll('&nbsp;', ' ');
+            code = code.replaceAll('&lt;', '<');
+            code = code.replaceAll('&gt;', '>');
+            // ctx.tree?.element?.children.first
+            return Scrollbar(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 8,
+                      ),
+                      color: Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Text(code),
+                        //child: child,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          })
+        },
+        /*customRender: {
           'figure': (RenderContext ctx, Widget child) {
             for (final tag in ctx.tree.children) {
               if (tag.name == 'img') {
@@ -68,8 +121,11 @@ class HtmlText extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                      color: Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 8),
+                      color: Get.isDarkMode
+                          ? Colors.grey.shade900
+                          : Colors.grey.shade100,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: child,
@@ -80,7 +136,7 @@ class HtmlText extends StatelessWidget {
               ),
             );
           }
-        },
+        },*/
         onLinkTap: (String? url, RenderContext ctx, Map<String, String> attributes, element) async {
           if (url != null) {
             await Util.launchInternal(url);
@@ -235,4 +291,10 @@ class HtmlText extends StatelessWidget {
 
     return result;
   }
+
+  CustomRenderMatcher imgMatcher() => (context) => context.tree.element?.localName == 'img';
+
+  CustomRenderMatcher figMatcher() => (context) => context.tree.element?.localName == 'figure';
+
+  CustomRenderMatcher codeMatcher() => (context) => context.tree.element?.localName == 'pre';
 }

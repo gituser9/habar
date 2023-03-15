@@ -35,44 +35,50 @@ class CommentsCtrl extends GetxController {
       key: (comment) => comment.id,
       value: (comment) => comment,
     );
-    List<StructuredComment> structComments = [];
-
-    commentList.comments.values
+    List<StructuredComment> structComments = commentList.comments.values
         .where((comment) => comment.level == 0 && comment.timePublished != null)
-        .forEach((comment) {
-      final structComment = StructuredComment(
-        author: comment.author,
-        publishTime: comment.timePublished!,
-        text: comment.message,
-        isPostAuthor: comment.isPostAuthor,
-        level: comment.level,
-        score: comment.score,
-      );
-
-      if (comment.children.isNotEmpty) {
-        structComment.children =
-            comment.children.map((id) => commentsMap[id]).where((c) => c?.timePublished != null).map((habrComment) {
-          final hComment = habrComment!;
-          return StructuredComment(
-            author: hComment.author,
-            publishTime: hComment.timePublished!,
-            text: hComment.message,
-            isPostAuthor: hComment.isPostAuthor,
-            level: hComment.level,
-            score: hComment.score,
-          );
-        }).toList();
-
-        structComment.children
-            .sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
-      }
-
-      structComments.add(structComment);
-    });
+        .map((comment) => convertToStructured(commentsMap, comment))
+        .toList();
 
     structComments
         .sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
 
     return structComments;
+  }
+
+  StructuredComment convertToStructured(Map<String, Comment> commentsMap, Comment comment) {
+    final structComment = StructuredComment.fromComment(comment);
+
+    if (comment.children.isNotEmpty) {
+      structComment.children = getChildren(commentsMap, comment);
+    }
+
+    return structComment;
+  }
+
+  List<StructuredComment> getChildren(Map<String, Comment> commentsMap, Comment comment) {
+    if (comment.children.isEmpty) {
+      return [];
+    }
+
+    List<StructuredComment> list = [];
+
+    for (final id in comment.children) {
+      if (!commentsMap.containsKey(id)) {
+        continue;
+      }
+
+      var child = commentsMap[id]!;
+      var structComment = StructuredComment.fromComment(child);
+
+      if (child.children.isNotEmpty) {
+        var structChildren = getChildren(commentsMap, child);
+        structComment.children = structChildren;
+      }
+
+      list.add(structComment);
+    }
+
+    return list;
   }
 }

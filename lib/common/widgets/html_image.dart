@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart' show md5;
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/controllers/html_text_ctrl.dart';
 import 'package:habar/common/controllers/settings_ctrl.dart';
@@ -75,28 +76,21 @@ class _HtmlImageState extends State<HtmlImage> {
   }
 
   Widget _buildImage(BuildContext context) {
+    bool isSvg = widget.imageUrl.split(".").last == "svg";
+
     return GestureDetector(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Image.network(
-            widget.imageUrl,
-            loadingBuilder: (ctx, child, progress) {
-              if (progress == null) {
-                return child;
-              }
-
-              return Center(
-                child: SizedBox(
-                  width: _defaultWidth,
-                  height: _defaultHeight,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      value: progress.expectedTotalBytes != null ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes! : null,
-                    ),
-                  ),
-                ),
-              );
-            },
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: Get.isDarkMode ? [] : [_getShadow()],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: isSvg ? _getSvgImage() : _getImage(),
+              ),
+            ),
           ),
         ),
         onTap: () async => await _showImage(context, widget.imageUrl));
@@ -233,5 +227,60 @@ class _HtmlImageState extends State<HtmlImage> {
     }
 
     return true;
+  }
+
+  Widget _getSvgImage() {
+    final networkSvg = SvgPicture.network(
+      widget.imageUrl,
+      placeholderBuilder: (BuildContext context) => Container(
+        padding: const EdgeInsets.all(30.0),
+        child: const CircularProgressIndicator(),
+      ),
+    );
+
+    return networkSvg;
+  }
+
+  Widget _getImage() {
+    return Image.network(
+      widget.imageUrl,
+      loadingBuilder: (ctx, child, progress) {
+        if (progress == null) {
+          return child;
+        }
+
+        return Center(
+          child: SizedBox(
+            width: _defaultWidth,
+            height: _defaultHeight,
+            child: Center(
+              child: CircularProgressIndicator(
+                value: progress.expectedTotalBytes != null
+                    ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes!
+                    : null,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  BoxShadow _getShadow() {
+    if (Get.isDarkMode) {
+      return BoxShadow(
+        color: Colors.grey.withOpacity(0.8),
+        spreadRadius: 0,
+        blurRadius: 0,
+        offset: const Offset(0, 0),
+      );
+    } else {
+      return BoxShadow(
+        color: Colors.grey.withOpacity(0.8),
+        spreadRadius: 3,
+        blurRadius: 7,
+        offset: const Offset(0, 3),
+      );
+    }
   }
 }

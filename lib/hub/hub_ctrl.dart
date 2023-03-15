@@ -9,8 +9,10 @@ class HubCtrl extends GetxController {
   late HubRepository _repo;
   final hub = Hub.empty().obs;
   final posts = PostList(articleIds: [], articleRefs: {}, pagesCount: 0).obs;
-  final hubAuthors = HubAuthorList(authorIds: [], authorRefs: {}, pagesCount: 0).obs;
-  final hubCompanies = HubCompanyList(companyIds: [], companyRefs: {}, pagesCount: 0).obs;
+  final hubAuthors =
+      HubAuthorList(authorIds: [], authorRefs: {}, pagesCount: 0).obs;
+  final hubCompanies =
+      HubCompanyList(companyIds: [], companyRefs: {}, pagesCount: 0).obs;
   final page = 1.obs;
   final selectedIndex = 0.obs;
   final isLoading = true.obs;
