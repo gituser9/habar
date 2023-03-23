@@ -120,7 +120,7 @@ class PostScreen extends StatelessWidget {
           ),
         ),
         SelectionArea(child: HtmlText(htmlText: post.textHtml)),
-        const Divider(),
+        Divider(height: 1, color: Colors.grey.shade600),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24),
           child: _buildFooterRow(post),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/http_request.dart';
+import 'package:habar/common/services/pin_hub_service.dart';
 import 'package:habar/common/services/post_position_service.dart';
 import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/services/settings_service.dart';
@@ -16,10 +17,12 @@ class HomeCtrl extends GetxController {
   final _repo = HomeRepo();
   final _savedPostService = Get.put(SavedPostService());
   final _positionService = Get.put(PostPositionService());
+  final _pinHubService = Get.put(PinHubService());
   final SettingsService _settingsService = Get.find();
 
   final posts = PostList.empty().obs;
   final hubs = HubList.empty().obs;
+  final pinnedHubs = HubList.empty().obs;
   final filter = ListFilter.all.obs;
   final flowFilter = FlowFilter().obs;
   final savedPosts = List<Post>.empty().obs;
@@ -32,7 +35,8 @@ class HomeCtrl extends GetxController {
   final postFilter = UserFilter().obs;
   final scrollCtrl = ScrollController();
   final currentFlowName = ''.obs;
-  final bottomOffset = 100;
+  final bottomOffset = 200;
+  final isShowPinnedHub = false.obs;
 
   int _page = 1;
   int _pageCount = 0;
@@ -101,6 +105,8 @@ class HomeCtrl extends GetxController {
 
     await _savedPostService.openBox();
     await _positionService.openBox();
+    await _pinHubService.openBox();
+
     await getAll(filters.filterKey);
   }
 

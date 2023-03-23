@@ -1,7 +1,7 @@
 name: habar
 description: Mobile client for habr.com
 publish_to: "none"
-version: 1.7.1+19
+version: 1.8.0+20
 
 environment:
   sdk: ">=2.18.0 <3.0.0"
@@ -12,7 +12,7 @@ dependencies:
   http: ^0.13.5
   rxdart: ^0.27.7
   flutter_html: ^3.0.0-alpha.6
-  url_launcher: ^6.1.9
+  url_launcher: ^6.1.10
   share: ^2.0.4
   intl: ^0.18.0
   cached_network_image: ^3.2.3
@@ -25,8 +25,8 @@ dependencies:
   hive_flutter: ^1.1.0
   flutter_advanced_segment: ^2.0.2+1
   uri_to_file: ^0.2.0
-  html: ^0.15.1
-  flutter_svg: ^2.0.1
+  html: ^0.15.2
+  flutter_svg: ^2.0.4
 
 dev_dependencies:
   flutter_test:
@@ -39,7 +39,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/logo.png
-  #   - images/a_dot_ham.jpeg
+
   # fonts:
   #   - family: Schyler
   #     fonts:

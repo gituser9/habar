@@ -13,10 +13,11 @@ class HomeRepo {
     Map<String, String> params = {
       'page': page.toString(),
     };
-    params.addAll(listFilterData[filterKey]!);
 
     if (isNews) {
       params['news'] = isNews.toString();
+    } else {
+      params.addAll(listFilterData[filterKey]!);
     }
 
     String json = await HttpRequest.get('/articles', params: params);

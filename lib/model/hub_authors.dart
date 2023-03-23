@@ -18,7 +18,7 @@ class HubAuthorList {
   String toJson() => json.encode(toMap());
 
   factory HubAuthorList.fromMap(Map<String, dynamic> json) => HubAuthorList(
-        pagesCount: json["pagesCount"] == null ? [] : json["pagesCount"],
+        pagesCount: json["pagesCount"] ?? [],
         authorIds: json["authorIds"] == null ? [] : List<String>.from(json["authorIds"].map((x) => x)),
         authorRefs:
             json["authorRefs"] == null ? {} : Map.from(json["authorRefs"]).map((k, v) => MapEntry<String, HubAuthorRef>(k, HubAuthorRef.fromMap(v))),
@@ -46,6 +46,7 @@ class HubAuthorRef extends BaseAuthor {
   final ScoreStats scoreStats;
   final double rating;
   final String id;
+
   // final String login;
   final String alias;
   final String fullname;
@@ -59,12 +60,12 @@ class HubAuthorRef extends BaseAuthor {
   factory HubAuthorRef.fromMap(Map<String, dynamic> json) => HubAuthorRef(
         scoreStats: ScoreStats.fromMap(json["scoreStats"]),
         rating: json["rating"] == null ? 0.0 : json["rating"].toDouble(),
-        id: json["id"] == null ? '' : json["id"],
+        id: json["id"] ?? '',
         // login: json["login"] == null ? '' : json["login"],
-        alias: json["alias"] == null ? '' : json["alias"],
-        fullname: json["fullname"] == null ? '' : json["fullname"],
-        avatarUrl: json["avatarUrl"] == null ? '' : json["avatarUrl"],
-        speciality: json["speciality"] == null ? '' : json["speciality"],
+        alias: json["alias"] ?? '',
+        fullname: json["fullname"] ?? '',
+        avatarUrl: json["avatarUrl"] ?? '',
+        speciality: json["speciality"] ?? '',
       );
 
   Map<String, dynamic> toMap() => {
@@ -97,10 +98,10 @@ class HubShort {
   String toJson() => json.encode(toMap());
 
   factory HubShort.fromMap(Map<String, dynamic> json) => HubShort(
-        id: json["id"] == null ? null : json["id"],
-        alias: json["alias"] == null ? null : json["alias"],
-        title: json["title"] == null ? null : json["title"],
-        titleHtml: json["titleHtml"] == null ? null : json["titleHtml"],
+        id: json["id"],
+        alias: json["alias"],
+        title: json["title"],
+        titleHtml: json["titleHtml"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -126,7 +127,7 @@ class ScoreStats {
 
   factory ScoreStats.fromMap(Map<String, dynamic> json) => ScoreStats(
         score: json["score"] == null ? 0.0 : json["score"].toDouble(),
-        votesCount: json["votesCount"] == null ? 0 : json["votesCount"],
+        votesCount: json["votesCount"] ?? 0,
       );
 
   Map<String, dynamic> toMap() => {

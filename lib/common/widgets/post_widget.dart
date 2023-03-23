@@ -25,6 +25,7 @@ class PostWidget extends StatelessWidget {
   final bool isSaved;
 
   PostWidget({
+    super.key,
     required this.article,
     required this.imageUrl,
     required this.isSaved,
@@ -32,24 +33,17 @@ class PostWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String imgUrl = Util.getImgUrl(imageUrl, article.textHtml);
-
-    return _buildBody(imgUrl);
+    return _buildBody();
   }
 
-  Widget _buildBody(String imgUrl) {
+  Widget _buildBody() {
     return InkWell(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
-          color: _settingsCtrl.settings.value.theme == AppThemeType.dark
-              ? Colors.grey[850]
-              : Colors.white,
+          color: _settingsCtrl.settings.value.theme == AppThemeType.dark ? Colors.grey[850] : Colors.white,
           borderRadius: BorderRadius.circular(4.0),
-          border: Border.all(
-              color: _settingsCtrl.settings.value.theme == AppThemeType.dark
-                  ? Colors.grey.shade700
-                  : Colors.grey.shade300),
+          border: Border.all(color: _settingsCtrl.settings.value.theme == AppThemeType.dark ? Colors.grey.shade700 : Colors.grey.shade300),
         ),
         child: Column(
           children: [
@@ -58,44 +52,29 @@ class PostWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  UserInfoWidget(
-                      author: article.author,
-                      publishTime: article.timePublished),
+                  UserInfoWidget(author: article.author, publishTime: article.timePublished),
                   _buildAction(),
                 ],
               ),
             ),
-            if (imgUrl.isNotEmpty && _settingsCtrl.settings.value.isShowImage)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Image.network(imgUrl),
-              ),
+            _buildImage(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Html(
-                  data: article.titleHtml,
-                  shrinkWrap: true,
-                  style: {
-                    'body': Style(
-                      fontSize: FontSize(18),
-                      fontWeight: FontWeight.bold,
-                    ),
-                    'blockquote': Style(
-                      fontStyle: FontStyle.italic,
-                      fontSize: FontSize(16),
-                    ),
-                  },
-                ),
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: _buildTitle(),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+              child: Row(
+                children: [
+                  _buildComplexity(),
+                  SizedBox(width: article.complexity == null || article.complexity!.isEmpty ? 0 : 16),
+                  _buildReadTime(),
+                ],
               ),
             ),
-            if (article.leadData.textHtml.isNotEmpty &&
-                _settingsCtrl.settings.value.isShowPostPreview)
-              _buildTextPreview(),
+            _buildTextPreview(),
             Padding(
-              padding:
-                  const EdgeInsets.only(top: 16, bottom: 8, left: 8, right: 8),
+              padding: const EdgeInsets.only(top: 16, bottom: 8, left: 8, right: 8),
               child: _buildFooterRow(),
             ),
           ],
@@ -107,7 +86,52 @@ class PostWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildImage() {
+    if (!_settingsCtrl.settings.value.isShowImage) {
+      return Container();
+    }
+
+    String imgUrl = Util.getImgUrl(imageUrl, article.textHtml);
+
+    if (imgUrl.isEmpty) {
+      return Container();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Image.network(imgUrl),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Html(
+        data: article.titleHtml,
+        shrinkWrap: true,
+        style: {
+          'body': Style(
+            fontSize: FontSize(18),
+            fontWeight: FontWeight.bold,
+          ),
+          'blockquote': Style(
+            fontStyle: FontStyle.italic,
+            fontSize: FontSize(16),
+          ),
+        },
+      ),
+    );
+  }
+
   Widget _buildTextPreview() {
+    if (!_settingsCtrl.settings.value.isShowPostPreview && article.leadData.textHtml.isNotEmpty) {
+      return Container();
+    }
+
+    if (article.leadData.textHtml.isEmpty) {
+      return Container();
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Html(
@@ -115,20 +139,10 @@ class PostWidget extends StatelessWidget {
           shrinkWrap: true,
           style: {
             'body': Style(fontSize: FontSize(16)),
-            'blockquote':
-                Style(fontStyle: FontStyle.italic, fontSize: FontSize(16)),
+            'blockquote': Style(fontStyle: FontStyle.italic, fontSize: FontSize(16)),
             'a': Style(textDecoration: TextDecoration.none),
           },
-          /*customRender: {
-            'figure': (RenderContext ctx, Widget child) {
-              return Container();
-            },
-            'img': (RenderContext ctx, Widget child) {
-              return Container();
-            },
-          },*/
-          onLinkTap: (String? url, RenderContext ctx,
-              Map<String, String> attributes, element) async {
+          onLinkTap: (String? url, RenderContext ctx, Map<String, String> attributes, element) async {
             if (url != null) {
               await Util.launchURL(url);
             }
@@ -146,8 +160,7 @@ class PostWidget extends StatelessWidget {
               child: SizedBox(
                 height: 16,
                 width: 16,
-                child: CircularProgressIndicator(
-                    color: Colors.grey, strokeWidth: 2),
+                child: CircularProgressIndicator(color: Colors.grey, strokeWidth: 2),
               ),
             );
           }
@@ -195,18 +208,17 @@ class PostWidget extends StatelessWidget {
         ),
       ],
     );
-    
   }
 
   Widget _buildFooterRow() {
-    Color raitingColor;
+    Color ratingColor;
 
     if (article.statistics.votesCount > 0) {
-      raitingColor = Colors.green.shade800;
+      ratingColor = Colors.green.shade800;
     } else if (article.statistics.votesCount < 0) {
-      raitingColor = Colors.red;
+      ratingColor = Colors.red;
     } else {
-      raitingColor = Colors.grey.shade600;
+      ratingColor = Colors.grey.shade600;
     }
 
     return Row(
@@ -215,23 +227,19 @@ class PostWidget extends StatelessWidget {
         FooterItemWidget(
           icon: Icons.thumbs_up_down,
           value: article.statistics.votesCount,
-          textColor: raitingColor,
+          textColor: ratingColor,
           isMinus: article.statistics.votesCount < 0,
           isPlus: article.statistics.votesCount > 0,
         ),
-        FooterItemWidget(
-            icon: Icons.visibility, value: article.statistics.readingCount),
-        FooterItemWidget(
-            icon: Icons.bookmark, value: article.statistics.favoritesCount),
+        FooterItemWidget(icon: Icons.visibility, value: article.statistics.readingCount),
+        FooterItemWidget(icon: Icons.bookmark, value: article.statistics.favoritesCount),
         Row(
           children: [
             IconButton(
               splashRadius: 25,
               alignment: Alignment.centerRight,
-              icon: Icon(Icons.mode_comment_rounded,
-                  color: AppColors.actionIcon, size: 18),
-              onPressed: () async =>
-                  Get.to(() => CommentsScreen(post: article)),
+              icon: Icon(Icons.mode_comment_rounded, color: AppColors.actionIcon, size: 18),
+              onPressed: () async => Get.to(() => CommentsScreen(post: article)),
             ),
             Text(
               article.statistics.commentsCount.toString(),
@@ -243,6 +251,58 @@ class PostWidget extends StatelessWidget {
             ),
           ],
         ),
+      ],
+    );
+  }
+
+  Widget _buildComplexity() {
+    if (article.complexity == null || article.complexity!.isEmpty) {
+      return Container();
+    }
+
+    Color clr;
+    String title;
+    IconData iconData;
+
+    switch (article.complexity) {
+      case 'low':
+        clr = Colors.green;
+        title = 'Простой';
+        iconData = Icons.density_large_outlined;
+        break;
+      case 'medium':
+        clr = Colors.blue;
+        title = 'Средний';
+        iconData = Icons.density_medium_outlined;
+        break;
+      case 'high':
+        clr = Colors.red;
+        title = 'Сложный';
+        iconData = Icons.density_small_outlined;
+        break;
+      default:
+        return Container();
+    }
+
+    return Row(
+      children: [
+        Icon(iconData, color: clr, size: 18),
+        const SizedBox(width: 4),
+        Text(title, style: TextStyle(color: clr, fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+
+  Widget _buildReadTime() {
+    if (article.readingTime == null || article.readingTime! <= 0) {
+      return Container();
+    }
+
+    return Row(
+      children: [
+        const Icon(Icons.schedule, color: Colors.grey, size: 20),
+        const SizedBox(width: 4),
+        Text('${article.readingTime} мин', style: const TextStyle(fontWeight: FontWeight.bold)),
       ],
     );
   }

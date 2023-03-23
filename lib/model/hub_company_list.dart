@@ -20,7 +20,7 @@ class HubCompanyList {
   String toJson() => json.encode(toMap());
 
   factory HubCompanyList.fromMap(Map<String, dynamic> json) => HubCompanyList(
-        pagesCount: json["pagesCount"] == null ? 0 : json["pagesCount"],
+        pagesCount: json["pagesCount"] ?? 0,
         companyIds: json["companyIds"] == null ? [] : List<String>.from(json["companyIds"].map((x) => x)),
         companyRefs: json["companyRefs"] == null
             ? {}
@@ -56,11 +56,11 @@ class HubCompanyRef {
   String toJson() => json.encode(toMap());
 
   factory HubCompanyRef.fromMap(Map<String, dynamic> json) => HubCompanyRef(
-        id: json["id"] == null ? '' : json["id"],
-        alias: json["alias"] == null ? '' : json["alias"],
-        titleHtml: json["titleHtml"] == null ? '' : json["titleHtml"],
-        descriptionHtml: json["descriptionHtml"] == null ? '' : json["descriptionHtml"],
-        imageUrl: json["imageUrl"] == null ? '' : json["imageUrl"],
+        id: json["id"] ?? '',
+        alias: json["alias"] ?? '',
+        titleHtml: json["titleHtml"] ?? '',
+        descriptionHtml: json["descriptionHtml"] ?? '',
+        imageUrl: json["imageUrl"] ?? '',
         statistics: Statistics.fromMap(json["statistics"]),
       );
 
@@ -92,7 +92,7 @@ class Statistics {
   String toJson() => json.encode(toMap());
 
   factory Statistics.fromMap(Map<String, dynamic> json) => Statistics(
-        subscribersCount: json["subscribersCount"] == null ? null : json["subscribersCount"],
+        subscribersCount: json["subscribersCount"],
         rating: json["rating"] == null ? null : json["rating"].toDouble(),
       );
 

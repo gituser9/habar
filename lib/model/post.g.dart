@@ -31,13 +31,15 @@ class PostAdapter extends TypeAdapter<Post> {
       status: fields[11] as String,
       tags: (fields[10] as List).cast<Tag>(),
       leadData: fields[13] as LeadData,
+      readingTime: fields[14] as int?,
+      complexity: fields[15] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Post obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -65,7 +67,11 @@ class PostAdapter extends TypeAdapter<Post> {
       ..writeByte(12)
       ..write(obj.textHtml)
       ..writeByte(13)
-      ..write(obj.leadData);
+      ..write(obj.leadData)
+      ..writeByte(14)
+      ..write(obj.readingTime)
+      ..writeByte(15)
+      ..write(obj.complexity);
   }
 
   @override

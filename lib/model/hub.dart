@@ -31,11 +31,11 @@ class Hub {
   String toJson() => json.encode(toMap());
 
   factory Hub.fromMap(Map<String, dynamic> json) => Hub(
-        alias: json["alias"] == null ? null : json["alias"],
-        titleHtml: json["titleHtml"] == null ? null : json["titleHtml"],
-        descriptionHtml: json["descriptionHtml"] == null ? null : json["descriptionHtml"],
-        fullDescriptionHtml: json["fullDescriptionHtml"] == null ? null : json["fullDescriptionHtml"],
-        imageUrl: json["imageUrl"] == null ? null : json["imageUrl"],
+        alias: json["alias"],
+        titleHtml: json["titleHtml"],
+        descriptionHtml: json["descriptionHtml"],
+        fullDescriptionHtml: json["fullDescriptionHtml"],
+        imageUrl: json["imageUrl"],
         statistics: Statistics.fromMap(json["statistics"]),
       );
 
@@ -74,10 +74,10 @@ class Statistics {
   String toJson() => json.encode(toMap());
 
   factory Statistics.fromMap(Map<String, dynamic> json) => Statistics(
-        subscribersCount: json["subscribersCount"] == null ? null : json["subscribersCount"],
+        subscribersCount: json["subscribersCount"],
         rating: json["rating"] == null ? null : json["rating"].toDouble(),
-        authorsCount: json["authorsCount"] == null ? null : json["authorsCount"],
-        postsCount: json["postsCount"] == null ? null : json["postsCount"],
+        authorsCount: json["authorsCount"],
+        postsCount: json["postsCount"],
       );
 
   Map<String, dynamic> toMap() => {

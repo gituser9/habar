@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:habar/model/filter.dart';
+import 'package:habar/model/pin_hub.dart';
 import 'package:habar/model/post.dart';
 import 'package:habar/model/post_position.dart';
 import 'package:habar/model/settings.dart';
@@ -9,6 +10,7 @@ class HiveService extends GetxService {
   late Box postBox;
   late Box postPositionBox;
   late Box settingsBox;
+  late Box pinHubBox;
 
   @override
   void onInit() async {
@@ -29,6 +31,7 @@ class HiveService extends GetxService {
     Hive.registerAdapter(FilterSortTypeAdapter());
     Hive.registerAdapter(ListFilterAdapter());
     Hive.registerAdapter(ListHubFilterAdapter());
+    Hive.registerAdapter(PinHubAdapter());
   }
 
   @override
@@ -50,6 +53,9 @@ class HiveService extends GetxService {
         break;
       case 'post_position':
         postPositionBox = await Hive.openBox(boxName);
+        break;
+      case 'pin_hub':
+        pinHubBox = await Hive.openBox(boxName);
         break;
     }
   }
@@ -74,13 +80,6 @@ class HiveService extends GetxService {
     }
 
     List<T> result = maps.values.map((e) => e as T).toList();
-
-    // maps.values.forEach((value) {
-    //   final item = value as T;
-    //   result.add(item);
-    // });
-
-    // for (final ite)
 
     return result;
   }

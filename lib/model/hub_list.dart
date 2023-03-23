@@ -18,7 +18,7 @@ class HubList {
   String toJson() => json.encode(toMap());
 
   factory HubList.fromMap(Map<String, dynamic> json) => HubList(
-        pagesCount: json["pagesCount"] == null ? 0 : json["pagesCount"],
+        pagesCount: json["pagesCount"] ?? 0,
         hubIds: json["hubIds"] == null ? [] : List<String>.from(json["hubIds"].map((x) => x)),
         hubRefs: json["hubRefs"] == null ? {} : Map.from(json["hubRefs"]).map((k, v) => MapEntry<String, HubRef>(k, HubRef.fromMap(v))),
       );
@@ -45,19 +45,19 @@ class HubRef {
   final String titleHtml;
   final String imageUrl;
   final String descriptionHtml;
-  final Statistics statistics;
+  Statistics statistics;
 
   factory HubRef.fromJson(String str) => HubRef.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory HubRef.fromMap(Map<String, dynamic> json) => HubRef(
-        id: json["id"] == null ? null : json["id"],
-        alias: json["alias"] == null ? null : json["alias"],
-        titleHtml: json["titleHtml"] == null ? null : json["titleHtml"],
-        imageUrl: json["imageUrl"] == null ? '' : json["imageUrl"],
-        descriptionHtml: json["descriptionHtml"] == null ? '' : json["descriptionHtml"],
-        statistics: Statistics.fromMap(json["statistics"]),
+        id: json["id"],
+        alias: json["alias"],
+        titleHtml: json["titleHtml"],
+        imageUrl: json["imageUrl"] ?? '',
+        descriptionHtml: json["descriptionHtml"] ?? '',
+        statistics: json["statistics"] == null ? Statistics.empty() : Statistics.fromMap(json["statistics"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -88,10 +88,10 @@ class Statistics {
   String toJson() => json.encode(toMap());
 
   factory Statistics.fromMap(Map<String, dynamic> json) => Statistics(
-        subscribersCount: json["subscribersCount"] == null ? 0 : json["subscribersCount"],
+        subscribersCount: json["subscribersCount"] ?? 0,
         rating: json["rating"] == null ? 0.0 : json["rating"].toDouble(),
-        authorsCount: json["authorsCount"] == null ? 0 : json["authorsCount"],
-        postsCount: json["postsCount"] == null ? 0 : json["postsCount"],
+        authorsCount: json["authorsCount"] ?? 0,
+        postsCount: json["postsCount"] ?? 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -100,4 +100,6 @@ class Statistics {
         "authorsCount": authorsCount,
         "postsCount": postsCount,
       };
+
+  factory Statistics.empty() => Statistics(subscribersCount: 0, rating: 0, authorsCount: 0, postsCount: 0);
 }

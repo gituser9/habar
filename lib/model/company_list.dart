@@ -48,15 +48,15 @@ class Company {
   String toJson() => json.encode(toMap());
 
   factory Company.fromMap(Map<String, dynamic> json) => Company(
-        id: json["id"] == null ? 0 : json["id"],
-        alias: json["alias"] == null ? '' : json["alias"],
-        name: json["name"] == null ? '' : json["name"],
-        specializm: json["specializm"] == null ? '' : json["specializm"],
-        description: json["description"] == null ? '' : json["description"],
-        url: json["url"] == null ? '' : json["url"],
-        fansCount: json["fans_count"] == null ? 0 : json["fans_count"],
-        icon: json["icon"] == null ? '' : json["icon"],
-        path: json["path"] == null ? '' : json["path"],
+        id: json["id"] ?? 0,
+        alias: json["alias"] ?? '',
+        name: json["name"] ?? '',
+        specializm: json["specializm"] ?? '',
+        description: json["description"] ?? '',
+        url: json["url"] ?? '',
+        fansCount: json["fans_count"] ?? 0,
+        icon: json["icon"] ?? '',
+        path: json["path"] ?? '',
       );
 
   Map<String, dynamic> toMap() => {
