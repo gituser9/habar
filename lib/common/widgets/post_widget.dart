@@ -9,6 +9,7 @@ import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/footer_item_widget.dart';
 import 'package:habar/common/widgets/user_info_widget.dart';
+import 'package:habar/home/home_ctrl.dart';
 import 'package:habar/model/post.dart';
 import 'package:habar/model/settings.dart';
 import 'package:habar/post/post_ctrl.dart';
@@ -17,6 +18,7 @@ import 'package:share/share.dart';
 class PostWidget extends StatelessWidget {
   final SettingsCtrl _settingsCtrl = Get.find();
   final SavedPostService _savedPostService = Get.find();
+  final HomeCtrl _homeCtrl = Get.find();
   final _positionService = Get.put(PostPositionService());
   final _postCtrl = Get.put(PostCtrl());
 
@@ -175,10 +177,14 @@ class PostWidget extends StatelessWidget {
                 msg = 'удален';
                 await _savedPostService.deleteById(article.id);
                 await _positionService.deleteById(article.id);
+
+                _homeCtrl.savedPosts.removeWhere((p) => p.id == article.id);
               } else {
                 msg = 'сохранен';
                 await _postCtrl.getByID(article.id);
                 await _savedPostService.save(_postCtrl.post.value);
+
+                _homeCtrl.savedPosts.add(_postCtrl.post.value);
               }
 
               _postCtrl.savedIds.remove(article.id);
@@ -213,9 +219,9 @@ class PostWidget extends StatelessWidget {
   Widget _buildFooterRow() {
     Color ratingColor;
 
-    if (article.statistics.votesCount > 0) {
+    if (article.statistics.score > 0) {
       ratingColor = Colors.green.shade800;
-    } else if (article.statistics.votesCount < 0) {
+    } else if (article.statistics.score < 0) {
       ratingColor = Colors.red;
     } else {
       ratingColor = Colors.grey.shade600;
@@ -226,10 +232,10 @@ class PostWidget extends StatelessWidget {
       children: [
         FooterItemWidget(
           icon: Icons.thumbs_up_down,
-          value: article.statistics.votesCount,
+          value: article.statistics.score,
           textColor: ratingColor,
-          isMinus: article.statistics.votesCount < 0,
-          isPlus: article.statistics.votesCount > 0,
+          isMinus: article.statistics.score < 0,
+          isPlus: article.statistics.score > 0,
         ),
         FooterItemWidget(icon: Icons.visibility, value: article.statistics.readingCount),
         FooterItemWidget(icon: Icons.bookmark, value: article.statistics.favoritesCount),

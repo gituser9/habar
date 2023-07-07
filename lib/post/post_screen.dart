@@ -36,71 +36,10 @@ class PostScreen extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 30),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              UserInfoWidget(publishTime: post.timePublished, author: post.author),
-              Row(
-                children: [
-                  Obx(() {
-                    if (_ctrl.savedIds.contains(post.id)) {
-                      return const Padding(
-                        padding: EdgeInsets.only(right: 10.0),
-                        child: SizedBox(
-                          height: 16,
-                          width: 16,
-                          child: CircularProgressIndicator(color: Colors.grey, strokeWidth: 2),
-                        ),
-                      );
-                    }
+        // header
+        _buildHeader(post),
 
-                    return IconButton(
-                      icon: Icon(_ctrl.isSaved.value ? Icons.delete : Icons.save, color: Colors.grey),
-                      onPressed: () async {
-                        _ctrl.savedIds.add(post.id);
-                        String msg = '';
-
-                        if (_ctrl.isSaved.value) {
-                          msg = 'удален';
-                          await _ctrl.delete();
-                        } else {
-                          msg = 'сохранен';
-                          await _ctrl.save();
-                        }
-
-                        _ctrl.savedIds.remove(post.id);
-                        final snackBar = SnackBar(
-                          content: Text('Пост успешно $msg',
-                              style: TextStyle(
-                                color: Get.isDarkMode ? Colors.white : null,
-                              )),
-                          backgroundColor: Get.isDarkMode ? Colors.black : null,
-                        );
-                        ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
-                      },
-                    );
-                  }),
-                  IconButton(
-                    splashRadius: 20,
-                    icon: const Icon(
-                      Icons.share,
-                      color: Colors.grey,
-                      size: 20,
-                    ),
-                    onPressed: () async {
-                      await Share.share(
-                        'https://m.habr.com/ru/post/${post.id}/',
-                        subject: post.titleHtml,
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+        // hubs
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Align(
@@ -109,6 +48,8 @@ class PostScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
+
+        // post
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Align(
@@ -121,87 +62,168 @@ class PostScreen extends StatelessWidget {
         ),
         SelectionArea(child: HtmlText(htmlText: post.textHtml)),
         Divider(height: 1, color: Colors.grey.shade600),
+
+        // footer
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24),
           child: _buildFooterRow(post),
         ),
-        if (_ctrl.isSaved.isTrue)
-          Container(
-            color: Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade200,
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              color: Get.isDarkMode ? Colors.grey.shade800 : Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: TextButton.icon(
-                      onPressed: () async {
-                        await _ctrl.delete();
-                        _ctrl.savedIds.remove(post.id);
-                        _ctrl.isSaved.value = false;
-
-                        final snackBar = SnackBar(
-                          content: Text('Пост успешно удален',
-                              style: TextStyle(
-                                color: Get.isDarkMode ? Colors.white : null,
-                              )),
-                          backgroundColor: Get.isDarkMode ? Colors.black : null,
-                        );
-                        ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
-                      },
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.grey,
-                      ),
-                      label: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [Text('Удалить')],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        Container(
-          color: Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade200,
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            color: Get.isDarkMode ? Colors.grey.shade800 : Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: () async {
-                      await Get.to(() => CommentsScreen(post: post));
-                    },
-                    icon: const Icon(
-                      Icons.mode_comment_rounded,
-                      color: Colors.grey,
-                    ),
-                    label: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text('Комментарии'),
-                        if (post.statistics.commentsCount > 0)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(
-                              ' ${post.statistics.commentsCount}',
-                              style: TextStyle(color: Colors.blue.shade600),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
+        _deleteButton(post),
+        _buildCommentButton(post),
       ],
+    );
+  }
+
+  Container _deleteButton(Post post) {
+    if (!_ctrl.isSaved.isTrue) {
+      return Container();
+    }
+
+    return Container(
+      color: Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade200,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        color: Get.isDarkMode ? Colors.grey.shade800 : Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: TextButton.icon(
+                onPressed: () async {
+                  await _ctrl.delete();
+                  _ctrl.isSaved.value = false;
+
+                  final snackBar = SnackBar(
+                    content: Text('Пост успешно удален',
+                        style: TextStyle(
+                          color: Get.isDarkMode ? Colors.white : null,
+                        )),
+                    backgroundColor: Get.isDarkMode ? Colors.black : null,
+                  );
+                  ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
+                },
+                icon: const Icon(
+                  Icons.delete,
+                  color: Colors.grey,
+                ),
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [Text('Удалить')],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _buildHeader(Post post) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          UserInfoWidget(publishTime: post.timePublished, author: post.author),
+          Row(
+            children: [
+              Obx(() {
+                if (_ctrl.savedIds.contains(post.id)) {
+                  return const Padding(
+                    padding: EdgeInsets.only(right: 10.0),
+                    child: SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(color: Colors.grey, strokeWidth: 2),
+                    ),
+                  );
+                }
+
+                return IconButton(
+                  icon: Icon(_ctrl.isSaved.value ? Icons.delete : Icons.save, color: Colors.grey),
+                  onPressed: () async {
+                    String msg = '';
+
+                    if (_ctrl.isSaved.value) {
+                      msg = 'удален';
+                      await _ctrl.delete();
+                    } else {
+                      msg = 'сохранен';
+                      await _ctrl.save();
+                    }
+
+                    final snackBar = SnackBar(
+                      content: Text('Пост успешно $msg',
+                          style: TextStyle(
+                            color: Get.isDarkMode ? Colors.white : null,
+                          )),
+                      backgroundColor: Get.isDarkMode ? Colors.black : null,
+                    );
+                    ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
+                  },
+                );
+              }),
+              IconButton(
+                splashRadius: 20,
+                icon: const Icon(
+                  Icons.share,
+                  color: Colors.grey,
+                  size: 20,
+                ),
+                onPressed: () async {
+                  await Share.share(
+                    'https://m.habr.com/ru/post/${post.id}/',
+                    subject: post.titleHtml,
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container _buildCommentButton(Post post) {
+    return Container(
+      color: Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade200,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        color: Get.isDarkMode ? Colors.grey.shade800 : Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: TextButton.icon(
+                onPressed: () async {
+                  await Get.to(() => CommentsScreen(post: post));
+                },
+                icon: const Icon(
+                  Icons.mode_comment_rounded,
+                  color: Colors.grey,
+                ),
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Комментарии',
+                      style: TextStyle(color: Get.isDarkMode ? Colors.grey.shade300 : Colors.grey.shade900),
+                    ),
+                    if (post.statistics.commentsCount > 0)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          ' ${post.statistics.commentsCount}',
+                          style: TextStyle(color: Colors.blue.shade600),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 

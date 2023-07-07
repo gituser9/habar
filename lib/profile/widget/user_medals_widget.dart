@@ -18,8 +18,8 @@ class UserMedalsWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
                   child: Text(
                     'Значки',
                     style: Constant.profileHeadersStyle,
@@ -30,15 +30,15 @@ class UserMedalsWidget extends StatelessWidget {
                     for (final medal in profile.data.badges)
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(medal.title, style: const TextStyle(color: Colors.blue)),
-                        ),
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: Colors.blue,
                           ),
                           borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(medal.title, style: const TextStyle(color: Colors.blue)),
                         ),
                       ),
                   ],

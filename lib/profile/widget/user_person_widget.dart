@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/model/profile.dart';
@@ -55,8 +53,8 @@ class UserPersonWidget extends StatelessWidget {
   }
 
   Widget _buildStatusRow() {
-    const labelStyle = const TextStyle(color: Colors.grey, fontSize: 12);
-    const valueStyle = const TextStyle(fontWeight: FontWeight.bold, fontSize: 20);
+    const labelStyle = TextStyle(color: Colors.grey, fontSize: 12);
+    const valueStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 20);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),

@@ -11,51 +11,48 @@ class HubInfoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16),
-      child: Container(
-        // color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: CachedNetworkImage(
-                    imageUrl: 'https:' + hub.imageUrl,
-                    placeholder: (context, url) => const Icon(Icons.image),
-                    errorWidget: (context, url, error) => const Icon(Icons.image),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: CachedNetworkImage(
+                  imageUrl: 'https:' + hub.imageUrl,
+                  placeholder: (context, url) => const Icon(Icons.image),
+                  errorWidget: (context, url, error) => const Icon(Icons.image),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    hub.statistics.rating.toString(),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      hub.statistics.rating.toString(),
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                    Text(
-                      'Рейтинг',
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              hub.titleHtml,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(
-              hub.descriptionHtml,
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            const SizedBox(height: 16),
-          ],
-        ),
+                  const Text(
+                    'Рейтинг',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            hub.titleHtml,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Text(
+            hub.descriptionHtml,
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+          const SizedBox(height: 16),
+        ],
       ),
     );
   }

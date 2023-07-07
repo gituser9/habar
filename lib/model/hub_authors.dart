@@ -45,9 +45,9 @@ class HubAuthorRef extends BaseAuthor {
 
   final ScoreStats scoreStats;
   final double rating;
-  final String id;
 
   // final String login;
+  final String id;
   final String alias;
   final String fullname;
   final String avatarUrl;

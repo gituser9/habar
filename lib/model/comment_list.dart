@@ -25,7 +25,7 @@ class CommentList {
 
   Map<String, dynamic> toMap() => {
         "comments": Map.from(comments).map((k, v) => MapEntry<String, dynamic>(k, v.toMap())),
-        "commentAccess": commentAccess == null ? null : commentAccess?.toMap(),
+        "commentAccess": commentAccess?.toMap(),
         "lastCommentTimestamp": lastCommentTimestamp,
       };
 }
@@ -52,7 +52,7 @@ class CommentAccess {
       );
 
   Map<String, dynamic> toMap() => {
-        "isCanComment": isCanComment == null ? null : isCanComment,
+        "isCanComment": isCanComment,
         "cantCommentReasonKey": cantCommentReasonKey,
         "cantCommentReason": cantCommentReason,
       };

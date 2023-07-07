@@ -185,7 +185,7 @@ class Author {
 
   factory Author.fromMap(Map<String, dynamic> json) => Author(
         scoreStats: json["scoreStats"] == null ? ScoreStats.empty() : ScoreStats.fromMap(json["scoreStats"]),
-        id: json["id"] ?? 0,
+        id: json["id"] ?? '0',
         login: json["login"] ?? '',
         alias: json["alias"] ?? '',
         fullname: json["fullname"] ?? '',

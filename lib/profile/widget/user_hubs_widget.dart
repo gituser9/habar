@@ -30,8 +30,8 @@ class UserHubsWidget extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
-            children: [
-              const Text('Состоит в хабах', style: Constant.profileHeadersStyle),
+            children: const [
+              Text('Состоит в хабах', style: Constant.profileHeadersStyle),
             ],
           ),
         ),
@@ -46,16 +46,16 @@ class UserHubsWidget extends StatelessWidget {
                   },
                   child: Container(
                     margin: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade100,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
                       child: Text(
                         hub.titleHtml,
-                        style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+                        style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade100,
-                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                 ),

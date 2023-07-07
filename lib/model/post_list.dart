@@ -87,7 +87,7 @@ class ArticleRef extends BasePost {
   String toJson() => json.encode(toMap());
 
   factory ArticleRef.fromMap(Map<String, dynamic> json) => ArticleRef(
-        id: json["id"] == null ? 0 : json["id"],
+        id: json["id"] ?? 0,
         timePublished: DateTime.parse(json["timePublished"]),
         isCorporative: json["isCorporative"] ?? false,
         titleHtml: json["titleHtml"] ?? '',
@@ -321,6 +321,6 @@ class EnumValues<T> {
   EnumValues(this.map);
 
   Map<T, String> reverse() {
-    return map.map((k, v) => new MapEntry(v, k));
+    return map.map((k, v) => MapEntry(v, k));
   }
 }

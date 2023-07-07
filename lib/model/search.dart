@@ -6,6 +6,6 @@ enum SearchFilter {
 
 extension ParseToString on SearchFilter {
   String toShortString() {
-    return this.toString().split('.').last;
+    return toString().split('.').last;
   }
 }

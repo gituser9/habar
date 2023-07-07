@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:habar/common/widgets/footer_item_widget.dart';
 import 'package:habar/common/widgets/html_text.dart';
 import 'package:habar/common/widgets/user_info_widget.dart';
 import 'package:habar/model/comment.dart';
 
 class CommentWidget extends StatelessWidget {
-  final SettingsCtrl _settingsCtrl = Get.find();
   final StructuredComment comment;
 
-  CommentWidget({super.key,
+  const CommentWidget({
+    super.key,
     required this.comment,
   });
 
@@ -58,5 +56,4 @@ class CommentWidget extends StatelessWidget {
       ],
     );
   }
-
 }

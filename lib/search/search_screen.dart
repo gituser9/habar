@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:habar/common/controllers/hide_bottombar_ctrl.dart';
 import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:habar/common/costants.dart';
 import 'package:habar/common/services/saved_post_service.dart';
@@ -20,6 +21,7 @@ class SearchScreen extends StatelessWidget {
   final ctrl = Get.put(SearchCtrl());
   final SettingsCtrl _settingsCtrl = Get.find();
   final SavedPostService _savedPostService = Get.find();
+  final _bottomCtrl = HideBottomBarCtrl();
 
   SearchScreen({Key? key}) : super(key: key) {
     ctrl.posts.value = SearchPostResponse.empty();
@@ -32,6 +34,7 @@ class SearchScreen extends StatelessWidget {
       appBar: _buildAppBar(context),
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: _bottomCtrl.scrollCtrl,
           child: Column(
             children: [
               _getSearchField(),
@@ -54,8 +57,7 @@ class SearchScreen extends StatelessWidget {
           onPressed: () async => await Get.bottomSheet(
             // FilterWidget(),
             _buildSearchOptions(),
-            backgroundColor:
-                Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
+            backgroundColor: Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
           ),
         )
       ],
@@ -78,8 +80,7 @@ class SearchScreen extends StatelessWidget {
             child: const Icon(Icons.search),
             onTap: () async => await ctrl.search(),
           ),
-          fillColor:
-              Get.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+          fillColor: Get.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
           filled: true,
         ),
         onChanged: (data) => ctrl.queryStringStream.add(data),
@@ -106,7 +107,7 @@ class SearchScreen extends StatelessWidget {
 
         return _buildUserList(ctrl.users.value);
       default:
-        return NoDataWidget();
+        return const NoDataWidget();
     }
   }
 
@@ -120,8 +121,7 @@ class SearchScreen extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               String postId = postResponse.articleIds[index];
               final post = postResponse.articleRefs[postId]!;
-              final imgUrl =
-                  Util.getImgUrl(post.leadData.imageUrl, post.textHtml);
+              final imgUrl = Util.getImgUrl(post.leadData.imageUrl, post.textHtml);
 
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 4),
@@ -201,21 +201,24 @@ class SearchScreen extends StatelessWidget {
   }
 
   Widget _getBottomBar(int index) {
-    return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.article),
-          label: 'Публикации',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Пользователи',
-        ),
-      ],
-      currentIndex: index,
-      unselectedLabelStyle: const TextStyle(color: Colors.grey),
-      // fixedColor: Colors.blue,
-      onTap: (int newIndex) => ctrl.selectedIndex.value = newIndex,
+    return AnimatedContainer(
+      height: _bottomCtrl.isBottomBarVisible.value ? kBottomNavigationBarHeight + 20 : 0,
+      duration: _bottomCtrl.duration,
+      curve: Curves.fastLinearToSlowEaseIn,
+      child: NavigationBar(
+        destinations: const <NavigationDestination>[
+          NavigationDestination(
+            icon: Icon(Icons.article),
+            label: 'Публикации',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person),
+            label: 'Пользователи',
+          ),
+        ],
+        selectedIndex: index,
+        onDestinationSelected: (int newIndex) => ctrl.selectedIndex.value = newIndex,
+      ),
     );
   }
 
@@ -240,8 +243,7 @@ class SearchScreen extends StatelessWidget {
                     await ctrl.search();
                   },
                   icon: const Icon(Icons.done_all, color: Colors.white),
-                  label: const Text('Применить',
-                      style: TextStyle(color: Colors.white)),
+                  label: const Text('Применить', style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     primary: AppColors.primary,
                   ),
@@ -273,8 +275,7 @@ class SearchScreen extends StatelessWidget {
               },
               child: Text(
                 value,
-                style: TextStyle(
-                    color: isChosen ? Colors.white : _getButtonTextColor()),
+                style: TextStyle(color: isChosen ? Colors.white : _getButtonTextColor()),
               )),
         );
       }),
@@ -283,8 +284,6 @@ class SearchScreen extends StatelessWidget {
 
   // todo: utils
   Color _getButtonTextColor() {
-    return _settingsCtrl.settings.value.theme == AppThemeType.dark
-        ? Colors.grey.shade400
-        : Colors.black;
+    return _settingsCtrl.settings.value.theme == AppThemeType.dark ? Colors.grey.shade400 : Colors.black;
   }
 }

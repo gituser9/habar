@@ -29,17 +29,11 @@ class ProfileCtrl extends GetxController {
       isLoading.value = false;
     });
 
-    _repo.profileHubsStream
-        .map((hubList) => hubList.hubRefs.values.toList())
-        .listen((refs) => profileHubs.value = refs);
+    _repo.profileHubsStream.map((hubList) => hubList.hubRefs.values.toList()).listen((refs) => profileHubs.value = refs);
 
-    _repo.profileCompaniesStream
-        .map((companyList) => companyList.companies)
-        .listen((companies) => profileCompanies.value = companies);
+    _repo.profileCompaniesStream.map((companyList) => companyList.companies).listen((companies) => profileCompanies.value = companies);
 
-    _repo.profileChildrenStream
-        .map((profileList) => profileList.data)
-        .listen((children) => profileChildren.value = children);
+    _repo.profileChildrenStream.map((profileList) => profileList.data).listen((children) => profileChildren.value = children);
 
     _repo.postsStream.listen((postList) => posts.value = postList);
 
@@ -59,6 +53,7 @@ class ProfileCtrl extends GetxController {
     await getProfileCompanies(login);
     await getProfileChildren(login);
     await getProfileArticles(login);
+    await getProfileComments(login);
   }
 
   Future getProfile(String login) async {
@@ -94,23 +89,21 @@ class ProfileCtrl extends GetxController {
     );
     List<StructuredComment> structComments = [];
 
-    commentList.comments.values.forEach((comment) {
+    for (final comment in commentList.comments.values) {
       final structComment = StructuredComment.fromComment(comment);
 
       if (comment.children.isNotEmpty) {
-        comment.children.forEach((id) {
+        for (final id in comment.children) {
           Comment habrComment = commentsMap[id]!;
           structComment.children.add(StructuredComment.fromComment(habrComment));
-        });
-        structComment.children
-            .sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
+        }
+        structComment.children.sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
       }
 
       structComments.add(structComment);
-    });
+    }
 
-    structComments
-        .sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
+    structComments.sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
     return structComments;
   }
 }

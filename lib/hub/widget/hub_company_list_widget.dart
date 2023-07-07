@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:get/get.dart';
+import 'package:habar/common/controllers/hide_bottombar_ctrl.dart';
 import 'package:habar/hub/hub_ctrl.dart';
 import 'package:habar/model/hub_company_list.dart';
 
 class HubCompanyListWidget extends StatelessWidget {
-  final HubCtrl ctrl = Get.find();
+  final HubCtrl _ctrl = Get.find();
   final String name;
+  final HideBottomBarCtrl bottomCtrl;
 
-  HubCompanyListWidget({Key? key, required this.name}) : super(key: key) {
-    ctrl.getCompanies(name, 1);
+  HubCompanyListWidget({Key? key, required this.name, required this.bottomCtrl}) : super(key: key) {
+    _ctrl.getCompanies(name, 1);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // color: Colors.white,
       margin: const EdgeInsets.only(top: 16),
-      child: Obx(() => _buildBody(ctrl.hubCompanies.value)),
+      child: Obx(() => _buildBody(_ctrl.hubCompanies.value)),
     );
   }
 
   Widget _buildBody(HubCompanyList companies) {
     return ListView.builder(
+      controller: bottomCtrl.scrollCtrl,
       shrinkWrap: true,
       itemCount: companies.companyIds.length,
       itemBuilder: (ctx, index) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:habar/common/controllers/hide_bottombar_ctrl.dart';
 import 'package:habar/home/widgets/loading_widget.dart';
 import 'package:habar/model/profile.dart';
 import 'package:habar/profile/profile_ctrl.dart';
@@ -14,16 +15,18 @@ import 'package:habar/profile/widget/user_subscriptions_widget.dart';
 class ProfileScreen extends StatelessWidget {
   final String login;
   final ctrl = Get.put(ProfileCtrl());
+  final _bottomCtrl = HideBottomBarCtrl();
 
   ProfileScreen({Key? key, required this.login}) : super(key: key) {
     ctrl.selectedIndex.value = 0;
-    ctrl.getProfile(login);
+    ctrl.setup(login);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
+        controller: _bottomCtrl.scrollCtrl,
         child: Obx(() => _getCurrentPage(ctrl.selectedIndex.value)),
       ),
       bottomNavigationBar: Obx(() => _getBottomBar(ctrl.selectedIndex.value)),
@@ -31,31 +34,34 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _getBottomBar(int selectedIndex) {
-    return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Профиль',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.article),
-          label: 'Публикации',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.mode_comment_rounded),
-          label: 'Комментарии',
-        ),
-      ],
-      currentIndex: selectedIndex,
-      unselectedLabelStyle: const TextStyle(color: Colors.grey),
-      fixedColor: Colors.blue,
-      onTap: (int index) => ctrl.selectedIndex.value = index,
+    return AnimatedContainer(
+      height: _bottomCtrl.isBottomBarVisible.value ? kBottomNavigationBarHeight + 20 : 0,
+      duration: _bottomCtrl.duration,
+      curve: Curves.fastLinearToSlowEaseIn,
+      child: NavigationBar(
+        destinations: const <NavigationDestination>[
+          NavigationDestination(
+            icon: Icon(Icons.person),
+            label: 'Профиль',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.article),
+            label: 'Публикации',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.mode_comment_rounded),
+            label: 'Комментарии',
+          ),
+        ],
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (int index) => ctrl.selectedIndex.value = index,
+      ),
     );
   }
 
   Widget _getCurrentPage(int index) {
     if (ctrl.isLoading.value) {
-      return Center(child: LoadingWidget());
+      return const Center(child: LoadingWidget());
     }
 
     switch (index) {

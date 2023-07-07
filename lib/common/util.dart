@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:habar/profile/profile_screen.dart';
@@ -29,7 +28,6 @@ class Util {
   static Future launchInternal(String url) async {
     if (url.contains('habr.com')) {
       final id = getIdFromUrl(url);
-      print(id);
 
       if (url.contains('/post/')) {
         await Get.toNamed('/post/$id');

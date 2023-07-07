@@ -9,7 +9,8 @@ class FooterItemWidget extends StatelessWidget {
   final bool? isMinus;
   final bool? isPlus;
 
-  FooterItemWidget({
+  const FooterItemWidget({
+    super.key,
     required this.icon,
     this.value,
     this.textColor,

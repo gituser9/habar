@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/post_widget.dart';
 import 'package:habar/home/home_ctrl.dart';
 
 class SavedWidget extends StatelessWidget {
   final HomeCtrl _ctrl = Get.find();
-  final SavedPostService _savedPostService = Get.find();
 
   SavedWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final ids = _savedPostService.savedIds;
-
-      if (ids.isEmpty) {
+      if (_ctrl.savedPosts.isEmpty) {
         return _buildEmptyWidget();
       }
 
@@ -28,10 +24,10 @@ class SavedWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: ListView.builder(
-        itemCount: _savedPostService.savedIds.length,
+        controller: _ctrl.scrollCtrl,
+        itemCount: _ctrl.savedPosts.length,
         itemBuilder: (BuildContext context, int index) {
-          final id = _savedPostService.savedIds[index];
-          final post = _ctrl.savedPosts.firstWhere((item) => item.id == id);
+          final post = _ctrl.savedPosts[index];
 
           return Container(
             margin: const EdgeInsets.symmetric(vertical: 4),

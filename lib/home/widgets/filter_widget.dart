@@ -18,6 +18,8 @@ class FilterWidget extends StatelessWidget {
     fontSize: 20,
   );
 
+  FilterWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     ctrl.postFilter.value.sortType.value = FilterSortType.newPost;
@@ -59,7 +61,8 @@ class FilterWidget extends StatelessWidget {
                     icon: const Icon(Icons.done_all, color: Colors.white),
                     label: const Text('Применить', style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
-                      primary: AppColors.primary,
+                      // primary: AppColors.primary,
+                      backgroundColor: AppColors.primary,
                     ),
                   ),
                 ),

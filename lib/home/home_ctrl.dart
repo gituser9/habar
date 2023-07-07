@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/http_request.dart';
 import 'package:habar/common/services/pin_hub_service.dart';
@@ -37,6 +38,7 @@ class HomeCtrl extends GetxController {
   final currentFlowName = ''.obs;
   final bottomOffset = 200;
   final isShowPinnedHub = false.obs;
+  final isBottomBarVisible = true.obs;
 
   int _page = 1;
   int _pageCount = 0;
@@ -75,6 +77,20 @@ class HomeCtrl extends GetxController {
     });
 
     scrollCtrl.addListener(() async {
+      if (scrollCtrl.position.userScrollDirection == ScrollDirection.forward) {
+        if (isBottomBarVisible.isFalse) {
+          showNavBar();
+        }
+      } else {
+        if (isBottomBarVisible.isTrue) {
+          hideNavBar();
+        }
+      }
+
+      if (isLoadMore.isTrue) {
+        return;
+      }
+
       bool isEnd = (scrollCtrl.offset + bottomOffset) >= scrollCtrl.position.maxScrollExtent;
 
       if (isEnd) {
@@ -148,14 +164,23 @@ class HomeCtrl extends GetxController {
 
   void getSaved() {
     isLoading.value = false;
-    final posts = _savedPostService.getAll();
 
+    final posts = _savedPostService.getAll();
     posts.sort((left, right) => left.timePublished.isBefore(right.timePublished) ? 1 : 0);
+
     savedPosts.value = posts;
   }
 
   void resetPage() {
     _page = 1;
     page.value = 1;
+  }
+
+  void showNavBar() {
+    isBottomBarVisible.value = true;
+  }
+
+  void hideNavBar() {
+    isBottomBarVisible.value = false;
   }
 }

@@ -12,7 +12,7 @@ class HubWidget extends StatelessWidget {
   final HomeCtrl _ctrl = Get.find();
   final PinHubService _pinHubService = Get.find();
 
-  HubWidget({Key? key}) : super(key: key) {}
+  HubWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

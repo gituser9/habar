@@ -25,6 +25,7 @@ class PaginationWidget extends StatelessWidget {
     if (pageCount <= 1) {
       return Container();
     }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -32,6 +33,7 @@ class PaginationWidget extends StatelessWidget {
           if (page == 1) {
             return;
           }
+
           callback(page - 1);
         }),
         _buildVisiblePageButtons(),
@@ -39,6 +41,7 @@ class PaginationWidget extends StatelessWidget {
           if (page == pageCount) {
             return;
           }
+
           callback(page + 1);
         }),
       ],
@@ -113,15 +116,15 @@ class PaginationWidget extends StatelessWidget {
     List<Widget> buttons = [];
 
     if (pageCount > _pageViewCount && page <= 3) {
-      for (int i = 1; i <= 4; i++) {
+      for (int i = 1; i <= 3; i++) {
         buttons.add(_buildPageButton(i));
       }
 
       buttons.add(
         const Center(
-          child: const Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: const Text('...', style: const TextStyle(color: Colors.blue)),
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text('...', style: TextStyle(color: Colors.blue)),
           ),
         ),
       );
@@ -132,9 +135,9 @@ class PaginationWidget extends StatelessWidget {
       if (page > 3) {
         buttons.add(
           const Center(
-            child: const Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: const Text('...', style: const TextStyle(color: Colors.blue)),
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('...', style: TextStyle(color: Colors.blue)),
             ),
           ),
         );
@@ -145,9 +148,9 @@ class PaginationWidget extends StatelessWidget {
       if ((page + 2) < pageCount) {
         buttons.add(
           const Center(
-            child: const Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: const Text('...', style: const TextStyle(color: Colors.blue)),
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('...', style: TextStyle(color: Colors.blue)),
             ),
           ),
         );

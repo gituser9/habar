@@ -26,10 +26,10 @@ class UserSubscriptions extends StatelessWidget {
     return Column(
       children: [
         const Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: const Align(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Align(
             alignment: Alignment.centerLeft,
-            child: const Text(
+            child: Text(
               'Подписан на компании',
               style: Constant.profileHeadersStyle,
             ),

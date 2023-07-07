@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:habar/common/controllers/hide_bottombar_ctrl.dart';
 import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/empty_screen_widget.dart';
@@ -14,7 +15,7 @@ class PostsWidget extends StatelessWidget {
   final SavedPostService _savedPostService = Get.find();
 
   PostsWidget({Key? key, required this.login}) : super(key: key) {
-    _ctrl.getProfileArticles(login);
+    // _ctrl.getProfileArticles(login);
   }
 
   @override
@@ -44,7 +45,7 @@ class PostsWidget extends StatelessWidget {
               final imgUrl = Util.getImgUrl(articleRef.leadData.imageUrl, articleRef.textHtml);
 
               return Container(
-                margin: EdgeInsets.symmetric(vertical: 4),
+                margin: const EdgeInsets.symmetric(vertical: 4),
                 child: PostWidget(
                   article: articleRef,
                   imageUrl: imgUrl,

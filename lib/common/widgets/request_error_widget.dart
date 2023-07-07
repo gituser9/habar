@@ -14,20 +14,18 @@ class RequestErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Column(
-          children: [
-            Text('Ошибка загрузки'),
-            ElevatedButton(
-              child: Text('Попробовать еще раз'),
-              onPressed: () async {
-                errorStream.add('');
-                await HttpRequest.get(requestUrl);
-              },
-            )
-          ],
-        ),
+    return Center(
+      child: Column(
+        children: [
+          const Text('Ошибка загрузки'),
+          ElevatedButton(
+            child: const Text('Попробовать еще раз'),
+            onPressed: () async {
+              errorStream.add('');
+              await HttpRequest.get(requestUrl);
+            },
+          )
+        ],
       ),
     );
   }

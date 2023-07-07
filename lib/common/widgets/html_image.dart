@@ -26,7 +26,7 @@ class _HtmlImageState extends State<HtmlImage> {
   final _defaultWidth = 200.0;
 
   final SettingsCtrl _settingsCtrl = Get.find();
-  final HtmlTextCtrl _ctrl = Get.find();
+  final HtmlTextCtrl _ctrl = Get.put(HtmlTextCtrl());
 
   bool isImageHidden = false;
 
@@ -255,9 +255,7 @@ class _HtmlImageState extends State<HtmlImage> {
             height: _defaultHeight,
             child: Center(
               child: CircularProgressIndicator(
-                value: progress.expectedTotalBytes != null
-                    ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes!
-                    : null,
+                value: progress.expectedTotalBytes != null ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes! : null,
               ),
             ),
           ),

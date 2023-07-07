@@ -10,7 +10,8 @@ class UserInfoWidget extends StatelessWidget {
   final DateTime publishTime;
   final Author author;
 
-  UserInfoWidget({
+  const UserInfoWidget({
+    super.key,
     required this.publishTime,
     required this.author,
   });

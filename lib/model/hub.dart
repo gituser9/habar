@@ -75,7 +75,7 @@ class Statistics {
 
   factory Statistics.fromMap(Map<String, dynamic> json) => Statistics(
         subscribersCount: json["subscribersCount"],
-        rating: json["rating"] == null ? null : json["rating"].toDouble(),
+        rating: json["rating"]?.toDouble(),
         authorsCount: json["authorsCount"],
         postsCount: json["postsCount"],
       );

@@ -19,17 +19,22 @@ class AppTheme {
 
   static final dark = ThemeData.dark().copyWith(
     useMaterial3: true,
+    colorScheme: ColorScheme.dark(
+      surface: Colors.grey.shade900,
+    ),
     scaffoldBackgroundColor: Colors.grey.shade900,
     appBarTheme: const AppBarTheme(
-        actionsIconTheme: IconThemeData(color: Colors.grey),
-        titleTextStyle: TextStyle(
-          color: Colors.grey,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        )),
+      actionsIconTheme: IconThemeData(color: Colors.grey),
+      titleTextStyle: TextStyle(
+        color: Colors.grey,
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
     textTheme: TextTheme(
       bodyMedium: TextStyle(color: Colors.grey.shade400),
       bodyLarge: TextStyle(color: Colors.grey.shade400),
     ),
+    // navigationBarTheme: NavigationBarThemeData(iconTheme: MaterialStateProperty<IconThemeData?>()),
   );
 }

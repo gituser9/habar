@@ -31,24 +31,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // GoogleFonts.balsa
-    // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    //   statusBarColor: Colors.white,
-    //   statusBarIconBrightness: Brightness.dark,
-    // ));
-
     return GetMaterialApp(
         title: 'Habar',
-        /*theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          // textTheme: GoogleFonts.droidSansTextTheme(
-          //   Theme.of(context).textTheme,
-          // ),
-        ),*/
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        // themeMode: ThemeMode.dark,
         themeMode: _getTheme(),
         getPages: [
           GetPage(name: '/post/:id', page: () => PostScreen()),
@@ -73,8 +59,7 @@ class MyApp extends StatelessWidget {
               routing.current.contains('/blog/'.toString());
 
           if (isPostRoute) {
-            String id =
-                routing.current.split('/').where((e) => e.isNotEmpty).firstWhere((e) => int.tryParse(e) != null);
+            String id = routing.current.split('/').where((e) => e.isNotEmpty).firstWhere((e) => int.tryParse(e) != null);
 
             if (id.isNotEmpty) {
               ctrl.getByID(id);
