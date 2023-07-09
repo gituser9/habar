@@ -8,9 +8,9 @@ import 'package:habar/common/controllers/html_text_ctrl.dart';
 import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
-import 'package:uri_to_file/uri_to_file.dart';
 
 class HtmlImage extends StatefulWidget {
   final String imageUrl;
@@ -178,18 +178,16 @@ class _HtmlImageState extends State<HtmlImage> {
 
                             var response = await http.get(Uri.parse(url));
                             String hash = md5.convert(response.bodyBytes).toString();
-                            var result = await ImageGallerySaver.saveImage(
-                              response.bodyBytes,
-                              name: 'habar_$hash',
-                              quality: 100,
-                            );
-                            File file = await toFile(result['filePath']);
+                            String ext = url.split(".").last;
+
+                            var tmpDir = await getTemporaryDirectory();
+                            File img = await File("${tmpDir.path}/$hash.$ext").writeAsBytes(response.bodyBytes);
 
                             _ctrl.isImageLoading.value = false;
 
                             try {
-                              await Share.shareFiles([file.path]);
-                              await file.delete();
+                              await Share.shareFiles([img.path]);
+                              await img.delete();
                             } catch (e) {
                               print(e);
                             }
