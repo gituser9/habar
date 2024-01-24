@@ -78,13 +78,19 @@ class HomeRepo {
       'page': page.toString(),
       'perPage': '20',
     };
-    params.addAll(listFilterData[filterKey]!);
 
     if (isNews) {
-      params['news'] = isNews.toString();
+      params['types[0]'] = 'news';
+      params.addAll(listFilterData[filterKey]!);
+    } else {
+      params['types[0]'] = 'articles';
+      params.addAll(listFilterData[filterKey]!);
     }
 
-    String json = await HttpRequest.get('/articles', params: params);
+    params['complexity'] = 'all';
+    params['myFeed'] = 'false';
+
+    String json = await HttpRequest.get('/articles/', params: params);
 
     if (json.isEmpty) {
       return;
