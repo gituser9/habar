@@ -10,7 +10,11 @@ class HubCompanyListWidget extends StatelessWidget {
   final String name;
   final HideBottomBarCtrl bottomCtrl;
 
-  HubCompanyListWidget({Key? key, required this.name, required this.bottomCtrl}) : super(key: key) {
+  HubCompanyListWidget({
+    super.key,
+    required this.name,
+    required this.bottomCtrl,
+  }) {
     _ctrl.getCompanies(name, 1);
   }
 
@@ -46,7 +50,7 @@ class HubCompanyListWidget extends StatelessWidget {
               'body': Style(
                 fontSize: FontSize(13),
                 color: Colors.grey,
-                padding: const EdgeInsets.all(0),
+                padding: HtmlPaddings.all(0),
                 margin: Margins.all(0),
               ),
             },

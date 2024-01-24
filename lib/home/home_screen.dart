@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/controllers/settings_ctrl.dart';
-import 'package:habar/common/costants.dart';
 import 'package:habar/common/widgets/no_data_widget.dart';
 import 'package:habar/home/home_ctrl.dart';
+import 'package:habar/home/widgets/drawer_widget.dart';
 import 'package:habar/home/widgets/filter_widget.dart';
 import 'package:habar/home/widgets/hub_widget.dart';
 import 'package:habar/home/widgets/loading_widget.dart';
 import 'package:habar/home/widgets/posts_widget.dart';
+import 'package:habar/home/widgets/saved_search_widget.dart';
 import 'package:habar/home/widgets/saved_widget.dart';
 import 'package:habar/model/home.dart';
-import 'package:habar/model/post_list.dart';
 import 'package:habar/search/search_screen.dart';
 import 'package:habar/settings/settings_screen.dart';
 
@@ -24,13 +24,13 @@ class HomeScreen extends StatelessWidget {
     3: HomeMode.saved,
   };
 
-  HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(context),
-      drawer: _buildDrawer(),
+      drawer: DrawerWidget(),
       body: RefreshIndicator(
         onRefresh: () async => await _refreshPage(),
         child: Obx(() {
@@ -41,6 +41,34 @@ class HomeScreen extends StatelessWidget {
           return _buildBody();
         }),
       ),
+      floatingActionButton: Obx(() {
+        if (_ctrl.homeMode.value != HomeMode.saved) {
+          return Container();
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              onPressed: () async => await Get.bottomSheet(
+                SavedSearchWidget(),
+                backgroundColor: Get.isDarkMode ? Colors.grey.shade900 : Colors.white,
+              ),
+              child: const Icon(Icons.search),
+            ),
+            //
+            if (_ctrl.savedFilteredPosts.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: FloatingActionButton(
+                  onPressed: () async => _ctrl.savedFilteredPosts.clear(),
+                  child: const Icon(Icons.clear),
+                ),
+              ),
+          ],
+        );
+      }),
       bottomNavigationBar: Obx(() => _getBottomBar(_ctrl.selectedIndex.value)),
     );
   }
@@ -99,6 +127,20 @@ class HomeScreen extends StatelessWidget {
 
           return Container();
         }),
+        /*Obx(() {
+          return DropdownMenu<String>(
+            initialSelection: 'Статьи',
+            onSelected: (String? value) {
+              // This is called when the user selects an item.
+              // setState(() {
+              //   dropdownValue = value!;
+              // });
+            },
+            dropdownMenuEntries: ['Статьи', 'Посты'].map<DropdownMenuEntry<String>>((String value) {
+              return DropdownMenuEntry<String>(value: value, label: value);
+            }).toList(),
+          );
+        }),*/
         Obx(() {
           bool isShow = _ctrl.homeMode.value == HomeMode.news || _ctrl.homeMode.value == HomeMode.posts;
 
@@ -114,7 +156,7 @@ class HomeScreen extends StatelessWidget {
           );
         }),
         Obx(() {
-          if (_ctrl.homeMode.value == HomeMode.news || _ctrl.homeMode.value == HomeMode.saved) {
+          if (_ctrl.homeMode.value == HomeMode.saved) {
             return Container();
           }
 
@@ -126,6 +168,30 @@ class HomeScreen extends StatelessWidget {
             ),
           );
         }),
+        // Obx(() {
+        //   //
+        //   if (_ctrl.homeMode.value != HomeMode.saved) {
+        //     return Container();
+        //   }
+        //
+        //   return IconButton(
+        //     icon: const Icon(Icons.download),
+        //     onPressed: () async {
+        //       await _ctrl.downloadSavedPosts();
+        //     },
+        //   );
+        // }),
+        // Obx(() {
+        //   //
+        //   if (_ctrl.homeMode.value != HomeMode.saved) {
+        //     return Container();
+        //   }
+        //
+        //   return IconButton(
+        //     icon: const Icon(Icons.upload),
+        //     onPressed: () {},
+        //   );
+        // }),
         IconButton(
           icon: const Icon(Icons.settings),
           onPressed: () async {
@@ -180,71 +246,6 @@ class HomeScreen extends StatelessWidget {
               await _ctrl.getAll(_settingsCtrl.settings.value.filters!.filterKey);
           }
         },
-      ),
-    );
-  }
-
-  Widget _buildDrawer() {
-    return Drawer(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            //
-            // user info
-            Stack(
-              children: [
-                Container(
-                  height: 180,
-                  color: const Color(0xFF364754),
-                  child: Container(),
-                ),
-                SizedBox(
-                  height: 180,
-                  child: Center(
-                    child: Image.asset(
-                      'assets/images/logo.png',
-                      width: 90,
-                    ),
-                  ),
-                )
-              ],
-            ),
-            // info flows
-            Row(
-              children: const [
-                Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    'Потоки',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
-              ],
-            ),
-            //
-            // todo: list view
-            ...Constant.postFlows
-                .map((flow) => ListTile(
-                      title: Text(flow.title),
-                      onTap: () async {
-                        Get.back();
-
-                        _ctrl.resetPage();
-                        _ctrl.currentFlow = flow.alias;
-                        _ctrl.currentFlowName.value = flow.title;
-
-                        if (flow.alias == '') {
-                          await _ctrl.getAll(_settingsCtrl.settings.value.filters!.filterKey);
-                          _ctrl.posts.value = PostList.empty();
-                        } else {
-                          await _ctrl.getFlow(flow.alias, page: 1);
-                          _ctrl.posts.value = PostList.empty();
-                        }
-                      },
-                    ))
-                .toList(),
-          ],
-        ),
       ),
     );
   }

@@ -5,7 +5,7 @@ import 'package:habar/model/profile.dart';
 class UserPersonWidget extends StatelessWidget {
   final Profile profile;
 
-  const UserPersonWidget({Key? key, required this.profile}) : super(key: key);
+  const UserPersonWidget({super.key, required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class UserPersonWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: CircleAvatar(
-                backgroundImage: NetworkImage(profile.data.avatar),
+                backgroundImage: NetworkImage('https:' + profile.data.avatar),
                 backgroundColor: Colors.transparent,
               ),
             ),
@@ -35,10 +35,10 @@ class UserPersonWidget extends StatelessWidget {
               style: const TextStyle(),
             ),
           _buildStatusRow(),
-          Text(
-            '${profile.data.counters.followers} подписчиков | ${profile.data.counters.followed} подписок',
-            style: const TextStyle(fontSize: 12),
-          ),
+          // Text(
+          //   '${profile.data.counters.followers} подписчиков | ${profile.data.counters.followed} подписок',
+          //   style: const TextStyle(fontSize: 12),
+          // ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
@@ -75,11 +75,11 @@ class UserPersonWidget extends StatelessWidget {
                         style: labelStyle,
                       ),
                       Text(
-                        profile.data.score.toString(),
+                        profile.data.score.score.toString(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
-                          color: profile.data.score > 0 ? Colors.green : Colors.red,
+                          color: profile.data.score.score > 0 ? Colors.green : Colors.red,
                         ),
                       ),
                     ],

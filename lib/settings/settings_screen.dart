@@ -3,9 +3,10 @@ import 'package:get/get.dart';
 import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:habar/common/themes.dart';
 import 'package:habar/model/settings.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
@@ -24,10 +25,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: SingleChildScrollView(
         child: GetBuilder<SettingsCtrl>(
           init: _ctrl,
-          builder: (_) => _buildBody(),
+          builder: (_) => _buildBody(context),
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -36,7 +42,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _ctrl.save();
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     return Column(
       children: [
         Padding(
@@ -90,9 +96,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: _ctrl.settings.value.theme == AppThemeType.dark
-                                ? Colors.grey.shade800
-                                : Colors.grey.shade200,
+                            color: _ctrl.settings.value.theme == AppThemeType.dark ? Colors.grey.shade800 : Colors.grey.shade200,
                             borderRadius: const BorderRadius.all(Radius.circular(4)),
                           ),
                           child: Padding(
@@ -137,9 +141,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: _ctrl.settings.value.theme == AppThemeType.dark
-                                ? Colors.grey.shade800
-                                : Colors.grey.shade200,
+                            color: _ctrl.settings.value.theme == AppThemeType.dark ? Colors.grey.shade800 : Colors.grey.shade200,
                             borderRadius: const BorderRadius.all(Radius.circular(4)),
                           ),
                           child: Padding(
@@ -211,6 +213,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
         ),
+        ElevatedButton(
+          child: const Text('Политика конфиденциальности'),
+          onPressed: () async {
+            await launchUrl(Uri.parse('http://195.2.93.109/habar_policy.html'));
+          },
+        ),
+        const SizedBox(height: 40),
       ],
     );
   }

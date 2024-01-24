@@ -4,7 +4,8 @@ import 'package:http/http.dart';
 class HttpRequest {
   static final _client = Client();
 
-  static Future<String> get(String url, {Map<String, String>? params, int version = 2}) async {
+  static Future<String> get(String url,
+      {Map<String, String>? params, int version = 2}) async {
     params ??= {};
 
     params['fl'] = 'ru';
@@ -22,6 +23,8 @@ class HttpRequest {
       print('body is empty');
       return '';
     }
+
+    var ff = response.body.toString();
 
     return response.body;
   }

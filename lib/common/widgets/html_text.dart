@@ -22,78 +22,81 @@ class HtmlText extends StatelessWidget {
         shrinkWrap: true,
         style: {
           'body': Style(fontSize: FontSize(_settingsCtrl.settings.value.postTextSize)),
-          'blockquote': Style(fontStyle: FontStyle.italic, fontSize: FontSize(_settingsCtrl.settings.value.postTextSize - 2)),
+          'blockquote': Style(
+            fontStyle: FontStyle.italic,
+            fontSize: FontSize(_settingsCtrl.settings.value.postTextSize - 2),
+          ),
           'pre': Style(
             fontStyle: FontStyle.normal,
             fontSize: FontSize(14),
           ),
           'figure': Style(
-              margin: Margins(top: Margin.zero(), right: Margin.zero(), bottom: Margin.zero(), left: Margin.zero()),
-              padding: const EdgeInsets.all(0)),
+            margin: Margins(top: Margin.zero(), right: Margin.zero(), bottom: Margin.zero(), left: Margin.zero()),
+            padding: HtmlPaddings.all(0),
+          ),
           'img': Style(
-              margin: Margins(top: Margin.zero(), right: Margin.zero(), bottom: Margin.zero(), left: Margin.zero()),
-              padding: const EdgeInsets.all(0)),
+            margin: Margins(top: Margin.zero(), right: Margin.zero(), bottom: Margin.zero(), left: Margin.zero()),
+            padding: HtmlPaddings.all(0),
+          ),
           'a': Style(textDecoration: TextDecoration.none),
         },
-        customRenders: {
-          imgMatcher(): CustomRender.widget(widget: (ctx, buildChildren) {
-            String? fullImg = ctx.tree.element?.attributes['data-src'];
+        extensions: [
+          TagExtension(
+              tagsToExtend: {'img'},
+              builder: (ctx) {
+                String? fullImg = ctx.attributes['data-src'];
 
-            if (fullImg == null || fullImg.isEmpty) {
-              fullImg = ctx.tree.element?.attributes['src'] ?? '';
-            }
+                if (fullImg == null || fullImg.isEmpty) {
+                  fullImg = ctx.attributes['src'] ?? '';
+                }
 
-            return HtmlImage(imageUrl: fullImg);
-          }),
-          figMatcher(): CustomRender.widget(widget: (ctx, buildChildren) {
-            for (final tag in ctx.tree.children) {
-              if (tag.name == 'img') {
-                String imgUrl = tag.element!.attributes['data-src'] ?? '';
+                return HtmlImage(imageUrl: fullImg);
+              }),
+          TagExtension(
+              tagsToExtend: {'figure'},
+              builder: (ctx) {
+                String? link = ctx.elementChildren.firstWhereOrNull((tag) => tag.localName == 'img')?.attributes['data-src'];
 
-                return HtmlImage(imageUrl: imgUrl);
-              }
-            }
+                if (link != null && link.isNotEmpty) {
+                  return HtmlImage(imageUrl: link);
+                }
 
-            return Container();
-          }),
-          codeMatcher(): CustomRender.widget(widget: (ctx, buildChildren) {
-            var code = ctx.tree.element?.children.first.innerHtml ?? "";
-            code = code.replaceAll('&nbsp;', ' ');
-            code = code.replaceAll('&lt;', '<');
-            code = code.replaceAll('&gt;', '>');
+                return Container();
+              }),
+          TagExtension(
+              tagsToExtend: {'pre'},
+              builder: (ctx) {
+                var code = ctx.elementChildren.first.innerHtml ?? "";
+                code = code.replaceAll('&nbsp;', ' ');
+                code = code.replaceAll('&lt;', '<');
+                code = code.replaceAll('&gt;', '>');
 
-            return Scrollbar(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 8,
+                return Scrollbar(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                            horizontal: 8,
+                          ),
+                          color: Get.isDarkMode ? Colors.black : Colors.grey.shade100,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(code),
+                            //child: child,
+                          ),
+                        ),
                       ),
-                      color: Get.isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Text(code),
-                        //child: child,
-                      ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            );
-          })
-        },
-        onLinkTap: (String? url, RenderContext ctx, Map<String, String> attributes, element) async {
+                );
+              }),
+        ],
+        onLinkTap: (String? url, Map<String, String> attributes, element) async {
           if (url != null) {
             await Util.launchInternal(url);
           }
         });
   }
-
-  CustomRenderMatcher imgMatcher() => (context) => context.tree.element?.localName == 'img';
-
-  CustomRenderMatcher figMatcher() => (context) => context.tree.element?.localName == 'figure';
-
-  CustomRenderMatcher codeMatcher() => (context) => context.tree.element?.localName == 'pre';
 }

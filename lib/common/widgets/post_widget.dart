@@ -144,7 +144,7 @@ class PostWidget extends StatelessWidget {
             'blockquote': Style(fontStyle: FontStyle.italic, fontSize: FontSize(16)),
             'a': Style(textDecoration: TextDecoration.none),
           },
-          onLinkTap: (String? url, RenderContext ctx, Map<String, String> attributes, element) async {
+          onLinkTap: (String? url, Map<String, String> attributes, element) async {
             if (url != null) {
               await Util.launchURL(url);
             }

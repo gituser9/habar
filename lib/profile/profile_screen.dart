@@ -17,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
   final ctrl = Get.put(ProfileCtrl());
   final _bottomCtrl = HideBottomBarCtrl();
 
-  ProfileScreen({Key? key, required this.login}) : super(key: key) {
+  ProfileScreen({super.key, required this.login}) {
     ctrl.selectedIndex.value = 0;
     ctrl.setup(login);
   }
@@ -70,18 +70,18 @@ class ProfileScreen extends StatelessWidget {
       case 2:
         return CommentsWidget(login: login);
       default:
-        return _buildProfilePage(ctrl.profile.value);
+        return _buildProfilePage(ctrl.profile.value, ctrl.whoIs.value);
     }
   }
 
-  Widget _buildProfilePage(Profile profile) {
+  Widget _buildProfilePage(Profile profile, WhoIs whoIs) {
     return Column(
       children: [
         const SizedBox(height: 40),
         UserPersonWidget(profile: profile),
-        UserMedalsWidget(profile: profile),
+        UserWhoIsWidget(whoIs: whoIs),
         UserHubsWidget(login: login),
-        UserChildrenWidget(login: login),
+        InvitedWidget(login: login),
         UserSubscriptions(login: login),
         const SizedBox(height: 50),
       ],

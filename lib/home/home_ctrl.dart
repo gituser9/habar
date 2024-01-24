@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
@@ -12,6 +15,8 @@ import 'package:habar/model/home.dart';
 import 'package:habar/model/hub_list.dart';
 import 'package:habar/model/post.dart';
 import 'package:habar/model/post_list.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeCtrl extends GetxController {
@@ -27,6 +32,9 @@ class HomeCtrl extends GetxController {
   final filter = ListFilter.all.obs;
   final flowFilter = FlowFilter().obs;
   final savedPosts = List<Post>.empty().obs;
+  final savedFilteredPosts = List<Post>.empty().obs;
+  final savedSearchHubs = <String>{}.obs;
+  final savedSearchTags = <String>{}.obs;
   final hubSearchStream = BehaviorSubject<String>();
   final homeMode = HomeMode.posts.obs;
   final page = 1.obs;
@@ -134,7 +142,12 @@ class HomeCtrl extends GetxController {
     }
 
     isLoading.value = true;
-    await _repo.getAll(filterKey, page, pageMode == HomeMode.news);
+
+    if (pageMode == HomeMode.news) {
+      await _repo.getAll(filterKey, page, PostContentType.news);
+    } else {
+      await _repo.getAll(filterKey, page, PostContentType.articles);
+    }
   }
 
   Future getFlow(String flow, {int? page, String? score, String? period, bool? isFlowNews}) async {
@@ -182,5 +195,97 @@ class HomeCtrl extends GetxController {
 
   void hideNavBar() {
     isBottomBarVisible.value = false;
+  }
+
+  Future downloadSavedPosts() async {
+    _checkStoragePermission();
+
+    var postMaps = [];
+
+    for (var post in savedPosts) {
+      postMaps.add(post.toMap());
+    }
+    var jsonString = json.encode(postMaps);
+    var directory = await getDownloadsDirectory();
+
+    if (directory == null) {
+      final snackBar = SnackBar(
+        content: Text('Выгрузка постов завершилась ошибкой',
+            style: TextStyle(
+              color: Get.isDarkMode ? Colors.white : null,
+            )),
+        backgroundColor: Get.isDarkMode ? Colors.black : null,
+      );
+      ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
+
+      return;
+    }
+
+    var file = File("${directory.path}/habar_posts.json");
+    file.writeAsString(jsonString);
+
+    final snackBar = SnackBar(
+      content: Text('Посты сохранены в папку загрузок',
+          style: TextStyle(
+            color: Get.isDarkMode ? Colors.white : null,
+          )),
+      backgroundColor: Get.isDarkMode ? Colors.black : null,
+    );
+    ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
+  }
+
+  Future<bool> _checkStoragePermission() async {
+    var status = await Permission.storage.status;
+
+    if (status.isPermanentlyDenied) {
+      return false;
+    }
+
+    if (status.isDenied) {
+      status = await Permission.storage.request();
+    }
+
+    if (status.isDenied) {
+      return false;
+    }
+
+    return true;
+  }
+
+  void loadSavedSearchData() {
+    for (Post post in savedPosts) {
+      savedSearchHubs.addAll(post.hubs.map((e) => e.title));
+      savedSearchTags.addAll(post.tags.map((e) => e.titleHtml));
+    }
+  }
+
+  void filterSaved(SavedFilter filter) {
+    List<Post> filtered = [];
+    filter.title = filter.title.toLowerCase();
+
+    for (Post post in savedPosts) {
+      if (filter.title.isNotEmpty) {
+        if (post.titleHtml.toLowerCase().contains(filter.title)) {
+          filtered.add(post);
+          continue;
+        }
+      }
+
+      if (filter.hub.isNotEmpty) {
+        if (post.hubs.any((hub) => hub.title == filter.hub)) {
+          filtered.add(post);
+          continue;
+        }
+      }
+
+      if (filter.tag.isNotEmpty) {
+        if (post.tags.any((tag) => tag.titleHtml == filter.tag)) {
+          filtered.add(post);
+          continue;
+        }
+      }
+    }
+
+    savedFilteredPosts.value = filtered;
   }
 }

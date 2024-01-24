@@ -18,7 +18,8 @@ class PostList {
   List<String> articleIds;
   Map<String, Post> articleRefs;
 
-  factory PostList.empty() => PostList(pagesCount: 0, articleIds: [], articleRefs: {});
+  factory PostList.empty() =>
+      PostList(pagesCount: 0, articleIds: [], articleRefs: {});
 
   factory PostList.fromJson(String str) => PostList.fromMap(json.decode(str));
 
@@ -26,14 +27,19 @@ class PostList {
 
   factory PostList.fromMap(Map<String, dynamic> json) => PostList(
         pagesCount: json["pagesCount"] ?? 0,
-        articleIds: json["articleIds"] == null ? [] : List<String>.from(json["articleIds"].map((x) => x)),
-        articleRefs: json["articleRefs"] == null ? {} : _getPosts(json["articleRefs"]),
+        articleIds: json["publicationIds"] == null
+            ? []
+            : List<String>.from(json["publicationIds"].map((x) => x)),
+        articleRefs: json["publicationRefs"] == null
+            ? {}
+            : _getPosts(json["publicationRefs"]),
       );
 
   Map<String, dynamic> toMap() => {
         "pagesCount": pagesCount,
         "articleIds": List<dynamic>.from(articleIds.map((x) => x)),
-        "articleRefs": Map.from(articleRefs).map((k, v) => MapEntry<String, dynamic>(k, v.toMap())),
+        "articleRefs": Map.from(articleRefs)
+            .map((k, v) => MapEntry<String, dynamic>(k, v.toMap())),
       };
 
   static Map<String, Post> _getPosts(Map<String, dynamic> json) {
@@ -82,7 +88,8 @@ class ArticleRef extends BasePost {
   List<PostHub> hubs;
   LeadData leadData;
 
-  factory ArticleRef.fromJson(String str) => ArticleRef.fromMap(json.decode(str));
+  factory ArticleRef.fromJson(String str) =>
+      ArticleRef.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
@@ -96,7 +103,9 @@ class ArticleRef extends BasePost {
         author: PostAuthor.fromMap(json["author"]),
         statistics: PostStatistics.fromMap(json["statistics"]),
         leadData: LeadData.fromMap(json["leadData"]),
-        hubs: json["hubs"] == null ? [] : List<PostHub>.from(json["hubs"].map((x) => PostHub.fromMap(x))),
+        hubs: json["hubs"] == null
+            ? []
+            : List<PostHub>.from(json["hubs"].map((x) => PostHub.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -153,7 +162,8 @@ class PostAuthor extends BaseAuthor {
   String avatarUrl;
   String speciality;
 
-  factory PostAuthor.fromJson(String str) => PostAuthor.fromMap(json.decode(str));
+  factory PostAuthor.fromJson(String str) =>
+      PostAuthor.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
@@ -214,7 +224,8 @@ class PostHub {
 
 enum Type { COLLECTIVE, CORPORATIVE }
 
-final typeValues = EnumValues({"collective": Type.COLLECTIVE, "corporative": Type.CORPORATIVE});
+final typeValues = EnumValues(
+    {"collective": Type.COLLECTIVE, "corporative": Type.CORPORATIVE});
 
 enum Lang { RU }
 
@@ -288,7 +299,8 @@ class PostStatistics extends BaseStatistic {
   int score;
   int votesCount;
 
-  factory PostStatistics.fromJson(String str) => PostStatistics.fromMap(json.decode(str));
+  factory PostStatistics.fromJson(String str) =>
+      PostStatistics.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 

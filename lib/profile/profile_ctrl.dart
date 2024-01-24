@@ -5,14 +5,16 @@ import 'package:habar/model/company_list.dart';
 import 'package:habar/model/hub_list.dart';
 import 'package:habar/model/post_list.dart';
 import 'package:habar/model/profile.dart';
+import 'package:habar/model/profile_list.dart';
 import 'package:habar/profile/profile_repository.dart';
 
 class ProfileCtrl extends GetxController {
   late ProfileRepository _repo;
   final profile = Profile.empty().obs;
+  final whoIs = WhoIs.empty().obs;
   final profileHubs = List<HubRef>.empty().obs;
   final profileCompanies = List<Company>.empty().obs;
-  final profileChildren = List<ProfileData>.empty().obs;
+  final inviteds = List<Invited>.empty().obs;
   final posts = PostList.empty().obs;
   final comments = List<StructuredComment>.empty().obs;
   final page = 1.obs;
@@ -33,11 +35,13 @@ class ProfileCtrl extends GetxController {
 
     _repo.profileCompaniesStream.map((companyList) => companyList.companies).listen((companies) => profileCompanies.value = companies);
 
-    _repo.profileChildrenStream.map((profileList) => profileList.data).listen((children) => profileChildren.value = children);
+    _repo.profileChildrenStream.map((profileList) => profileList.userRefs).listen((children) => inviteds.value = children);
 
     _repo.postsStream.listen((postList) => posts.value = postList);
 
     _repo.commentsStream.map(_getStructuredComments).listen((commentList) => comments.value = commentList);
+
+    _repo.whoIsStream.map((wh) => wh).listen((wh) => whoIs.value = wh);
   }
 
   @override
@@ -49,9 +53,10 @@ class ProfileCtrl extends GetxController {
 
   Future setup(String login) async {
     await getProfile(login);
+    await getWhoIs(login);
     await getProfileHubs(login);
     await getProfileCompanies(login);
-    await getProfileChildren(login);
+    await getInvited(login);
     await getProfileArticles(login);
     await getProfileComments(login);
   }
@@ -59,6 +64,11 @@ class ProfileCtrl extends GetxController {
   Future getProfile(String login) async {
     isLoading.value = true;
     await _repo.getProfile(login);
+  }
+
+  Future getWhoIs(String login) async {
+    isLoading.value = true;
+    await _repo.getWhoIs(login);
   }
 
   Future getProfileHubs(String login) async {
@@ -69,8 +79,8 @@ class ProfileCtrl extends GetxController {
     await _repo.getProfileCompanies(login);
   }
 
-  Future getProfileChildren(String login) async {
-    await _repo.getProfileChildren(login);
+  Future getInvited(String login) async {
+    await _repo.getInvited(login);
   }
 
   Future getProfileArticles(String login, {int page = 1}) async {

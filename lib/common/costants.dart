@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Constant {
-  static const baseUrl = "m.habr.com";
+  static const baseUrl = "habr.com";
   static const Map<int, String> mothNames = {
     1: 'января',
     2: 'февраля',

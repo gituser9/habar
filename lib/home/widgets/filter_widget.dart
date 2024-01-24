@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_advanced_segment/flutter_advanced_segment.dart';
+// import 'package:flutter_advanced_segment/flutter_advanced_segment.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:habar/common/costants.dart';
@@ -11,7 +11,6 @@ import 'package:habar/model/settings.dart';
 class FilterWidget extends StatelessWidget {
   final HomeCtrl ctrl = Get.find();
   final SettingsCtrl _settingsCtrl = Get.find();
-  final _segmentCtrl = AdvancedSegmentController('all');
 
   static const textStyle = TextStyle(
     fontWeight: FontWeight.bold,
@@ -23,14 +22,6 @@ class FilterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ctrl.postFilter.value.sortType.value = FilterSortType.newPost;
-
-    _segmentCtrl.addListener(() {
-      if (_segmentCtrl.value == 'new') {
-        ctrl.postFilter.value.sortType.value = FilterSortType.newPost;
-      } else {
-        ctrl.postFilter.value.sortType.value = FilterSortType.bestPost;
-      }
-    });
 
     return SingleChildScrollView(
       child: Container(
@@ -47,10 +38,10 @@ class FilterWidget extends StatelessWidget {
                     onPressed: () async {
                       Get.back();
 
-                      if (ctrl.pageMode == HomeMode.posts) {
-                        await ctrl.getAll(ctrl.postFilter.value.filterKey.value);
-                      } else {
+                      if (ctrl.pageMode == HomeMode.hubs) {
                         await ctrl.getHubs(filterKey: ctrl.postFilter.value.hubFilter.value);
+                      } else {
+                        await ctrl.getAll(ctrl.postFilter.value.filterKey.value);
                       }
 
                       _settingsCtrl.settings.value.filters!.filterKey = ctrl.postFilter.value.filterKey.value;
@@ -61,7 +52,6 @@ class FilterWidget extends StatelessWidget {
                     icon: const Icon(Icons.done_all, color: Colors.white),
                     label: const Text('Применить', style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
-                      // primary: AppColors.primary,
                       backgroundColor: AppColors.primary,
                     ),
                   ),
@@ -75,18 +65,21 @@ class FilterWidget extends StatelessWidget {
   }
 
   Widget _getFilter() {
-    return ctrl.pageMode == HomeMode.posts ? _buildPostsFilter() : _buildHubFilter();
+    if (ctrl.pageMode == HomeMode.hubs) {
+      return _buildHubFilter();
+    }
+
+    return _buildPostsFilter();
   }
 
   Widget _buildPostsFilter() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text('Сначала показывать', style: textStyle),
-        _buildTypeButtons(),
         const Text('Порог рейтинга', style: textStyle),
         const SizedBox(height: 10),
-        Obx(() => _buildScoreButtonsRow()),
+        // Obx(() => _buildScoreButtonsRow()),
+        _buildScoreButtonsRow(),
       ],
     );
   }
@@ -111,52 +104,16 @@ class FilterWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTypeButtons() {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Align(
-        alignment: Alignment.center,
-        child: AdvancedSegment(
-          controller: _segmentCtrl,
-          segments: const {
-            'new': '          Новые          ',
-            'best': 'Лучшие',
-          },
-          backgroundColor: Colors.grey.withOpacity(0.3),
-          inactiveStyle: TextStyle(color: _getButtonTextColor()),
-          activeStyle: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildScoreButtonsRow() {
-    if (ctrl.postFilter.value.sortType.value == FilterSortType.newPost) {
-      return Center(
-        child: Wrap(
-          children: [
-            _buildScoreButton('Все', 0, ListFilter.all),
-            _buildScoreButton('>= 0', 0, ListFilter.top0),
-            _buildScoreButton('>= 10', 0, ListFilter.top10),
-            _buildScoreButton('>= 25', 0, ListFilter.top25),
-            _buildScoreButton('>= 50', 0, ListFilter.top50),
-            _buildScoreButton('>= 100', 0, ListFilter.top100),
-          ],
-        ),
-      );
-    }
-
     return Center(
       child: Wrap(
         children: [
-          _buildScoreButton('Сутки', 0, ListFilter.daily),
-          _buildScoreButton('Неделя', 0, ListFilter.weekly),
-          _buildScoreButton('Месяц', 0, ListFilter.monthly),
-          _buildScoreButton('Год', 0, ListFilter.yearly),
-          _buildScoreButton('Все время', 230, ListFilter.alltime),
+          _buildScoreButton('Все', 0, ListFilter.all),
+          _buildScoreButton('>= 0', 0, ListFilter.top0),
+          _buildScoreButton('>= 10', 0, ListFilter.top10),
+          _buildScoreButton('>= 25', 0, ListFilter.top25),
+          _buildScoreButton('>= 50', 0, ListFilter.top50),
+          _buildScoreButton('>= 100', 0, ListFilter.top100),
         ],
       ),
     );

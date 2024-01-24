@@ -9,6 +9,7 @@ import 'package:rxdart/rxdart.dart';
 
 class ProfileRepository {
   final profileStream = BehaviorSubject<Profile>();
+  final whoIsStream = BehaviorSubject<WhoIs>();
   final profileHubsStream = BehaviorSubject<HubList>();
   final profileCompaniesStream = BehaviorSubject<CompanyList>();
   final profileChildrenStream = BehaviorSubject<ProfileList>();
@@ -16,7 +17,7 @@ class ProfileRepository {
   final commentsStream = BehaviorSubject<CommentList>();
 
   Future getProfile(String login) async {
-    final jsonString = await HttpRequest.get('/users/$login/profile', version: 1);
+    final jsonString = await HttpRequest.get('/users/$login/card', version: 2);
 
     if (jsonString.isEmpty) {
       return;
@@ -24,6 +25,17 @@ class ProfileRepository {
 
     final profile = Profile.fromJson(jsonString);
     profileStream.add(profile);
+  }
+
+  Future getWhoIs(String login) async {
+    final jsonString = await HttpRequest.get('/users/$login/whois', version: 2);
+
+    if (jsonString.isEmpty) {
+      return;
+    }
+
+    final whoIs = WhoIs.fromJson(jsonString);
+    whoIsStream.add(whoIs);
   }
 
   Future getProfileHubs(String login) async {
@@ -38,7 +50,7 @@ class ProfileRepository {
   }
 
   Future getProfileCompanies(String login) async {
-    final jsonString = await HttpRequest.get('/users/$login/companies/fan', version: 1);
+    final jsonString = await HttpRequest.get('/users/$login/subscriptions/companies', version: 2);
 
     if (jsonString.isEmpty) {
       return;
@@ -48,8 +60,8 @@ class ProfileRepository {
     profileCompaniesStream.add(companyList);
   }
 
-  Future getProfileChildren(String login) async {
-    final jsonString = await HttpRequest.get('/users/$login/children', version: 1);
+  Future getInvited(String login) async {
+    final jsonString = await HttpRequest.get('/users/$login/invited', version: 2);
 
     if (jsonString.isEmpty) {
       return;
@@ -63,9 +75,10 @@ class ProfileRepository {
     Map<String, String> params = {
       'page': page.toString(),
       'user': login,
+      'perPage': '20',
     };
 
-    String jsonString = await HttpRequest.get('/articles', params: params);
+    String jsonString = await HttpRequest.get('/articles', params: params, version: 2);
 
     if (jsonString.isEmpty) {
       return;
@@ -81,7 +94,7 @@ class ProfileRepository {
       'comments': 'true',
       'user': login,
     };
-    final jsonString = await HttpRequest.get('/users/$login/comments', params: params);
+    final jsonString = await HttpRequest.get('/users/$login/comments', params: params, version: 2);
 
     if (jsonString.isEmpty) {
       return;

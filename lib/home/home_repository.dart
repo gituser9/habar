@@ -1,5 +1,6 @@
 import 'package:habar/common/http_request.dart';
 import 'package:habar/model/filter.dart';
+import 'package:habar/model/home.dart';
 import 'package:habar/model/hub_list.dart';
 import 'package:habar/model/post_list.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,18 +10,29 @@ class HomeRepo {
   final hubsStream = BehaviorSubject<HubList>();
   final errorStream = BehaviorSubject<String>();
 
-  Future getAll(ListFilter filterKey, int page, bool isNews) async {
+  Future getAll(ListFilter filterKey, int page, PostContentType postType) async {
     Map<String, String> params = {
       'page': page.toString(),
     };
 
-    if (isNews) {
-      params['news'] = isNews.toString();
-    } else {
-      params.addAll(listFilterData[filterKey]!);
+    switch (postType) {
+      case PostContentType.articles:
+        params['types[0]'] = 'articles';
+        params.addAll(listFilterData[filterKey]!);
+        break;
+      case PostContentType.news:
+        params['types[0]'] = 'news';
+        params.addAll(listFilterData[filterKey]!);
+        break;
+      case PostContentType.posts:
+        params['types[0]'] = 'posts';
+        break;
     }
 
-    String json = await HttpRequest.get('/articles', params: params);
+    params['complexity'] = 'all';
+    params['myFeed'] = 'false';
+
+    String json = await HttpRequest.get('/articles', params: params, version: 2);
 
     if (json.isEmpty) {
       return;
@@ -64,6 +76,7 @@ class HomeRepo {
   Future loadMore(ListFilter filterKey, int page, bool isNews, PostList list) async {
     Map<String, String> params = {
       'page': page.toString(),
+      'perPage': '20',
     };
     params.addAll(listFilterData[filterKey]!);
 
@@ -95,6 +108,7 @@ class HomeRepo {
       'page': page.toString(),
       'flow': flow,
       'sort': 'all',
+      'perPage': '20',
     };
 
     if (isFlowNews ?? false) {
@@ -133,10 +147,11 @@ class HomeRepo {
 
     Map<String, String> params = {
       'page': page.toString(),
+      'perPage': '30',
     };
     params.addAll(listHubFilterData[filterKey]!);
 
-    String json = await HttpRequest.get('/hubs/', params: params);
+    String json = await HttpRequest.get('/hubs/', params: params, version: 2);
 
     if (json.isEmpty) {
       return;

@@ -37,7 +37,6 @@ class UserFilter {
 enum FilterSortType {
   @HiveField(0)
   newPost,
-
   @HiveField(1)
   bestPost,
 }
@@ -46,34 +45,24 @@ enum FilterSortType {
 enum ListFilter {
   @HiveField(0)
   all,
-
   @HiveField(1)
   top0,
-
   @HiveField(2)
   top10,
-
   @HiveField(3)
   top25,
-
   @HiveField(4)
   top50,
-
   @HiveField(5)
   top100,
-
   @HiveField(6)
   daily,
-
   @HiveField(7)
   weekly,
-
   @HiveField(8)
   monthly,
-
   @HiveField(9)
   yearly,
-
   @HiveField(10)
   alltime,
 }
@@ -101,12 +90,12 @@ final Map<ListFilter, String> flowPeriod = {
 };
 
 final Map<ListFilter, Map<String, String>> listFilterData = {
-  ListFilter.all: {'sort': 'rating'},
-  ListFilter.top0: {'sort': 'rating', 'score': '0'},
-  ListFilter.top10: {'sort': 'rating', 'score': '10'},
-  ListFilter.top25: {'sort': 'rating', 'score': '25'},
-  ListFilter.top50: {'sort': 'rating', 'score': '50'},
-  ListFilter.top100: {'sort': 'rating', 'score': '100'},
+  ListFilter.all: {},
+  ListFilter.top0: {'score': '0'},
+  ListFilter.top10: {'score': '10'},
+  ListFilter.top25: {'score': '25'},
+  ListFilter.top50: {'score': '50'},
+  ListFilter.top100: {'score': '100'},
   ListFilter.daily: {'period': 'daily', 'sort': 'date'},
   ListFilter.weekly: {'period': 'weekly', 'sort': 'date'},
   ListFilter.monthly: {'period': 'monthly', 'sort': 'date'},
@@ -118,19 +107,14 @@ final Map<ListFilter, Map<String, String>> listFilterData = {
 enum ListHubFilter {
   @HiveField(0)
   subscribersAsc,
-
   @HiveField(1)
   subscribersDesc,
-
   @HiveField(2)
   rateAsc,
-
   @HiveField(3)
   rateDesc,
-
   @HiveField(4)
   titleAsc,
-
   @HiveField(5)
   titleDesc,
 }

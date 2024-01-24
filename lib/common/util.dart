@@ -22,7 +22,7 @@ class Util {
   }
 
   static launchURL(String url) async {
-    await launch(url);
+    await launchUrl(Uri.parse(url));
   }
 
   static Future launchInternal(String url) async {
@@ -39,7 +39,7 @@ class Util {
         await Get.to(() => ProfileScreen(login: id));
       }
     } else {
-      await launch(url);
+      await launchUrl(Uri.parse(url));
     }
   }
 

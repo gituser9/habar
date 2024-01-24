@@ -44,7 +44,7 @@ class UserSubscriptions extends StatelessWidget {
 
             return ListTile(
               leading: CircleAvatar(
-                backgroundImage: NetworkImage(company.icon),
+                backgroundImage: NetworkImage('https:' + company.icon),
                 backgroundColor: Colors.transparent,
               ),
               title: Html(
@@ -54,9 +54,13 @@ class UserSubscriptions extends StatelessWidget {
                 },
               ),
               subtitle: Html(
-                data: company.specializm,
+                data: company.description,
                 style: {
-                  'body': Style(margin: Margins.all(0), fontSize: FontSize(13)),
+                  'body': Style(
+                    margin: Margins.all(0),
+                    fontSize: FontSize(13),
+                    color: const Color(0xFF909090),
+                  ),
                 },
               ),
               // onTap: () async {

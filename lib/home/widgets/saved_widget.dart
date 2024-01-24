@@ -3,11 +3,12 @@ import 'package:get/get.dart';
 import 'package:habar/common/util.dart';
 import 'package:habar/common/widgets/post_widget.dart';
 import 'package:habar/home/home_ctrl.dart';
+import 'package:habar/model/post.dart';
 
 class SavedWidget extends StatelessWidget {
   final HomeCtrl _ctrl = Get.find();
 
-  SavedWidget({Key? key}) : super(key: key);
+  SavedWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,18 +17,20 @@ class SavedWidget extends StatelessWidget {
         return _buildEmptyWidget();
       }
 
-      return _buildBody();
+      var posts = _ctrl.savedFilteredPosts.isEmpty ? _ctrl.savedPosts : _ctrl.savedFilteredPosts;
+
+      return _buildBody(posts);
     });
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(List<Post> posts) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: ListView.builder(
         controller: _ctrl.scrollCtrl,
-        itemCount: _ctrl.savedPosts.length,
+        itemCount: posts.length,
         itemBuilder: (BuildContext context, int index) {
-          final post = _ctrl.savedPosts[index];
+          final post = posts[index];
 
           return Container(
             margin: const EdgeInsets.symmetric(vertical: 4),

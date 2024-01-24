@@ -49,7 +49,7 @@ class HubWidget extends StatelessWidget {
         ),
         Obx(() => PaginationWidget(
               page: _ctrl.isShowPinnedHub.value ? 1 : _ctrl.page.value,
-              pageCount: _getList().pagesCount,
+              pageCount: _ctrl.hubs.value.pagesCount,
               callback: (int page) async {
                 if (_ctrl.isShowPinnedHub.value) {
                   return;

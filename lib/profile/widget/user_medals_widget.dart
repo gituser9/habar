@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:habar/common/costants.dart';
 import 'package:habar/model/profile.dart';
 
-class UserMedalsWidget extends StatelessWidget {
-  final Profile profile;
+class UserWhoIsWidget extends StatelessWidget {
+  final WhoIs whoIs;
 
-  const UserMedalsWidget({Key? key, required this.profile}) : super(key: key);
+  const UserWhoIsWidget({super.key, required this.whoIs});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class UserMedalsWidget extends StatelessWidget {
                 ),
                 Wrap(
                   children: [
-                    for (final medal in profile.data.badges)
+                    for (final medal in whoIs.badges)
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                         decoration: BoxDecoration(
