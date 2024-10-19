@@ -12,7 +12,7 @@ import 'package:share/share.dart';
 class PostScreen extends StatelessWidget {
   final PostCtrl _ctrl = Get.find();
 
-  PostScreen({Key? key}) : super(key: key);
+  PostScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -106,9 +106,9 @@ class PostScreen extends StatelessWidget {
                   Icons.delete,
                   color: Colors.grey,
                 ),
-                label: Row(
+                label: const Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [Text('Удалить')],
+                  children: [Text('Удалить')],
                 ),
               ),
             )

@@ -9,7 +9,7 @@ class UserSubscriptions extends StatelessWidget {
   final String login;
   final ProfileCtrl ctrl = Get.find();
 
-  UserSubscriptions({Key? key, required this.login}) : super(key: key) {
+  UserSubscriptions({super.key, required this.login}) {
     ctrl.getProfileCompanies(login);
   }
 
@@ -44,7 +44,7 @@ class UserSubscriptions extends StatelessWidget {
 
             return ListTile(
               leading: CircleAvatar(
-                backgroundImage: NetworkImage('https:' + company.icon),
+                backgroundImage: NetworkImage('https:${company.icon}'),
                 backgroundColor: Colors.transparent,
               ),
               title: Html(

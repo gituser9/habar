@@ -9,7 +9,7 @@ class CommentsWidget extends StatelessWidget {
   final ProfileCtrl _ctrl = Get.find();
   final String login;
 
-  CommentsWidget({Key? key, required this.login}) : super(key: key) {
+  CommentsWidget({super.key, required this.login}) {
     // _ctrl.getProfileComments(login);
   }
 

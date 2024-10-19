@@ -7,10 +7,10 @@ class RequestErrorWidget extends StatelessWidget {
   final BehaviorSubject<String> errorStream;
 
   const RequestErrorWidget({
-    Key? key,
+    super.key,
     required this.requestUrl,
     required this.errorStream,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -12,7 +12,7 @@ class PostsWidget extends StatelessWidget {
   final SettingsCtrl _settingsCtrl = Get.find();
   final _savedPostService = Get.put(SavedPostService());
 
-  PostsWidget({Key? key}) : super(key: key);
+  PostsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

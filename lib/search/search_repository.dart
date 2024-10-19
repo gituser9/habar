@@ -12,8 +12,9 @@ class SearchRepository {
       'query': searchString,
       'order': order,
       'page': page.toString(),
+      'perPage': '20',
     };
-    final jsonString = await HttpRequest.get('/articles', params: params);
+    final jsonString = await HttpRequest.get('/articles', params: params, version: 2);
 
     if (jsonString.isEmpty) {
       return;

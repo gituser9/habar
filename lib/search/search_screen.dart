@@ -23,7 +23,7 @@ class SearchScreen extends StatelessWidget {
   final SavedPostService _savedPostService = Get.find();
   final _bottomCtrl = HideBottomBarCtrl();
 
-  SearchScreen({Key? key}) : super(key: key) {
+  SearchScreen({super.key}) {
     ctrl.posts.value = SearchPostResponse.empty();
     ctrl.users.value = SearchUserResponse.empty();
   }
@@ -96,7 +96,7 @@ class SearchScreen extends StatelessWidget {
 
     switch (index) {
       case 0:
-        if (ctrl.posts.value.articleIds.isEmpty) {
+        if (ctrl.posts.value.publicationIds.isEmpty) {
           return const EmptyScreenWidget(text: 'Ничего не найдено');
         }
         return _buildPostList(ctrl.posts.value);
@@ -117,10 +117,10 @@ class SearchScreen extends StatelessWidget {
         ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: postResponse.articleIds.length,
+            itemCount: postResponse.publicationIds.length,
             itemBuilder: (BuildContext context, int index) {
-              String postId = postResponse.articleIds[index];
-              final post = postResponse.articleRefs[postId]!;
+              String postId = postResponse.publicationIds[index];
+              final post = postResponse.publicationRefs[postId]!;
               final imgUrl = Util.getImgUrl(post.leadData.imageUrl, post.textHtml);
 
               return Container(
@@ -168,7 +168,7 @@ class SearchScreen extends StatelessWidget {
                   children: [
                     Text(user.fullname),
                     Text(
-                      ' @' + user.alias,
+                      ' @${user.alias}',
                       style: TextStyle(color: AppColors.primary),
                     ),
                   ],
@@ -245,7 +245,7 @@ class SearchScreen extends StatelessWidget {
                   icon: const Icon(Icons.done_all, color: Colors.white),
                   label: const Text('Применить', style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
-                    primary: AppColors.primary,
+                    backgroundColor: AppColors.primary,
                   ),
                 ),
               ),

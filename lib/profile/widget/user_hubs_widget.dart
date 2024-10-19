@@ -10,7 +10,7 @@ class UserHubsWidget extends StatelessWidget {
   final String login;
   final ProfileCtrl ctrl = Get.find();
 
-  UserHubsWidget({Key? key, required this.login}) : super(key: key) {
+  UserHubsWidget({super.key, required this.login}) {
     ctrl.getProfileHubs(login);
   }
 
@@ -27,10 +27,10 @@ class UserHubsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
-            children: const [
+            children: [
               Text('Состоит в хабах', style: Constant.profileHeadersStyle),
             ],
           ),

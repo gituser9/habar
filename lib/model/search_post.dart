@@ -11,20 +11,20 @@ class SearchPostResponse {
   SearchPostResponse({
     required this.searchStatistics,
     required this.pagesCount,
-    required this.articleIds,
-    required this.articleRefs,
+    required this.publicationIds,
+    required this.publicationRefs,
   });
 
   SearchStatistics searchStatistics;
   int pagesCount;
-  List<String> articleIds;
-  Map<String, Post> articleRefs;
+  List<String> publicationIds;
+  Map<String, Post> publicationRefs;
 
   factory SearchPostResponse.empty() => SearchPostResponse(
         searchStatistics: SearchStatistics.empty(),
         pagesCount: 0,
-        articleIds: [],
-        articleRefs: {},
+        publicationIds: [],
+        publicationRefs: {},
       );
 
   factory SearchPostResponse.fromJson(String str) => SearchPostResponse.fromMap(json.decode(str));
@@ -34,15 +34,15 @@ class SearchPostResponse {
   factory SearchPostResponse.fromMap(Map<String, dynamic> json) => SearchPostResponse(
         searchStatistics: SearchStatistics.fromMap(json["searchStatistics"]),
         pagesCount: json["pagesCount"] ?? 0,
-        articleIds: json["articleIds"] == null ? [] : List<String>.from(json["articleIds"].map((x) => x)),
-        articleRefs: json["articleRefs"] == null ? {} : Map.from(json["articleRefs"]).map((k, v) => MapEntry<String, Post>(k, Post.fromMap(v))),
+        publicationIds: json["publicationIds"] == null ? [] : List<String>.from(json["publicationIds"].map((x) => x)),
+        publicationRefs: json["publicationRefs"] == null ? {} : Map.from(json["publicationRefs"]).map((k, v) => MapEntry<String, Post>(k, Post.fromMap(v))),
       );
 
   Map<String, dynamic> toMap() => {
         "searchStatistics": searchStatistics.toMap(),
         "pagesCount": pagesCount,
-        "articleIds": List<dynamic>.from(articleIds.map((x) => x)),
-        "articleRefs": Map.from(articleRefs).map((k, v) => MapEntry<String, dynamic>(k, v.toMap())),
+        "publicationIds": List<dynamic>.from(publicationIds.map((x) => x)),
+        "publicationRefs": Map.from(publicationRefs).map((k, v) => MapEntry<String, dynamic>(k, v.toMap())),
       };
 }
 
@@ -59,13 +59,19 @@ class ArticleRef extends BasePost {
     required this.leadData,
   });
 
+  @override
   String id;
+  @override
   DateTime timePublished;
   bool isCorporative;
+  @override
   String titleHtml;
+  @override
   BaseAuthor author;
+  @override
   BaseStatistic statistics;
   List<Hub> hubs;
+  @override
   final String textHtml = '';
   final LeadData leadData;
 
@@ -84,6 +90,7 @@ class ArticleRef extends BasePost {
         hubs: json["hubs"] == null ? [] : List<Hub>.from(json["hubs"].map((x) => Hub.fromMap(x))),
       );
 
+  @override
   Map<String, dynamic> toMap() => {
         "id": id,
         "timePublished": timePublished.toIso8601String(),
@@ -129,11 +136,16 @@ class Author extends BaseAuthor {
     required this.speciality,
   });
 
+  @override
   String id;
   String login;
+  @override
   String alias;
+  @override
   String fullname;
+  @override
   String avatarUrl;
+  @override
   String speciality;
 
   factory Author.fromJson(String str) => Author.fromMap(json.decode(str));
@@ -149,6 +161,7 @@ class Author extends BaseAuthor {
         speciality: json["speciality"] ?? '',
       );
 
+  @override
   Map<String, dynamic> toMap() => {
         "id": id,
         "login": login,
@@ -266,10 +279,15 @@ class Statistics extends BaseStatistic {
     required this.votesCount,
   });
 
+  @override
   int commentsCount;
+  @override
   int favoritesCount;
+  @override
   int readingCount;
+  @override
   int score;
+  @override
   int votesCount;
 
   factory Statistics.fromJson(String str) => Statistics.fromMap(json.decode(str));
@@ -284,6 +302,7 @@ class Statistics extends BaseStatistic {
         votesCount: json["votesCount"] ?? 0,
       );
 
+  @override
   Map<String, dynamic> toMap() => {
         "commentsCount": commentsCount,
         "favoritesCount": favoritesCount,

@@ -30,11 +30,7 @@ class CommentsCtrl extends GetxController {
   }
 
   List<StructuredComment> getStructuredComments(CommentList commentList) {
-    Map<String, Comment> commentsMap = Map.fromIterable(
-      commentList.comments.values,
-      key: (comment) => comment.id,
-      value: (comment) => comment,
-    );
+    Map<String, Comment> commentsMap = { for (var comment in commentList.comments.values) comment.id : comment };
     List<StructuredComment> structComments = commentList.comments.values
         .where((comment) => comment.level == 0 && comment.timePublished != null)
         .map((comment) => convertToStructured(commentsMap, comment))

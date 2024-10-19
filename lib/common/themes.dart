@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class AppTheme {
   static final light = ThemeData.light().copyWith(
     // scaffoldBackgroundColor: Colors.white,
-    useMaterial3: true,
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
       iconTheme: IconThemeData(color: Colors.black),
@@ -18,7 +17,6 @@ class AppTheme {
   );
 
   static final dark = ThemeData.dark().copyWith(
-    useMaterial3: true,
     colorScheme: ColorScheme.dark(
       surface: Colors.grey.shade900,
     ),

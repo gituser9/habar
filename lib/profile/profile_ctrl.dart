@@ -92,11 +92,7 @@ class ProfileCtrl extends GetxController {
   }
 
   List<StructuredComment> _getStructuredComments(CommentList commentList) {
-    Map<String, Comment> commentsMap = Map.fromIterable(
-      commentList.comments.values,
-      key: (comment) => comment.id,
-      value: (comment) => comment,
-    );
+    Map<String, Comment> commentsMap = { for (var comment in commentList.comments.values) comment.id : comment };
     List<StructuredComment> structComments = [];
 
     for (final comment in commentList.comments.values) {

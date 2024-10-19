@@ -18,14 +18,14 @@ class UserPersonWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: CircleAvatar(
-                backgroundImage: NetworkImage('https:' + profile.data.avatar),
+                backgroundImage: NetworkImage('https:${profile.data.avatar}'),
                 backgroundColor: Colors.transparent,
               ),
             ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
-              '@' + profile.data.login,
+              '@${profile.data.login}',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ),

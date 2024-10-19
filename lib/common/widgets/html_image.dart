@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:habar/common/controllers/html_text_ctrl.dart';
 import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
@@ -15,7 +14,7 @@ import 'package:share/share.dart';
 class HtmlImage extends StatefulWidget {
   final String imageUrl;
 
-  const HtmlImage({Key? key, required this.imageUrl}) : super(key: key);
+  const HtmlImage({super.key, required this.imageUrl});
 
   @override
   State<HtmlImage> createState() => _HtmlImageState();
@@ -150,7 +149,7 @@ class _HtmlImageState extends State<HtmlImage> {
 
                             var response = await http.get(Uri.parse(url));
                             String hash = md5.convert(response.bodyBytes).toString();
-                            var result = await ImageGallerySaver.saveImage(
+                            /*var result = await ImageGallerySaver.saveImage(
                               response.bodyBytes,
                               name: 'habar_$hash',
                               quality: 100,
@@ -160,7 +159,7 @@ class _HtmlImageState extends State<HtmlImage> {
                             _ctrl.isImageLoading.value = false;
 
                             final snackBar = SnackBar(content: Text(snackText));
-                            ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
+                            ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);*/
                           },
                         ),
 

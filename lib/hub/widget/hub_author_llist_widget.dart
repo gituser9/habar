@@ -11,7 +11,7 @@ class HubAuthorListWidget extends StatelessWidget {
   final String name;
   final HideBottomBarCtrl bottomCtrl;
 
-  HubAuthorListWidget({Key? key, required this.name, required this.bottomCtrl}) : super(key: key) {
+  HubAuthorListWidget({super.key, required this.name, required this.bottomCtrl}) {
     _ctrl.getAuthors(name, 1);
   }
 
@@ -42,7 +42,7 @@ class HubAuthorListWidget extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                '@' + author.alias,
+                '@${author.alias}',
                 style: const TextStyle(color: Colors.blue),
               ),
             ],

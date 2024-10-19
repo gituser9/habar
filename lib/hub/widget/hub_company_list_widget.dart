@@ -38,7 +38,7 @@ class HubCompanyListWidget extends StatelessWidget {
         return ListTile(
           leading: CircleAvatar(
             backgroundColor: Colors.transparent,
-            backgroundImage: NetworkImage('https:' + company.imageUrl),
+            backgroundImage: NetworkImage('https:${company.imageUrl}'),
           ),
           title: Text(
             company.titleHtml,

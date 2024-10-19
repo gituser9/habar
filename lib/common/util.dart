@@ -55,7 +55,7 @@ class Util {
       String url = avatarUrl;
 
       if (!url.startsWith('https:')) {
-        url = 'https:' + url;
+        url = 'https:$url';
       }
 
       return ClipRRect(

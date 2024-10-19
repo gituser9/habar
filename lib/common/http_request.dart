@@ -10,7 +10,7 @@ class HttpRequest {
     params['fl'] = 'ru';
     params['hl'] = 'ru';
 
-    final uri = Uri.https(Constant.baseUrl, '/kek/v$version' + url, params);
+    final uri = Uri.https(Constant.baseUrl, '/kek/v$version$url', params);
     final response = await _client.get(uri);
 
     if (response.statusCode != 200) {

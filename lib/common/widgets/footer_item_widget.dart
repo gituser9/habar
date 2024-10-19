@@ -30,7 +30,7 @@ class FooterItemWidget extends StatelessWidget {
 
     if (isPlus != null && isPlus!) {
       txtColor = Colors.green.shade700;
-      txtValue = '+' + txtValue;
+      txtValue = '+$txtValue';
     }
 
     return Row(

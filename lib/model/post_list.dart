@@ -18,8 +18,7 @@ class PostList {
   List<String> articleIds;
   Map<String, Post> articleRefs;
 
-  factory PostList.empty() =>
-      PostList(pagesCount: 0, articleIds: [], articleRefs: {});
+  factory PostList.empty() => PostList(pagesCount: 0, articleIds: [], articleRefs: {});
 
   factory PostList.fromJson(String str) => PostList.fromMap(json.decode(str));
 
@@ -27,19 +26,14 @@ class PostList {
 
   factory PostList.fromMap(Map<String, dynamic> json) => PostList(
         pagesCount: json["pagesCount"] ?? 0,
-        articleIds: json["publicationIds"] == null
-            ? []
-            : List<String>.from(json["publicationIds"].map((x) => x)),
-        articleRefs: json["publicationRefs"] == null
-            ? {}
-            : _getPosts(json["publicationRefs"]),
+        articleIds: json["publicationIds"] == null ? [] : List<String>.from(json["publicationIds"].map((x) => x)),
+        articleRefs: json["publicationRefs"] == null ? {} : _getPosts(json["publicationRefs"]),
       );
 
   Map<String, dynamic> toMap() => {
         "pagesCount": pagesCount,
         "articleIds": List<dynamic>.from(articleIds.map((x) => x)),
-        "articleRefs": Map.from(articleRefs)
-            .map((k, v) => MapEntry<String, dynamic>(k, v.toMap())),
+        "articleRefs": Map.from(articleRefs).map((k, v) => MapEntry<String, dynamic>(k, v.toMap())),
       };
 
   static Map<String, Post> _getPosts(Map<String, dynamic> json) {
@@ -51,6 +45,10 @@ class PostList {
       }
 
       if (value['author'] == null) {
+        return;
+      }
+
+      if (value['timePublished'] == null) {
         return;
       }
 
@@ -76,20 +74,24 @@ class ArticleRef extends BasePost {
     required this.leadData,
   });
 
+  @override
   String id;
+  @override
   DateTime timePublished;
   bool isCorporative;
+  @override
   String titleHtml;
 
   // PostType postType;
   // List<PostLabel> postLabels;
+  @override
   BaseAuthor author;
+  @override
   BaseStatistic statistics;
   List<PostHub> hubs;
   LeadData leadData;
 
-  factory ArticleRef.fromJson(String str) =>
-      ArticleRef.fromMap(json.decode(str));
+  factory ArticleRef.fromJson(String str) => ArticleRef.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
@@ -103,11 +105,10 @@ class ArticleRef extends BasePost {
         author: PostAuthor.fromMap(json["author"]),
         statistics: PostStatistics.fromMap(json["statistics"]),
         leadData: LeadData.fromMap(json["leadData"]),
-        hubs: json["hubs"] == null
-            ? []
-            : List<PostHub>.from(json["hubs"].map((x) => PostHub.fromMap(x))),
+        hubs: json["hubs"] == null ? [] : List<PostHub>.from(json["hubs"].map((x) => PostHub.fromMap(x))),
       );
 
+  @override
   Map<String, dynamic> toMap() => {
         "id": id,
         "timePublished": timePublished.toIso8601String(),
@@ -155,15 +156,19 @@ class PostAuthor extends BaseAuthor {
     required this.speciality,
   });
 
+  @override
   String id;
   String login;
+  @override
   String alias;
+  @override
   String fullname;
+  @override
   String avatarUrl;
+  @override
   String speciality;
 
-  factory PostAuthor.fromJson(String str) =>
-      PostAuthor.fromMap(json.decode(str));
+  factory PostAuthor.fromJson(String str) => PostAuthor.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
@@ -176,6 +181,7 @@ class PostAuthor extends BaseAuthor {
         speciality: json["speciality"] ?? '',
       );
 
+  @override
   Map<String, dynamic> toMap() => {
         "id": id,
         "login": login,
@@ -224,8 +230,7 @@ class PostHub {
 
 enum Type { COLLECTIVE, CORPORATIVE }
 
-final typeValues = EnumValues(
-    {"collective": Type.COLLECTIVE, "corporative": Type.CORPORATIVE});
+final typeValues = EnumValues({"collective": Type.COLLECTIVE, "corporative": Type.CORPORATIVE});
 
 enum Lang { RU }
 
@@ -293,14 +298,18 @@ class PostStatistics extends BaseStatistic {
     required this.votesCount,
   });
 
+  @override
   int commentsCount;
+  @override
   int favoritesCount;
+  @override
   int readingCount;
+  @override
   int score;
+  @override
   int votesCount;
 
-  factory PostStatistics.fromJson(String str) =>
-      PostStatistics.fromMap(json.decode(str));
+  factory PostStatistics.fromJson(String str) => PostStatistics.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
@@ -312,6 +321,7 @@ class PostStatistics extends BaseStatistic {
         votesCount: json["votesCount"] ?? 0,
       );
 
+  @override
   Map<String, dynamic> toMap() => {
         "commentsCount": commentsCount,
         "favoritesCount": favoritesCount,

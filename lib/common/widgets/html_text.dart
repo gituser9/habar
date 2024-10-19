@@ -11,9 +11,9 @@ class HtmlText extends StatelessWidget {
   final String htmlText;
 
   HtmlText({
-    Key? key,
+    super.key,
     required this.htmlText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

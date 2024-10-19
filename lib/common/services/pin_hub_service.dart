@@ -7,7 +7,7 @@ import 'package:habar/model/pin_hub.dart';
 
 class PinHubService extends GetxService {
   final _hiveService = Get.put(HiveService());
-  final _savedHubAliases = Set<String>().obs;
+  final _savedHubAliases = <String>{}.obs;
 
   Future openBox() async {
     await _hiveService.openBoxes('pin_hub');

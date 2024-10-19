@@ -12,7 +12,7 @@ class HubWidget extends StatelessWidget {
   final HomeCtrl _ctrl = Get.find();
   final PinHubService _pinHubService = Get.find();
 
-  HubWidget({Key? key}) : super(key: key);
+  HubWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +79,7 @@ class HubWidget extends StatelessWidget {
               width: 40,
               height: 40,
               child: CachedNetworkImage(
-                imageUrl: 'https:' + hub.imageUrl,
+                imageUrl: 'https:${hub.imageUrl}',
                 placeholder: (context, url) => const Icon(Icons.image),
                 errorWidget: (context, url, error) => const Icon(Icons.image),
               ),

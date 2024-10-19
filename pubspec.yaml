@@ -1,40 +1,40 @@
 name: habar
 description: Mobile client for habr.com
 publish_to: "none"
-version: 1.10.0+25
+version: 1.10.3+28
 
 environment:
-  #  sdk: ">=2.18.0 <3.0.0"
-  sdk: ">=3.2.0 <4.0.0"
+  sdk: ">=3.5.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  http: ^1.1.2
-  rxdart: ^0.27.7
+  http: ^1.2.2
+  rxdart: ^0.28.0
   flutter_html: ^3.0.0-beta.2
-  url_launcher: ^6.2.2
+  url_launcher: ^6.3.0
   share: ^2.0.4
   intl: ^0.19.0
-  cached_network_image: ^3.3.1
+  cached_network_image: ^3.4.0
   get: ^4.6.6
-  image_gallery_saver: ^2.0.3
-  permission_handler: ^11.1.0
-  path: ^1.8.3
-  path_provider: ^2.1.1
+  #  image_gallery_saver: ^2.0.3
+  permission_handler: ^11.3.1
+  path: ^1.9.0
+  path_provider: ^2.1.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   html: ^0.15.4
-  flutter_svg: ^2.0.9
+  flutter_svg: ^2.0.10+1
   filesystem_picker: ^4.1.0
 
 
+#  crypto: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.7
+  build_runner: ^2.4.12
   hive_generator: ^2.0.1
-  flutter_lints: ^3.0.1
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true

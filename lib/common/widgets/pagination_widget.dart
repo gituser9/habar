@@ -14,11 +14,11 @@ class PaginationWidget extends StatelessWidget {
   final Function(int) callback;
 
   const PaginationWidget({
-    Key? key,
+    super.key,
     required this.page,
     required this.pageCount,
     required this.callback,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

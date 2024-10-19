@@ -47,11 +47,11 @@ class UserInfoWidget extends StatelessWidget {
 
   String _getFullname() {
     if (author.alias.isNotEmpty) {
-      return author.alias + ' ';
+      return '${author.alias} ';
     }
 
     if (author.fullname.isNotEmpty) {
-      return author.fullname + ' ';
+      return '${author.fullname} ';
     }
 
     return '';

@@ -13,7 +13,7 @@ class CommentsScreen extends StatelessWidget {
   final _ctrl = Get.put(CommentsCtrl());
   final Post post;
 
-  CommentsScreen({Key? key, required this.post}) : super(key: key) {
+  CommentsScreen({super.key, required this.post}) {
     _ctrl.getAll(post.id);
   }
 

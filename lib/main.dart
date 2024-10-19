@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
   final settingsCtrl = Get.put(SettingsCtrl());
   final AppThemeType theme;
 
-  MyApp({Key? key, required this.theme}) : super(key: key);
+  MyApp({super.key, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
           GetPage(name: '/post/:id', page: () => PostScreen()),
           GetPage(name: '/ru/post/:id/', page: () => PostScreen()),
           GetPage(name: '/ru/news/:t/:id/', page: () => PostScreen()),
-          GetPage(name: '/ru/company/:name/blog/:id/', page: () => PostScreen()),
+          GetPage(name: '/ru/companies/:name/articles/:id/', page: () => PostScreen()),
           GetPage(name: '/', page: () => SafeArea(child: HomeScreen())),
         ],
         initialRoute: "/",
@@ -54,9 +54,7 @@ class MyApp extends StatelessWidget {
             return;
           }
 
-          bool isPostRoute = routing.current.contains('/post/'.toString()) ||
-              routing.current.contains('/news/'.toString()) ||
-              routing.current.contains('/blog/'.toString());
+          bool isPostRoute = routing.current.contains('/post/'.toString()) || routing.current.contains('/news/'.toString()) || routing.current.contains('/articles/'.toString());
 
           if (isPostRoute) {
             String id = routing.current.split('/').where((e) => e.isNotEmpty).firstWhere((e) => int.tryParse(e) != null);

@@ -14,7 +14,7 @@ class HubScreen extends StatelessWidget {
   final _ctrl = Get.put(HubCtrl());
   final _bottomCtrl = HideBottomBarCtrl();
 
-  HubScreen({Key? key, required this.name}) : super(key: key) {
+  HubScreen({super.key, required this.name}) {
     _ctrl.page.value = 1;
     _ctrl.selectedIndex.value = 0;
     _ctrl.setup(name);

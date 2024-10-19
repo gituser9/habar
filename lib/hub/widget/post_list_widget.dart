@@ -13,7 +13,7 @@ class PostListWidget extends StatelessWidget {
   final SavedPostService _savedPostService = Get.find();
   final HideBottomBarCtrl bottomCtrl;
 
-  PostListWidget({Key? key, required this.name, required this.bottomCtrl}) : super(key: key);
+  PostListWidget({super.key, required this.name, required this.bottomCtrl});
 
   @override
   Widget build(BuildContext context) {

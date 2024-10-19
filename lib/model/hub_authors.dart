@@ -47,10 +47,15 @@ class HubAuthorRef extends BaseAuthor {
   final double rating;
 
   // final String login;
+  @override
   final String id;
+  @override
   final String alias;
+  @override
   final String fullname;
+  @override
   final String avatarUrl;
+  @override
   final String speciality;
 
   factory HubAuthorRef.fromJson(String str) => HubAuthorRef.fromMap(json.decode(str));
@@ -68,6 +73,7 @@ class HubAuthorRef extends BaseAuthor {
         speciality: json["speciality"] ?? '',
       );
 
+  @override
   Map<String, dynamic> toMap() => {
         "scoreStats": scoreStats.toMap(),
         "rating": rating,

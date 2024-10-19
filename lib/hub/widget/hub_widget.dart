@@ -5,7 +5,7 @@ import 'package:habar/model/hub.dart';
 class HubInfoWidget extends StatelessWidget {
   final Hub hub;
 
-  const HubInfoWidget({Key? key, required this.hub}) : super(key: key);
+  const HubInfoWidget({super.key, required this.hub});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class HubInfoWidget extends StatelessWidget {
                 width: 40,
                 height: 40,
                 child: CachedNetworkImage(
-                  imageUrl: 'https:' + hub.imageUrl,
+                  imageUrl: 'https:${hub.imageUrl}',
                   placeholder: (context, url) => const Icon(Icons.image),
                   errorWidget: (context, url, error) => const Icon(Icons.image),
                 ),
