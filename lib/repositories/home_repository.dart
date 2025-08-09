@@ -38,7 +38,7 @@ class HomeRepo {
       return;
     }
 
-    final posts = PostList.fromJson(json);
+    final posts = PostList.fromJsonOld(json);
 
     postsStream.add(posts);
   }
@@ -68,7 +68,7 @@ class HomeRepo {
       return;
     }
 
-    final posts = PostList.fromJson(json);
+    final posts = PostList.fromJsonOld(json);
 
     postsStream.add(posts);
   }
@@ -96,7 +96,7 @@ class HomeRepo {
       return;
     }
 
-    final posts = PostList.fromJson(json);
+    final posts = PostList.fromJsonOld(json);
     final newList = PostList(
       articleIds: list.articleIds,
       articleRefs: list.articleRefs,
@@ -135,7 +135,7 @@ class HomeRepo {
       return;
     }
 
-    final posts = PostList.fromJson(json);
+    final posts = PostList.fromJsonOld(json);
     final newList = PostList(
       articleIds: list.articleIds,
       articleRefs: list.articleRefs,
@@ -163,7 +163,7 @@ class HomeRepo {
       return;
     }
 
-    final hubs = HubList.fromJson(json);
+    final hubs = HubList.fromJsonOld(json);
 
     hubsStream.add(hubs);
   }
@@ -177,7 +177,7 @@ class HomeRepo {
       return;
     }
 
-    var hubs = HubList.fromJson(json);
+    var hubs = HubList.fromJsonOld(json);
 
     hubsStream.add(hubs);
   }
