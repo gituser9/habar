@@ -23,11 +23,11 @@ class StructuredComment {
   });
 
   factory StructuredComment.fromComment(Comment comment) => StructuredComment(
-        author: comment.author,
+        author: comment.author ?? Author.empty(),
         publishTime: comment.timePublished!,
         text: comment.message,
         isPostAuthor: comment.isPostAuthor,
-        level: comment.level,
+        level: comment.level ?? 0,
         score: comment.score,
         id: comment.id,
       );

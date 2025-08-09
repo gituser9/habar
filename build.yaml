@@ -1,0 +1,9 @@
+targets:
+  $default:
+    builders:
+      hive_generator:
+        enabled: true
+      json_serializable:
+        enabled: true
+      retrofit_generator:
+        enabled: true

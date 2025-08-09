@@ -9,7 +9,7 @@ import 'package:habar/common/controllers/settings_ctrl.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HtmlImage extends StatefulWidget {
   final String imageUrl;
@@ -185,7 +185,15 @@ class _HtmlImageState extends State<HtmlImage> {
                             _ctrl.isImageLoading.value = false;
 
                             try {
-                              await Share.shareFiles([img.path]);
+                              final params = ShareParams(
+                                text: 'picture',
+                                files: [XFile(img.path)],
+                              );
+                              final result = await SharePlus.instance.share(params);
+
+                              if (result.status == ShareResultStatus.success) {
+                                // print('Thank you for sharing the picture!');
+                              }
                               await img.delete();
                             } catch (e) {
                               print(e);

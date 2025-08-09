@@ -44,18 +44,28 @@ class HtmlText extends StatelessWidget {
           TagExtension(
               tagsToExtend: {'img'},
               builder: (ctx) {
-                String? fullImg = ctx.attributes['data-src'];
+                String link = '';
 
-                if (fullImg == null || fullImg.isEmpty) {
-                  fullImg = ctx.attributes['src'] ?? '';
+                if (ctx.attributes.containsKey('data-src')) {
+                  link = ctx.attributes['data-src'] ?? '';
                 }
 
-                return HtmlImage(imageUrl: fullImg);
+                if (ctx.attributes.containsKey('src')) {
+                  link = ctx.attributes['src'] ?? '';
+                }
+
+                if (link.isNotEmpty) {
+                  return HtmlImage(imageUrl: link);
+                }
+
+                return Container();
               }),
           TagExtension(
               tagsToExtend: {'figure'},
               builder: (ctx) {
                 String? link = ctx.elementChildren.firstWhereOrNull((tag) => tag.localName == 'img')?.attributes['data-src'];
+
+                link ??= ctx.elementChildren.firstWhereOrNull((tag) => tag.localName == 'img')?.attributes['src'];
 
                 if (link != null && link.isNotEmpty) {
                   return HtmlImage(imageUrl: link);
@@ -70,6 +80,7 @@ class HtmlText extends StatelessWidget {
                 code = code.replaceAll('&nbsp;', ' ');
                 code = code.replaceAll('&lt;', '<');
                 code = code.replaceAll('&gt;', '>');
+                code = code.replaceAll('&amp;', '&');
 
                 return Scrollbar(
                   child: Row(

@@ -6,7 +6,7 @@ import 'package:habar/model/hub_list.dart';
 import 'package:habar/model/post_list.dart';
 import 'package:habar/model/profile.dart';
 import 'package:habar/model/profile_list.dart';
-import 'package:habar/profile/profile_repository.dart';
+import 'package:habar/repositories/profile_repository.dart';
 
 class ProfileCtrl extends GetxController {
   late ProfileRepository _repo;
@@ -33,9 +33,9 @@ class ProfileCtrl extends GetxController {
 
     _repo.profileHubsStream.map((hubList) => hubList.hubRefs.values.toList()).listen((refs) => profileHubs.value = refs);
 
-    _repo.profileCompaniesStream.map((companyList) => companyList.companies).listen((companies) => profileCompanies.value = companies);
+    _repo.profileCompaniesStream.listen((companies) => profileCompanies.value = companies);
 
-    _repo.profileChildrenStream.map((profileList) => profileList.userRefs).listen((children) => inviteds.value = children);
+    _repo.profileChildrenStream.listen((children) => inviteds.value = children);
 
     _repo.postsStream.listen((postList) => posts.value = postList);
 
@@ -92,7 +92,7 @@ class ProfileCtrl extends GetxController {
   }
 
   List<StructuredComment> _getStructuredComments(CommentList commentList) {
-    Map<String, Comment> commentsMap = { for (var comment in commentList.comments.values) comment.id : comment };
+    Map<String, Comment> commentsMap = {for (var comment in commentList.comments.values) comment.id: comment};
     List<StructuredComment> structComments = [];
 
     for (final comment in commentList.comments.values) {

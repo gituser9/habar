@@ -13,7 +13,7 @@ import 'package:habar/home/home_ctrl.dart';
 import 'package:habar/model/post.dart';
 import 'package:habar/model/settings.dart';
 import 'package:habar/post/post_ctrl.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PostWidget extends StatelessWidget {
   final SettingsCtrl _settingsCtrl = Get.find();
@@ -54,7 +54,12 @@ class PostWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  UserInfoWidget(author: article.author, publishTime: article.timePublished),
+                  UserInfoWidget(
+                    publishTime: article.timePublished,
+                    alias: article.author?.alias ?? '',
+                    avatarUrl: article.author?.avatarUrl ?? '',
+                    fullName: article.author?.fullname ?? '',
+                  ),
                   _buildAction(),
                 ],
               ),
@@ -93,7 +98,7 @@ class PostWidget extends StatelessWidget {
       return Container();
     }
 
-    String imgUrl = Util.getImgUrl(imageUrl, article.textHtml);
+    String imgUrl = Util.getImgUrl(imageUrl, article.textHtml ?? '');
 
     if (imgUrl.isEmpty) {
       return Container();
@@ -206,10 +211,8 @@ class PostWidget extends StatelessWidget {
             size: 20,
           ),
           onPressed: () async {
-            await Share.share(
-              'https://m.habr.com/ru/post/${article.id}/',
-              subject: article.titleHtml,
-            );
+            final params = ShareParams(uri: Uri.parse('https://m.habr.com/ru/post/${article.id}/'));
+            await SharePlus.instance.share(params);
           },
         ),
       ],
@@ -219,9 +222,9 @@ class PostWidget extends StatelessWidget {
   Widget _buildFooterRow() {
     Color ratingColor;
 
-    if (article.statistics.score > 0) {
+    if (article.statistics != null) {
       ratingColor = Colors.green.shade800;
-    } else if (article.statistics.score < 0) {
+    } else if (article.statistics != null && article.statistics!.score < 0) {
       ratingColor = Colors.red;
     } else {
       ratingColor = Colors.grey.shade600;
@@ -232,13 +235,13 @@ class PostWidget extends StatelessWidget {
       children: [
         FooterItemWidget(
           icon: Icons.thumbs_up_down,
-          value: article.statistics.score,
+          value: article.statistics?.score ?? 0,
           textColor: ratingColor,
-          isMinus: article.statistics.score < 0,
-          isPlus: article.statistics.score > 0,
+          isMinus: (article.statistics?.score ?? 0) < 0,
+          isPlus: (article.statistics?.score ?? 0) > 0,
         ),
-        FooterItemWidget(icon: Icons.visibility, value: article.statistics.readingCount),
-        FooterItemWidget(icon: Icons.bookmark, value: article.statistics.favoritesCount),
+        FooterItemWidget(icon: Icons.visibility, value: article.statistics?.readingCount ?? 0),
+        FooterItemWidget(icon: Icons.bookmark, value: article.statistics?.favoritesCount ?? 0),
         Row(
           children: [
             IconButton(
@@ -248,7 +251,7 @@ class PostWidget extends StatelessWidget {
               onPressed: () async => Get.to(() => CommentsScreen(post: article)),
             ),
             Text(
-              article.statistics.commentsCount.toString(),
+              (article.statistics?.commentsCount ?? '').toString(),
               style: TextStyle(
                 fontSize: 11,
                 color: Colors.grey.shade600,

@@ -7,7 +7,7 @@ import 'package:habar/common/widgets/user_info_widget.dart';
 import 'package:habar/home/widgets/loading_widget.dart';
 import 'package:habar/model/post.dart';
 import 'package:habar/post/post_ctrl.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PostScreen extends StatelessWidget {
   final PostCtrl _ctrl = Get.find();
@@ -60,7 +60,7 @@ class PostScreen extends StatelessWidget {
             ),
           ),
         ),
-        SelectionArea(child: HtmlText(htmlText: post.textHtml)),
+        SelectionArea(child: HtmlText(htmlText: post.textHtml ?? '')),
         Divider(height: 1, color: Colors.grey.shade600),
 
         // footer
@@ -124,7 +124,13 @@ class PostScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          UserInfoWidget(publishTime: post.timePublished, author: post.author),
+          UserInfoWidget(
+            publishTime: post.timePublished,
+            alias: post.author?.alias ?? '',
+            avatarUrl: post.author?.avatarUrl ?? '',
+            fullName: post.author?.fullname ?? '',
+            //
+          ),
           Row(
             children: [
               Obx(() {
@@ -171,10 +177,8 @@ class PostScreen extends StatelessWidget {
                   size: 20,
                 ),
                 onPressed: () async {
-                  await Share.share(
-                    'https://m.habr.com/ru/post/${post.id}/',
-                    subject: post.titleHtml,
-                  );
+                  final params = ShareParams(uri: Uri.parse('https://m.habr.com/ru/post/${post.id}/'));
+                  await SharePlus.instance.share(params);
                 },
               ),
             ],
@@ -209,11 +213,11 @@ class PostScreen extends StatelessWidget {
                       'Комментарии',
                       style: TextStyle(color: Get.isDarkMode ? Colors.grey.shade300 : Colors.grey.shade900),
                     ),
-                    if (post.statistics.commentsCount > 0)
+                    if (post.statistics?.commentsCount != null)
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: Text(
-                          ' ${post.statistics.commentsCount}',
+                          ' ${post.statistics!.commentsCount}',
                           style: TextStyle(color: Colors.blue.shade600),
                         ),
                       ),
@@ -230,9 +234,9 @@ class PostScreen extends StatelessWidget {
   Widget _buildFooterRow(Post post) {
     Color raitingColor;
 
-    if (post.statistics.votesCount > 0) {
+    if (post.statistics?.votesCount != null) {
       raitingColor = Colors.green.shade800;
-    } else if (post.statistics.votesCount < 0) {
+    } else if (post.statistics!.votesCount < 0) {
       raitingColor = Colors.red;
     } else {
       raitingColor = Colors.grey.shade600;
@@ -243,21 +247,19 @@ class PostScreen extends StatelessWidget {
       children: [
         FooterItemWidget(
           icon: Icons.thumbs_up_down,
-          value: post.statistics.votesCount,
+          value: post.statistics?.votesCount ?? 0,
           textColor: raitingColor,
-          isMinus: post.statistics.votesCount < 0,
-          isPlus: post.statistics.votesCount > 0,
+          isMinus: (post.statistics?.votesCount ?? 0) < 0,
+          isPlus: (post.statistics?.votesCount ?? 0) > 0,
         ),
-        FooterItemWidget(icon: Icons.visibility, value: post.statistics.readingCount),
-        FooterItemWidget(icon: Icons.bookmark, value: post.statistics.favoritesCount),
+        FooterItemWidget(icon: Icons.visibility, value: post.statistics?.readingCount ?? 0),
+        FooterItemWidget(icon: Icons.bookmark, value: post.statistics?.favoritesCount ?? 0),
         IconButton(
           splashRadius: 25,
           icon: const Icon(Icons.share, color: Colors.grey, size: 15),
           onPressed: () async {
-            await Share.share(
-              'https://m.habr.com/ru/post/${post.id}/',
-              subject: post.titleHtml,
-            );
+            final params = ShareParams(uri: Uri.parse('https://m.habr.com/ru/post/${post.id}/'));
+            await SharePlus.instance.share(params);
           },
         ),
       ],
@@ -265,7 +267,7 @@ class PostScreen extends StatelessWidget {
   }
 
   Widget _buildHubRow(Post post) {
-    final hubNames = post.hubs.map(((hub) => hub.title)).toList();
+    final hubNames = post.hubs?.map(((hub) => hub.title)).toList() ?? [];
 
     return Text(
       hubNames.join(', '),

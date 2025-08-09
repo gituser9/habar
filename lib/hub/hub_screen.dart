@@ -4,10 +4,10 @@ import 'package:habar/common/controllers/hide_bottombar_ctrl.dart';
 import 'package:habar/common/widgets/no_data_widget.dart';
 import 'package:habar/home/widgets/loading_widget.dart';
 import 'package:habar/hub/hub_ctrl.dart';
-import 'package:habar/hub/widget/hub_author_llist_widget.dart';
-import 'package:habar/hub/widget/hub_company_list_widget.dart';
-import 'package:habar/hub/widget/hub_widget.dart';
-import 'package:habar/hub/widget/post_list_widget.dart';
+import 'package:habar/hub/widgets/hub_author_llist_widget.dart';
+import 'package:habar/hub/widgets/hub_company_list_widget.dart';
+import 'package:habar/hub/widgets/hub_widget.dart';
+import 'package:habar/hub/widgets/post_list_widget.dart';
 
 class HubScreen extends StatelessWidget {
   final String name;

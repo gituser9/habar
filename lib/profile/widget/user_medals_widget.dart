@@ -19,7 +19,7 @@ class UserWhoIsWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8),
+                  padding: EdgeInsets.symmetric(vertical: 12),
                   child: Text(
                     'Значки',
                     style: Constant.profileHeadersStyle,
@@ -27,7 +27,7 @@ class UserWhoIsWidget extends StatelessWidget {
                 ),
                 Wrap(
                   children: [
-                    for (final medal in whoIs.badges)
+                    for (final medal in whoIs.badgets)
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                         decoration: BoxDecoration(

@@ -1,14 +1,14 @@
 import 'package:get/get.dart';
-import 'package:habar/hub/hub_repository.dart';
 import 'package:habar/model/hub.dart';
 import 'package:habar/model/hub_authors.dart';
 import 'package:habar/model/hub_company_list.dart';
 import 'package:habar/model/post_list.dart';
+import 'package:habar/repositories/hub_repository.dart';
 
 class HubCtrl extends GetxController {
   late HubRepository _repo;
   final hub = Hub.empty().obs;
-  final posts = PostList(articleIds: [], articleRefs: {}, pagesCount: 0).obs;
+  final posts = PostList(publicationIds: [], publicationRefs: {}, pagesCount: 0).obs;
   final hubAuthors = HubAuthorList(authorIds: [], authorRefs: {}, pagesCount: 0).obs;
   final hubCompanies = HubCompanyList(companyIds: [], companyRefs: {}, pagesCount: 0).obs;
   final page = 1.obs;

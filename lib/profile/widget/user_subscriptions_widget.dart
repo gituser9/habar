@@ -44,17 +44,17 @@ class UserSubscriptions extends StatelessWidget {
 
             return ListTile(
               leading: CircleAvatar(
-                backgroundImage: NetworkImage('https:${company.icon}'),
+                backgroundImage: NetworkImage('https:${company.imageUrl}'),
                 backgroundColor: Colors.transparent,
               ),
               title: Html(
-                data: company.name,
+                data: company.titleHtml,
                 style: {
                   'body': Style(fontWeight: FontWeight.bold, margin: Margins.all(0)),
                 },
               ),
               subtitle: Html(
-                data: company.description,
+                data: company.descriptionHtml ?? '',
                 style: {
                   'body': Style(
                     margin: Margins.all(0),

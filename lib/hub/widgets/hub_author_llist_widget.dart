@@ -33,11 +33,11 @@ class HubAuthorListWidget extends StatelessWidget {
         final author = authors.authorRefs[login]!;
 
         return ListTile(
-          leading: Util.getAvatar(author.avatarUrl, 40),
+          leading: Util.getAvatar(author.avatarUrl ?? '', 40),
           title: Wrap(
             children: [
               Text(
-                author.fullname,
+                author.fullname ?? '',
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               ),
               const SizedBox(width: 8),
@@ -48,7 +48,7 @@ class HubAuthorListWidget extends StatelessWidget {
             ],
           ),
           subtitle: Text(
-            author.speciality,
+            author.speciality ?? '',
             style: const TextStyle(fontSize: 13),
           ),
           onTap: () {

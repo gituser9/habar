@@ -1,22 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:habar/model/post.dart';
+import 'package:habar/repositories/base_repo.dart';
 
-import '../common/http_client.dart';
-
-class PostRepo {
+class PostRepo extends BaseRepo {
   Future<Post> getById(String id) async {
-    final dio = Dio(); // Provide a dio instance
-    dio.options.headers['Demo-Header'] = 'demo header'; // config your dio headers globally
-    final client = HttpClient(dio);
+    final post = await habrClient.post(id);
 
-    // final json = await HttpRequest.get('/articles/$id');
-    final post = await client.post(id);
-
-    /*if (json.isEmpty) {
-      return Post.empty();
-    }*/
-
-    // return Post.fromJsonOld(json);
     return post;
   }
 }

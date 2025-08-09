@@ -45,7 +45,7 @@ class HubCompanyListWidget extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
           subtitle: Html(
-            data: company.descriptionHtml,
+            data: company.descriptionHtml ?? '',
             style: {
               'body': Style(
                 fontSize: FontSize(13),

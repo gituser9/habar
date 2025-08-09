@@ -38,8 +38,8 @@ class SavedWidget extends StatelessWidget {
                 article: post,
                 isSaved: true,
                 imageUrl: Util.getImgUrl(
-                  post.leadData.imageUrl,
-                  post.textHtml,
+                  post.leadData.imageUrl ?? '',
+                  post.textHtml ?? '',
                 )),
           );
         },

@@ -1,33 +1,26 @@
 import 'dart:convert';
 
+import 'package:habar/model/ICommnatble.dart';
 import 'package:habar/model/author.dart';
 import 'package:hive/hive.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'post.g.dart';
-
-abstract class BaseStatistic {
-  final int commentsCount = 0;
-  final int favoritesCount = 0;
-  final int readingCount = 0;
-  final int score = 0;
-  final int votesCount = 0;
-
-  Map<String, dynamic> toMap();
-}
 
 abstract class BasePost {
   final String id = '';
   final String textHtml = '';
   final String titleHtml = '';
   final DateTime timePublished = DateTime.now();
-  late BaseStatistic statistics;
+  late Statistics statistics;
   late BaseAuthor author;
 
   Map<String, dynamic> toMap();
 }
 
+@JsonSerializable()
 @HiveType(typeId: 1)
-class Post {
+class Post implements ICommentable {
   Post({
     required this.id,
     required this.timePublished,
@@ -60,19 +53,19 @@ class Post {
   @HiveField(5)
   String postType;
   @HiveField(6)
-  List<PostLabel> postLabels;
+  List<PostLabel>? postLabels;
   @HiveField(7)
-  Author author;
+  Author? author;
   @HiveField(8)
-  Statistics statistics;
+  Statistics? statistics;
   @HiveField(9)
-  List<HubData> hubs;
+  List<HubData>? hubs;
   @HiveField(10)
   List<Tag> tags;
   @HiveField(11)
   String status;
   @HiveField(12)
-  String textHtml;
+  String? textHtml;
   @HiveField(13)
   LeadData leadData;
   @HiveField(14)
@@ -99,49 +92,63 @@ class Post {
         complexity: '',
       );
 
-  factory Post.fromJson(String str) => Post.fromMap(json.decode(str));
+  factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
-  String toJson() => json.encode(toMap());
+  Map<String, dynamic> toMap() => _$PostToJson(this);
 
-  factory Post.fromMap(Map<String, dynamic> json) => Post(
-        id: json["id"] ?? '',
-        timePublished: DateTime.parse(json["timePublished"]),
-        isCorporative: json["isCorporative"] ?? false,
-        lang: json["lang"] ?? '',
-        titleHtml: json["titleHtml"] ?? '',
-        postType: json["postType"] ?? '',
-        postLabels: json["postLabels"] == null ? [] : List<PostLabel>.from(json["postLabels"].map((x) => PostLabel.fromMap(x))),
-        author: json["author"] == null ? Author.empty() : Author.fromMap(json["author"]),
-        statistics: Statistics.fromMap(json["statistics"]),
-        hubs: json["hubs"] == null ? [] : List<HubData>.from(json["hubs"].map((x) => HubData.fromMap(x))),
-        textHtml: json["textHtml"] ?? '',
-        tags: json["tags"] == null ? [] : List<Tag>.from(json["tags"].map((x) => Tag.fromMap(x))),
-        status: json["status"] ?? '',
-        leadData: json["status"] == null ? LeadData.empty() : LeadData.fromMap(json["leadData"]),
-        readingTime: json["readingTime"] ?? 0,
-        complexity: json["complexity"] ?? '',
-      );
+  @override
+  String authorAlias() {
+    return author?.alias ?? '';
+  }
 
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "timePublished": timePublished.toIso8601String(),
-        "isCorporative": isCorporative,
-        "lang": lang,
-        "titleHtml": titleHtml,
-        "postType": postType,
-        "postLabels": List<dynamic>.from(postLabels.map((x) => x.toMap())),
-        "author": author.toMap(),
-        "statistics": statistics.toMap(),
-        "hubs": List<dynamic>.from(hubs.map((x) => x.toMap())),
-        "textHtml": textHtml,
-        "tags": List<dynamic>.from(tags.map((x) => x.toMap())),
-        "status": status,
-        "complexity": complexity,
-        "readingTime": readingTime,
-      };
+  @override
+  String avatarUrl() {
+    return author?.avatarUrl ?? '';
+  }
+
+  @override
+  int commentsCount() {
+    return statistics?.commentsCount ?? 0;
+  }
+
+  @override
+  int favoritesCount() {
+    return statistics?.favoritesCount ?? 0;
+  }
+
+  @override
+  String fullName() {
+    return author?.fullname ?? '';
+  }
+
+  @override
+  DateTime publishTime() {
+    return timePublished;
+  }
+
+  @override
+  int readingCount() {
+    return statistics?.readingCount ?? 0;
+  }
+
+  @override
+  int votesCount() {
+    return statistics?.votesCount ?? 0;
+  }
+
+  @override
+  String title() {
+    return titleHtml;
+  }
+
+  @override
+  String itemId() {
+    return id;
+  }
 }
 
 // todo: separate file
+@JsonSerializable()
 @HiveType(typeId: 2)
 class Author {
   Author({
@@ -155,19 +162,19 @@ class Author {
   });
 
   @HiveField(0)
-  ScoreStats scoreStats;
+  ScoreStats? scoreStats;
   @HiveField(1)
   String id;
   @HiveField(2)
-  String login;
+  String? login;
   @HiveField(3)
   String alias;
   @HiveField(4)
-  String fullname;
+  String? fullname;
   @HiveField(5)
-  String avatarUrl;
+  String? avatarUrl;
   @HiveField(6)
-  String speciality;
+  String? speciality;
 
   factory Author.empty() => Author(
         scoreStats: ScoreStats.empty(),
@@ -179,31 +186,14 @@ class Author {
         speciality: '',
       );
 
-  factory Author.fromJson(String str) => Author.fromMap(json.decode(str));
+  factory Author.fromJson(Map<String, dynamic> json) => _$AuthorFromJson(json);
 
   String toJson() => json.encode(toMap());
 
-  factory Author.fromMap(Map<String, dynamic> json) => Author(
-        scoreStats: json["scoreStats"] == null ? ScoreStats.empty() : ScoreStats.fromMap(json["scoreStats"]),
-        id: json["id"] ?? '0',
-        login: json["login"] ?? '',
-        alias: json["alias"] ?? '',
-        fullname: json["fullname"] ?? '',
-        avatarUrl: json["avatarUrl"] ?? '',
-        speciality: json["speciality"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "scoreStats": scoreStats.toMap(),
-        "id": id,
-        "login": login,
-        "alias": alias,
-        "fullname": fullname,
-        "avatarUrl": avatarUrl,
-        "speciality": speciality,
-      };
+  Map<String, dynamic> toMap() => _$AuthorToJson(this);
 }
 
+@JsonSerializable()
 @HiveType(typeId: 3)
 class ScoreStats {
   ScoreStats({
@@ -218,21 +208,12 @@ class ScoreStats {
 
   factory ScoreStats.empty() => ScoreStats(score: 0.0, votesCount: 0);
 
-  factory ScoreStats.fromJson(String str) => ScoreStats.fromMap(json.decode(str));
+  factory ScoreStats.fromJson(Map<String, dynamic> json) => _$ScoreStatsFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory ScoreStats.fromMap(Map<String, dynamic> json) => ScoreStats(
-        score: json["score"] == null ? 0.0 : json["score"].toDouble(),
-        votesCount: json["votesCount"] ?? 0,
-      );
-
-  Map<String, dynamic> toMap() => {
-        "score": score,
-        "votesCount": votesCount,
-      };
+  Map<String, dynamic> toMap() => _$ScoreStatsToJson(this);
 }
 
+@JsonSerializable()
 @HiveType(typeId: 4)
 class HubData {
   HubData({
@@ -254,28 +235,13 @@ class HubData {
   @HiveField(4)
   String titleHtml;
 
-  factory HubData.fromJson(String str) => HubData.fromMap(json.decode(str));
+  factory HubData.fromJson(Map<String, dynamic> json) => _$HubDataFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory HubData.fromMap(Map<String, dynamic> json) => HubData(
-        id: json["id"] ?? '',
-        alias: json["alias"] ?? '',
-        type: json["type"] ?? '',
-        title: json["title"] ?? '',
-        titleHtml: json["titleHtml"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "alias": alias,
-        "type": type,
-        "title": title,
-        "titleHtml": titleHtml,
-      };
+  Map<String, dynamic> toMap() => _$HubDataToJson(this);
 }
 
 // todo: delete?
+@JsonSerializable()
 class Img {
   Img({
     required this.url,
@@ -283,19 +249,12 @@ class Img {
 
   String url;
 
-  factory Img.fromJson(String str) => Img.fromMap(json.decode(str));
+  factory Img.fromJson(Map<String, dynamic> json) => _$ImgFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory Img.fromMap(Map<String, dynamic> json) => Img(
-        url: json["url"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "url": url,
-      };
+  Map<String, dynamic> toMap() => _$ImgToJson(this);
 }
 
+@JsonSerializable()
 @HiveType(typeId: 5)
 class PostLabel {
   PostLabel({
@@ -305,19 +264,12 @@ class PostLabel {
   @HiveField(0)
   String type;
 
-  factory PostLabel.fromJson(String str) => PostLabel.fromMap(json.decode(str));
+  factory PostLabel.fromJson(Map<String, dynamic> json) => _$PostLabelFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory PostLabel.fromMap(Map<String, dynamic> json) => PostLabel(
-        type: json["type"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "type": type,
-      };
+  Map<String, dynamic> toMap() => _$PostLabelToJson(this);
 }
 
+@JsonSerializable()
 @HiveType(typeId: 6)
 class Statistics {
   Statistics({
@@ -347,27 +299,14 @@ class Statistics {
         votesCount: 0,
       );
 
-  factory Statistics.fromJson(String str) => Statistics.fromMap(json.decode(str));
+  factory Statistics.fromJson(Map<String, dynamic> json) => _$StatisticsFromJson(json);
 
   String toJson() => json.encode(toMap());
 
-  factory Statistics.fromMap(Map<String, dynamic> json) => Statistics(
-        commentsCount: json["commentsCount"] ?? 0,
-        favoritesCount: json["favoritesCount"] ?? 0,
-        readingCount: json["readingCount"] ?? 0,
-        score: json["score"] ?? 0,
-        votesCount: json["votesCount"] ?? 0,
-      );
-
-  Map<String, dynamic> toMap() => {
-        "commentsCount": commentsCount,
-        "favoritesCount": favoritesCount,
-        "readingCount": readingCount,
-        "score": score,
-        "votesCount": votesCount,
-      };
+  Map<String, dynamic> toMap() => _$StatisticsToJson(this);
 }
 
+@JsonSerializable()
 @HiveType(typeId: 7)
 class Tag {
   Tag({
@@ -377,19 +316,12 @@ class Tag {
   @HiveField(0)
   String titleHtml;
 
-  factory Tag.fromJson(String str) => Tag.fromMap(json.decode(str));
+  factory Tag.fromJson(Map<String, dynamic> json) => _$TagFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory Tag.fromMap(Map<String, dynamic> json) => Tag(
-        titleHtml: json["titleHtml"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "titleHtml": titleHtml,
-      };
+  Map<String, dynamic> toMap() => _$TagToJson(this);
 }
 
+@JsonSerializable()
 @HiveType(typeId: 8)
 class LeadData {
   LeadData({
@@ -400,21 +332,11 @@ class LeadData {
   @HiveField(0)
   final String textHtml;
   @HiveField(1)
-  final String imageUrl;
+  final String? imageUrl;
 
   factory LeadData.empty() => LeadData(textHtml: '', imageUrl: '');
 
-  factory LeadData.fromJson(String str) => LeadData.fromMap(json.decode(str));
+  factory LeadData.fromJson(Map<String, dynamic> json) => _$LeadDataFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory LeadData.fromMap(Map<String, dynamic> json) => LeadData(
-        textHtml: json["textHtml"] ?? '',
-        imageUrl: json["imageUrl"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "textHtml": textHtml,
-        "imageUrl": imageUrl,
-      };
+  Map<String, dynamic> toMap() => _$LeadDataToJson(this);
 }

@@ -1,9 +1,8 @@
-// To parse this JSON data, do
-//
-//     final welcome = welcomeFromMap(jsonString);
+import 'package:json_annotation/json_annotation.dart';
 
-import 'dart:convert';
+part 'search_user.g.dart';
 
+@JsonSerializable()
 class SearchUserResponse {
   SearchUserResponse({
     required this.userIds,
@@ -24,25 +23,10 @@ class SearchUserResponse {
         searchStatistics: SearchStatistics.empty(),
       );
 
-  factory SearchUserResponse.fromJson(String str) => SearchUserResponse.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory SearchUserResponse.fromMap(Map<String, dynamic> json) => SearchUserResponse(
-        userIds: json["userIds"] == null ? [] : List<String>.from(json["userIds"].map((x) => x)),
-        userRefs: json["userRefs"] == null ? {} : Map.from(json["userRefs"]).map((k, v) => MapEntry<String, UserRef>(k, UserRef.fromMap(v))),
-        pagesCount: json["pagesCount"] ?? 0,
-        searchStatistics: SearchStatistics.fromMap(json["searchStatistics"]),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "userIds": List<dynamic>.from(userIds.map((x) => x)),
-        "userRefs": Map.from(userRefs).map((k, v) => MapEntry<String, dynamic>(k, v.toMap())),
-        "pagesCount": pagesCount,
-        "searchStatistics": searchStatistics.toMap(),
-      };
+  factory SearchUserResponse.fromJson(Map<String, dynamic> json) => _$SearchUserResponseFromJson(json);
 }
 
+@JsonSerializable()
 class SearchStatistics {
   SearchStatistics({
     required this.articlesCount,
@@ -66,27 +50,10 @@ class SearchStatistics {
         companiesCount: 0,
       );
 
-  factory SearchStatistics.fromJson(String str) => SearchStatistics.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory SearchStatistics.fromMap(Map<String, dynamic> json) => SearchStatistics(
-        articlesCount: json["articlesCount"] ?? 0,
-        commentsCount: json["commentsCount"] ?? 0,
-        hubsCount: json["hubsCount"] ?? 0,
-        usersCount: json["usersCount"] ?? 0,
-        companiesCount: json["companiesCount"] ?? 0,
-      );
-
-  Map<String, dynamic> toMap() => {
-        "articlesCount": articlesCount,
-        "commentsCount": commentsCount,
-        "hubsCount": hubsCount,
-        "usersCount": usersCount,
-        "companiesCount": companiesCount,
-      };
+  factory SearchStatistics.fromJson(Map<String, dynamic> json) => _$SearchStatisticsFromJson(json);
 }
 
+@JsonSerializable()
 class UserRef {
   UserRef({
     required this.scoreStats,
@@ -108,35 +75,12 @@ class UserRef {
   String avatarUrl;
   String speciality;
 
-  factory UserRef.fromJson(String str) => UserRef.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory UserRef.fromMap(Map<String, dynamic> json) => UserRef(
-        scoreStats: ScoreStats.fromMap(json["scoreStats"]),
-        rating: json["rating"] == null ? 0.0 : json["rating"].toDouble(),
-        id: json["id"] ?? '',
-        login: json["login"] ?? '',
-        alias: json["alias"] ?? '',
-        fullname: json["fullname"] ?? '',
-        avatarUrl: json["avatarUrl"] ?? '',
-        speciality: json["speciality"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "scoreStats": scoreStats.toMap(),
-        "rating": rating,
-        "id": id,
-        "login": login,
-        "alias": alias,
-        "fullname": fullname,
-        "avatarUrl": avatarUrl,
-        "speciality": speciality,
-      };
+  factory UserRef.fromJson(Map<String, dynamic> json) => _$UserRefFromJson(json);
 }
 
-class Hub {
-  Hub({
+@JsonSerializable()
+class SearchHub {
+  SearchHub({
     required this.id,
     required this.alias,
     required this.title,
@@ -148,25 +92,10 @@ class Hub {
   String title;
   String titleHtml;
 
-  factory Hub.fromJson(String str) => Hub.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Hub.fromMap(Map<String, dynamic> json) => Hub(
-        id: json["id"] ?? '',
-        alias: json["alias"] ?? '',
-        title: json["title"] ?? '',
-        titleHtml: json["titleHtml"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "alias": alias,
-        "title": title,
-        "titleHtml": titleHtml,
-      };
+  factory SearchHub.fromJson(Map<String, dynamic> json) => _$SearchHubFromJson(json);
 }
 
+@JsonSerializable()
 class ScoreStats {
   ScoreStats({
     required this.score,
@@ -176,17 +105,5 @@ class ScoreStats {
   double score;
   int votesCount;
 
-  factory ScoreStats.fromJson(String str) => ScoreStats.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory ScoreStats.fromMap(Map<String, dynamic> json) => ScoreStats(
-        score: json["score"] == null ? 0.0 : json["score"].toDouble(),
-        votesCount: json["votesCount"] ?? 0,
-      );
-
-  Map<String, dynamic> toMap() => {
-        "score": score,
-        "votesCount": votesCount,
-      };
+  factory ScoreStats.fromJson(Map<String, dynamic> json) => _$ScoreStatsFromJson(json);
 }

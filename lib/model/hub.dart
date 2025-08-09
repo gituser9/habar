@@ -1,5 +1,8 @@
-import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'hub.g.dart';
+
+@JsonSerializable()
 class Hub {
   Hub({
     required this.alias,
@@ -26,29 +29,12 @@ class Hub {
         statistics: Statistics.empty(),
       );
 
-  factory Hub.fromJson(String str) => Hub.fromMap(json.decode(str));
+  factory Hub.fromJson(Map<String, dynamic> json) => _$HubFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory Hub.fromMap(Map<String, dynamic> json) => Hub(
-        alias: json["alias"],
-        titleHtml: json["titleHtml"],
-        descriptionHtml: json["descriptionHtml"],
-        fullDescriptionHtml: json["fullDescriptionHtml"],
-        imageUrl: json["imageUrl"],
-        statistics: Statistics.fromMap(json["statistics"]),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "alias": alias,
-        "titleHtml": titleHtml,
-        "descriptionHtml": descriptionHtml,
-        "fullDescriptionHtml": fullDescriptionHtml,
-        "imageUrl": imageUrl,
-        "statistics": statistics.toMap(),
-      };
+  Map<String, dynamic> toMap() => _$HubToJson(this);
 }
 
+@JsonSerializable()
 class Statistics {
   Statistics({
     required this.subscribersCount,
@@ -69,21 +55,7 @@ class Statistics {
         postsCount: 0,
       );
 
-  factory Statistics.fromJson(String str) => Statistics.fromMap(json.decode(str));
+  factory Statistics.fromJson(Map<String, dynamic> json) => _$StatisticsFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory Statistics.fromMap(Map<String, dynamic> json) => Statistics(
-        subscribersCount: json["subscribersCount"],
-        rating: json["rating"]?.toDouble(),
-        authorsCount: json["authorsCount"],
-        postsCount: json["postsCount"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "subscribersCount": subscribersCount,
-        "rating": rating,
-        "authorsCount": authorsCount,
-        "postsCount": postsCount,
-      };
+  Map<String, dynamic> toMap() => _$StatisticsToJson(this);
 }

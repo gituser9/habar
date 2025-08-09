@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:get/get.dart';
 import 'package:habar/common/services/hive_service.dart';
 import 'package:habar/model/hub_list.dart';
@@ -35,8 +33,7 @@ class PinHubService extends GetxService {
     }
 
     for (final pin in pinned) {
-      String js = json.encode(pin.data);
-      var hubRef = HubRef.fromJson(js);
+      var hubRef = HubRef.fromJson(pin.data);
 
       hubList.hubIds.add(pin.alias);
       hubList.hubRefs[pin.alias] = hubRef;

@@ -1,5 +1,6 @@
 abstract class BaseAuthor {
   final String id = '';
+
   // final String login = '';
   final String alias = '';
   final String fullname = '';

@@ -1,9 +1,8 @@
-// To parse this JSON data, do
-//
-//     final welcome = welcomeFromMap(jsonString);
+import 'package:json_annotation/json_annotation.dart';
 
-import 'dart:convert';
+part 'hub_company_list.g.dart';
 
+@JsonSerializable()
 class HubCompanyList {
   HubCompanyList({
     required this.pagesCount,
@@ -15,25 +14,12 @@ class HubCompanyList {
   final List<String> companyIds;
   final Map<String, HubCompanyRef> companyRefs;
 
-  factory HubCompanyList.fromJson(String str) => HubCompanyList.fromMap(json.decode(str));
+  factory HubCompanyList.fromJson(Map<String, dynamic> json) => _$HubCompanyListFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory HubCompanyList.fromMap(Map<String, dynamic> json) => HubCompanyList(
-        pagesCount: json["pagesCount"] ?? 0,
-        companyIds: json["companyIds"] == null ? [] : List<String>.from(json["companyIds"].map((x) => x)),
-        companyRefs: json["companyRefs"] == null
-            ? {}
-            : Map.from(json["companyRefs"]).map((k, v) => MapEntry<String, HubCompanyRef>(k, HubCompanyRef.fromMap(v))),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "pagesCount": pagesCount,
-        "companyIds": List<dynamic>.from(companyIds.map((x) => x)),
-        "companyRefs": Map.from(companyRefs).map((k, v) => MapEntry<String, dynamic>(k, v.toMap())),
-      };
+  Map<String, dynamic> toMap() => _$HubCompanyListToJson(this);
 }
 
+@JsonSerializable()
 class HubCompanyRef {
   HubCompanyRef({
     required this.id,
@@ -47,37 +33,20 @@ class HubCompanyRef {
   final String id;
   final String alias;
   final String titleHtml;
-  final String descriptionHtml;
+  final String? descriptionHtml;
   final String imageUrl;
   final Statistics statistics;
 
-  factory HubCompanyRef.fromJson(String str) => HubCompanyRef.fromMap(json.decode(str));
+  factory HubCompanyRef.fromJson(Map<String, dynamic> json) => _$HubCompanyRefFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory HubCompanyRef.fromMap(Map<String, dynamic> json) => HubCompanyRef(
-        id: json["id"] ?? '',
-        alias: json["alias"] ?? '',
-        titleHtml: json["titleHtml"] ?? '',
-        descriptionHtml: json["descriptionHtml"] ?? '',
-        imageUrl: json["imageUrl"] ?? '',
-        statistics: Statistics.fromMap(json["statistics"]),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "alias": alias,
-        "titleHtml": titleHtml,
-        "descriptionHtml": descriptionHtml,
-        "imageUrl": imageUrl,
-        "statistics": statistics.toMap(),
-      };
+  Map<String, dynamic> toMap() => _$HubCompanyRefToJson(this);
 }
 
 enum Type { COLLECTIVE, CORPORATIVE }
 
 final typeValues = EnumValues({"collective": Type.COLLECTIVE, "corporative": Type.CORPORATIVE});
 
+@JsonSerializable()
 class Statistics {
   Statistics({
     required this.subscribersCount,
@@ -87,19 +56,9 @@ class Statistics {
   final int subscribersCount;
   final double rating;
 
-  factory Statistics.fromJson(String str) => Statistics.fromMap(json.decode(str));
+  factory Statistics.fromJson(Map<String, dynamic> json) => _$StatisticsFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory Statistics.fromMap(Map<String, dynamic> json) => Statistics(
-        subscribersCount: json["subscribersCount"],
-        rating: json["rating"]?.toDouble(),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "subscribersCount": subscribersCount,
-        "rating": rating,
-      };
+  Map<String, dynamic> toMap() => _$StatisticsToJson(this);
 }
 
 class EnumValues<T> {

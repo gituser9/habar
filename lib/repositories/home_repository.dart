@@ -1,183 +1,115 @@
-import 'package:habar/common/http_request.dart';
+import 'package:habar/common/costants.dart';
 import 'package:habar/model/filter.dart';
 import 'package:habar/model/home.dart';
 import 'package:habar/model/hub_list.dart';
 import 'package:habar/model/post_list.dart';
+import 'package:habar/repositories/base_repo.dart';
 import 'package:rxdart/rxdart.dart';
 
-class HomeRepo {
+class HomeRepo extends BaseRepo {
   final postsStream = BehaviorSubject<PostList>();
   final hubsStream = BehaviorSubject<HubList>();
   final errorStream = BehaviorSubject<String>();
 
   Future getAll(ListFilter filterKey, int page, PostContentType postType) async {
-    Map<String, String> params = {
-      'page': page.toString(),
-    };
+    String types = '';
 
     switch (postType) {
       case PostContentType.articles:
-        params['types[0]'] = 'articles';
-        params.addAll(listFilterData[filterKey]!);
+        types = 'articles';
         break;
       case PostContentType.news:
-        params['types[0]'] = 'news';
-        params.addAll(listFilterData[filterKey]!);
+        types = 'news';
         break;
       case PostContentType.posts:
-        params['types[0]'] = 'posts';
+        types = 'posts';
         break;
     }
 
-    params['complexity'] = 'all';
-    params['myFeed'] = 'false';
-
-    String json = await HttpRequest.get('/articles', params: params, version: 2);
-
-    if (json.isEmpty) {
-      return;
-    }
-
-    final posts = PostList.fromJsonOld(json);
+    final filters = listFilterData[filterKey]!;
+    final posts = await habrClient.articlesByFilters(
+      page: page,
+      types: types,
+      complexity: 'all',
+      myFeed: false,
+      score: filters['score'] ?? '0',
+    );
 
     postsStream.add(posts);
   }
 
   Future getFlow(String flow, int page, String? score, String? period, bool? isFlowNews) async {
-    Map<String, String> params = {
-      'page': page.toString(),
-      'flow': flow,
-      'sort': 'all',
-    };
-
-    if (isFlowNews ?? false) {
-      params['flowNews'] = isFlowNews.toString();
-    }
-
-    if (score != null) {
-      params['score'] = score.toString();
-    }
-
-    if (period != null) {
-      params['period'] = period.toString();
-    }
-
-    String json = await HttpRequest.get('/articles', params: params);
-
-    if (json.isEmpty) {
-      return;
-    }
-
-    final posts = PostList.fromJsonOld(json);
+    final posts = await habrClient.articlesByFilters(
+      page: page,
+      flow: flow,
+      sort: 'all',
+      flowNews: isFlowNews,
+      score: score,
+      period: period,
+    );
 
     postsStream.add(posts);
   }
 
   Future loadMore(ListFilter filterKey, int page, bool isNews, PostList list) async {
-    Map<String, String> params = {
-      'page': page.toString(),
-      'perPage': '20',
-    };
+    String types = '';
 
     if (isNews) {
-      params['types[0]'] = 'news';
-      params.addAll(listFilterData[filterKey]!);
+      types = 'news';
     } else {
-      params['types[0]'] = 'articles';
-      params.addAll(listFilterData[filterKey]!);
+      types = 'articles';
     }
 
-    params['complexity'] = 'all';
-    params['myFeed'] = 'false';
-
-    String json = await HttpRequest.get('/articles/', params: params);
-
-    if (json.isEmpty) {
-      return;
-    }
-
-    final posts = PostList.fromJsonOld(json);
+    final posts = await habrClient.articlesByFilters(
+      page: page,
+      types: types,
+      complexity: 'all',
+      myFeed: false,
+    );
     final newList = PostList(
-      articleIds: list.articleIds,
-      articleRefs: list.articleRefs,
+      publicationIds: list.publicationIds,
+      publicationRefs: list.publicationRefs,
       pagesCount: list.pagesCount,
     );
 
-    newList.articleIds.addAll(posts.articleIds);
-    newList.articleRefs.addAll(posts.articleRefs);
+    newList.publicationIds.addAll(posts.publicationIds);
+    newList.publicationRefs.addAll(posts.publicationRefs);
 
     postsStream.add(newList);
   }
 
   Future loadMoreFlow(String flow, int page, PostList list, {bool? isFlowNews, String? score, String? period}) async {
-    Map<String, String> params = {
-      'page': page.toString(),
-      'flow': flow,
-      'sort': 'all',
-      'perPage': '20',
-    };
-
-    if (isFlowNews ?? false) {
-      params['flowNews'] = isFlowNews.toString();
-    }
-
-    if (score != null) {
-      params['score'] = score.toString();
-    }
-
-    if (period != null) {
-      params['period'] = period.toString();
-    }
-
-    String json = await HttpRequest.get('/articles', params: params);
-
-    if (json.isEmpty) {
-      return;
-    }
-
-    final posts = PostList.fromJsonOld(json);
+    final posts = await habrClient.articlesByFilters(
+      page: page,
+      flow: flow,
+      sort: 'all',
+      perPage: Constant.pageSize,
+      flowNews: isFlowNews,
+      score: score,
+      period: period,
+    );
     final newList = PostList(
-      articleIds: list.articleIds,
-      articleRefs: list.articleRefs,
+      publicationIds: list.publicationIds,
+      publicationRefs: list.publicationRefs,
       pagesCount: list.pagesCount,
     );
 
-    newList.articleIds.addAll(posts.articleIds);
-    newList.articleRefs.addAll(posts.articleRefs);
+    newList.publicationIds.addAll(posts.publicationIds);
+    newList.publicationRefs.addAll(posts.publicationRefs);
 
     postsStream.add(newList);
   }
 
   Future getHubs(int page, {ListHubFilter? filterKey}) async {
     filterKey ??= ListHubFilter.rateDesc;
-
-    Map<String, String> params = {
-      'page': page.toString(),
-      'perPage': '30',
-    };
-    params.addAll(listHubFilterData[filterKey]!);
-
-    String json = await HttpRequest.get('/hubs/', params: params, version: 2);
-
-    if (json.isEmpty) {
-      return;
-    }
-
-    final hubs = HubList.fromJsonOld(json);
+    final sort = listHubFilterData[filterKey]!;
+    final hubs = await habrClient.hubsByFilters(page, Constant.hubPageSize, sort['sort'] ?? 'rating', sort['order'] ?? 'desc');
 
     hubsStream.add(hubs);
   }
 
   Future searchHubs(String queryString) async {
-    String json = await HttpRequest.get('/hubs/search', params: {
-      'q': queryString,
-    });
-
-    if (json.isEmpty) {
-      return;
-    }
-
-    var hubs = HubList.fromJsonOld(json);
+    var hubs = await habrClient.hubSearch(queryString);
 
     hubsStream.add(hubs);
   }

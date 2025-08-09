@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:habar/comments/comments_repository.dart';
 import 'package:habar/model/comment.dart';
 import 'package:habar/model/comment_list.dart';
+import 'package:habar/repositories/comments_repository.dart';
 
 class CommentsCtrl extends GetxController {
   late CommentsRepo _repo;
@@ -30,14 +30,11 @@ class CommentsCtrl extends GetxController {
   }
 
   List<StructuredComment> getStructuredComments(CommentList commentList) {
-    Map<String, Comment> commentsMap = { for (var comment in commentList.comments.values) comment.id : comment };
-    List<StructuredComment> structComments = commentList.comments.values
-        .where((comment) => comment.level == 0 && comment.timePublished != null)
-        .map((comment) => convertToStructured(commentsMap, comment))
-        .toList();
+    Map<String, Comment> commentsMap = {for (var comment in commentList.comments.values) comment.id: comment};
+    List<StructuredComment> structComments =
+        commentList.comments.values.where((comment) => comment.level == 0 && comment.timePublished != null).map((comment) => convertToStructured(commentsMap, comment)).toList();
 
-    structComments
-        .sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
+    structComments.sort((commentLeft, commentRight) => commentLeft.publishTime.isBefore(commentRight.publishTime) ? 0 : 1);
 
     return structComments;
   }

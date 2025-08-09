@@ -14,24 +14,24 @@ class UserPersonWidget extends StatelessWidget {
       // color: Colors.white,
       child: Column(
         children: [
-          if (profile.data.avatar.isNotEmpty)
+          if (profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: CircleAvatar(
-                backgroundImage: NetworkImage('https:${profile.data.avatar}'),
+                backgroundImage: NetworkImage('https:${profile.avatarUrl}'),
                 backgroundColor: Colors.transparent,
               ),
             ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
-              '@${profile.data.login}',
+              '@${profile.alias}',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ),
-          if (profile.data.fullname.isNotEmpty)
+          if (profile.fullname != null && profile.fullname!.isNotEmpty)
             Text(
-              profile.data.fullname,
+              profile.fullname!,
               style: const TextStyle(),
             ),
           _buildStatusRow(),
@@ -42,7 +42,7 @@ class UserPersonWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
-              'Зарегистрировался ${Util.dateToString(profile.data.timeRegistered)}',
+              'Зарегистрировался ${Util.dateToString(profile.registerDateTime)}',
               style: const TextStyle(color: Colors.grey, fontSize: 12),
             ),
           ),
@@ -66,7 +66,7 @@ class UserPersonWidget extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                if (profile.data.score != 0.0)
+                if (profile.scoreStats?.score != 0.0)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -75,16 +75,16 @@ class UserPersonWidget extends StatelessWidget {
                         style: labelStyle,
                       ),
                       Text(
-                        profile.data.score.score.toString(),
+                        profile.scoreStats?.score.toString() ?? '',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
-                          color: profile.data.score.score > 0 ? Colors.green : Colors.red,
+                          color: (profile.scoreStats?.score ?? 0) > 0 ? Colors.green : Colors.red,
                         ),
                       ),
                     ],
                   ),
-                if (profile.data.rating > 0.0)
+                if (profile.rating > 0.0)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -93,12 +93,12 @@ class UserPersonWidget extends StatelessWidget {
                         style: labelStyle,
                       ),
                       Text(
-                        profile.data.rating.toString(),
+                        profile.rating.toString(),
                         style: valueStyle,
                       ),
                     ],
                   ),
-                if (profile.data.ratingPosition != 0.0)
+                if (profile.ratingPos != 0.0)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -107,7 +107,7 @@ class UserPersonWidget extends StatelessWidget {
                         style: labelStyle,
                       ),
                       Text(
-                        profile.data.ratingPosition.toString(),
+                        profile.ratingPos?.toString() ?? '',
                         style: valueStyle,
                       ),
                     ],

@@ -1,66 +1,30 @@
-// To parse this JSON data, do
-//
-//     final postList = postListFromMap(jsonString);
-
-import 'dart:convert';
-
-import 'package:habar/model/author.dart';
 import 'package:habar/model/post.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'post_list.g.dart';
+
+@JsonSerializable()
 class PostList {
   PostList({
     required this.pagesCount,
-    required this.articleIds,
-    required this.articleRefs,
+    required this.publicationIds,
+    required this.publicationRefs,
   });
 
   int pagesCount;
-  List<String> articleIds;
-  Map<String, Post> articleRefs;
+  List<String> publicationIds;
+  Map<String, Post> publicationRefs;
 
-  factory PostList.empty() => PostList(pagesCount: 0, articleIds: [], articleRefs: {});
+  factory PostList.empty() => PostList(pagesCount: 0, publicationIds: [], publicationRefs: {});
 
-  factory PostList.fromJson(String str) => PostList.fromMap(json.decode(str));
+  factory PostList.fromJson(Map<String, dynamic> json) => _$PostListFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory PostList.fromMap(Map<String, dynamic> json) => PostList(
-        pagesCount: json["pagesCount"] ?? 0,
-        articleIds: json["publicationIds"] == null ? [] : List<String>.from(json["publicationIds"].map((x) => x)),
-        articleRefs: json["publicationRefs"] == null ? {} : _getPosts(json["publicationRefs"]),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "pagesCount": pagesCount,
-        "articleIds": List<dynamic>.from(articleIds.map((x) => x)),
-        "articleRefs": Map.from(articleRefs).map((k, v) => MapEntry<String, dynamic>(k, v.toMap())),
-      };
-
-  static Map<String, Post> _getPosts(Map<String, dynamic> json) {
-    Map<String, Post> posts = {};
-
-    json.forEach((key, value) {
-      if (value['id'] == null) {
-        return;
-      }
-
-      if (value['author'] == null) {
-        return;
-      }
-
-      if (value['timePublished'] == null) {
-        return;
-      }
-
-      posts[key] = Post.fromMap(value);
-    });
-
-    return posts;
-  }
+  Map<String, dynamic> toMap() => _$PostListToJson(this);
 }
 
 // todo: delete?
-class ArticleRef extends BasePost {
+@JsonSerializable()
+class ArticleRef {
   ArticleRef({
     required this.id,
     required this.timePublished,
@@ -74,28 +38,25 @@ class ArticleRef extends BasePost {
     required this.leadData,
   });
 
-  @override
   String id;
-  @override
   DateTime timePublished;
   bool isCorporative;
-  @override
   String titleHtml;
 
   // PostType postType;
   // List<PostLabel> postLabels;
-  @override
-  BaseAuthor author;
-  @override
-  BaseStatistic statistics;
+  Author author;
+  Statistics statistics;
   List<PostHub> hubs;
   LeadData leadData;
 
-  factory ArticleRef.fromJson(String str) => ArticleRef.fromMap(json.decode(str));
+  factory ArticleRef.fromJson(Map<String, dynamic> json) => _$ArticleRefFromJson(json);
 
-  String toJson() => json.encode(toMap());
+  // factory ArticleRef.fromJson(String str) => ArticleRef.fromMap(json.decode(str));
+  //
+  // String toJson() => json.encode(toMap());
 
-  factory ArticleRef.fromMap(Map<String, dynamic> json) => ArticleRef(
+  /*factory ArticleRef.fromMap(Map<String, dynamic> json) => ArticleRef(
         id: json["id"] ?? 0,
         timePublished: DateTime.parse(json["timePublished"]),
         isCorporative: json["isCorporative"] ?? false,
@@ -106,22 +67,12 @@ class ArticleRef extends BasePost {
         statistics: PostStatistics.fromMap(json["statistics"]),
         leadData: LeadData.fromMap(json["leadData"]),
         hubs: json["hubs"] == null ? [] : List<PostHub>.from(json["hubs"].map((x) => PostHub.fromMap(x))),
-      );
+      );*/
 
-  @override
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "timePublished": timePublished.toIso8601String(),
-        "isCorporative": isCorporative,
-        "titleHtml": titleHtml,
-        "postType": postTypeValues.reverse(),
-        // "postLabels": List<dynamic>.from(postLabels.map((x) => x.toMap())),
-        "author": author.toMap(),
-        "statistics": statistics.toMap(),
-        "hubs": List<dynamic>.from(hubs.map((x) => x.toMap())),
-      };
+  Map<String, dynamic> toMap() => _$ArticleRefToJson(this);
 }
 
+@JsonSerializable()
 class LeadData {
   LeadData({
     required this.textHtml,
@@ -131,22 +82,14 @@ class LeadData {
   final String textHtml;
   final String imageUrl;
 
-  factory LeadData.fromJson(String str) => LeadData.fromMap(json.decode(str));
+  // factory LeadData.fromJson(String str) => LeadData.fromMap(json.decode(str));
+  factory LeadData.fromJson(Map<String, dynamic> json) => _$LeadDataFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory LeadData.fromMap(Map<String, dynamic> json) => LeadData(
-        textHtml: json["textHtml"] ?? '',
-        imageUrl: json["imageUrl"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "textHtml": textHtml,
-        "imageUrl": imageUrl,
-      };
+  Map<String, dynamic> toMap() => _$LeadDataToJson(this);
 }
 
-class PostAuthor extends BaseAuthor {
+@JsonSerializable()
+class PostAuthor {
   PostAuthor({
     required this.id,
     required this.login,
@@ -156,42 +99,20 @@ class PostAuthor extends BaseAuthor {
     required this.speciality,
   });
 
-  @override
   String id;
   String login;
-  @override
   String alias;
-  @override
   String fullname;
-  @override
   String avatarUrl;
-  @override
   String speciality;
 
-  factory PostAuthor.fromJson(String str) => PostAuthor.fromMap(json.decode(str));
+  // factory PostAuthor.fromJson(String str) => PostAuthor.fromMap(json.decode(str));
+  factory PostAuthor.fromJson(Map<String, dynamic> json) => _$PostAuthorFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory PostAuthor.fromMap(Map<String, dynamic> json) => PostAuthor(
-        id: json["id"] ?? '',
-        login: json["login"] ?? '',
-        alias: json["alias"] ?? '',
-        fullname: json["fullname"] ?? '',
-        avatarUrl: json["avatarUrl"] ?? '',
-        speciality: json["speciality"] ?? '',
-      );
-
-  @override
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "login": login,
-        "alias": alias,
-        "fullname": fullname,
-        "avatarUrl": avatarUrl,
-        "speciality": speciality,
-      };
+  Map<String, dynamic> toMap() => _$PostAuthorToJson(this);
 }
 
+@JsonSerializable()
 class PostHub {
   PostHub({
     required this.id,
@@ -207,25 +128,10 @@ class PostHub {
   String title;
   String titleHtml;
 
-  factory PostHub.fromJson(String str) => PostHub.fromMap(json.decode(str));
+  // factory PostHub.fromJson(String str) => PostHub.fromMap(json.decode(str));
+  factory PostHub.fromJson(Map<String, dynamic> json) => _$PostHubFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory PostHub.fromMap(Map<String, dynamic> json) => PostHub(
-        id: json["id"] ?? '',
-        alias: json["alias"] ?? '',
-        title: json["title"] ?? '',
-        titleHtml: json["titleHtml"] ?? '',
-        type: typeValues.map[json["type"]] ?? Type.COLLECTIVE,
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "alias": alias,
-        "type": typeValues.reverse(),
-        "title": title,
-        "titleHtml": titleHtml,
-      };
+  Map<String, dynamic> toMap() => _$PostHubToJson(this);
 }
 
 enum Type { COLLECTIVE, CORPORATIVE }
@@ -236,6 +142,7 @@ enum Lang { RU }
 
 final langValues = EnumValues({"ru": Lang.RU});
 
+@JsonSerializable()
 class PostLabel {
   PostLabel({
     required this.type,
@@ -246,21 +153,12 @@ class PostLabel {
 
   // Data data;
 
-  factory PostLabel.fromJson(String str) => PostLabel.fromMap(json.decode(str));
+  factory PostLabel.fromJson(Map<String, dynamic> json) => _$PostLabelFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory PostLabel.fromMap(Map<String, dynamic> json) => PostLabel(
-        type: json["type"] ?? '',
-        // data: Data.fromMap(json["data"]),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "type": type,
-        // "data": data.toMap(),
-      };
+  Map<String, dynamic> toMap() => _$PostLabelToJson(this);
 }
 
+@JsonSerializable()
 class Data {
   Data({
     required this.originalAuthorName,
@@ -270,26 +168,18 @@ class Data {
   String originalAuthorName;
   String originalUrl;
 
-  factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
+  // factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
+  factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory Data.fromMap(Map<String, dynamic> json) => Data(
-        originalAuthorName: json["originalAuthorName"] ?? '',
-        originalUrl: json["originalUrl"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "originalAuthorName": originalAuthorName,
-        "originalUrl": originalUrl,
-      };
+  Map<String, dynamic> toMap() => _$DataToJson(this);
 }
 
 enum PostType { ARTICLE }
 
 final postTypeValues = EnumValues({"article": PostType.ARTICLE});
 
-class PostStatistics extends BaseStatistic {
+@JsonSerializable()
+class PostStatistics {
   PostStatistics({
     required this.commentsCount,
     required this.favoritesCount,
@@ -298,37 +188,16 @@ class PostStatistics extends BaseStatistic {
     required this.votesCount,
   });
 
-  @override
   int commentsCount;
-  @override
   int favoritesCount;
-  @override
   int readingCount;
-  @override
   int score;
-  @override
   int votesCount;
 
-  factory PostStatistics.fromJson(String str) => PostStatistics.fromMap(json.decode(str));
+  // factory PostStatistics.fromJson(String str) => PostStatistics.fromMap(json.decode(str));
+  factory PostStatistics.fromJson(Map<String, dynamic> json) => _$PostStatisticsFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory PostStatistics.fromMap(Map<String, dynamic> json) => PostStatistics(
-        commentsCount: json["commentsCount"] ?? 0,
-        favoritesCount: json["favoritesCount"] ?? 0,
-        readingCount: json["readingCount"] ?? 0,
-        score: json["score"] ?? 0,
-        votesCount: json["votesCount"] ?? 0,
-      );
-
-  @override
-  Map<String, dynamic> toMap() => {
-        "commentsCount": commentsCount,
-        "favoritesCount": favoritesCount,
-        "readingCount": readingCount,
-        "score": score,
-        "votesCount": votesCount,
-      };
+  Map<String, dynamic> toMap() => _$PostStatisticsToJson(this);
 }
 
 enum Status { PUBLISHED }

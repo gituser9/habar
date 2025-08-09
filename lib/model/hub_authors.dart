@@ -1,7 +1,8 @@
-import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
 
-import 'package:habar/model/author.dart';
+part 'hub_authors.g.dart';
 
+@JsonSerializable()
 class HubAuthorList {
   HubAuthorList({
     required this.pagesCount,
@@ -13,30 +14,17 @@ class HubAuthorList {
   final List<String> authorIds;
   final Map<String, HubAuthorRef> authorRefs;
 
-  factory HubAuthorList.fromJson(String str) => HubAuthorList.fromMap(json.decode(str));
+  factory HubAuthorList.fromJson(Map<String, dynamic> json) => _$HubAuthorListFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory HubAuthorList.fromMap(Map<String, dynamic> json) => HubAuthorList(
-        pagesCount: json["pagesCount"] ?? [],
-        authorIds: json["authorIds"] == null ? [] : List<String>.from(json["authorIds"].map((x) => x)),
-        authorRefs:
-            json["authorRefs"] == null ? {} : Map.from(json["authorRefs"]).map((k, v) => MapEntry<String, HubAuthorRef>(k, HubAuthorRef.fromMap(v))),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "pagesCount": pagesCount,
-        "authorIds": List<dynamic>.from(authorIds.map((x) => x)),
-        "authorRefs": Map.from(authorRefs).map((k, v) => MapEntry<String, dynamic>(k, v.toMap())),
-      };
+  Map<String, dynamic> toMap() => _$HubAuthorListToJson(this);
 }
 
-class HubAuthorRef extends BaseAuthor {
+@JsonSerializable()
+class HubAuthorRef {
   HubAuthorRef({
     required this.scoreStats,
     required this.rating,
     required this.id,
-    // required this.login,
     required this.alias,
     required this.fullname,
     required this.avatarUrl,
@@ -46,46 +34,18 @@ class HubAuthorRef extends BaseAuthor {
   final ScoreStats scoreStats;
   final double rating;
 
-  // final String login;
-  @override
   final String id;
-  @override
   final String alias;
-  @override
-  final String fullname;
-  @override
-  final String avatarUrl;
-  @override
-  final String speciality;
+  final String? fullname;
+  final String? avatarUrl;
+  final String? speciality;
 
-  factory HubAuthorRef.fromJson(String str) => HubAuthorRef.fromMap(json.decode(str));
+  factory HubAuthorRef.fromJson(Map<String, dynamic> json) => _$HubAuthorRefFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory HubAuthorRef.fromMap(Map<String, dynamic> json) => HubAuthorRef(
-        scoreStats: ScoreStats.fromMap(json["scoreStats"]),
-        rating: json["rating"] == null ? 0.0 : json["rating"].toDouble(),
-        id: json["id"] ?? '',
-        // login: json["login"] == null ? '' : json["login"],
-        alias: json["alias"] ?? '',
-        fullname: json["fullname"] ?? '',
-        avatarUrl: json["avatarUrl"] ?? '',
-        speciality: json["speciality"] ?? '',
-      );
-
-  @override
-  Map<String, dynamic> toMap() => {
-        "scoreStats": scoreStats.toMap(),
-        "rating": rating,
-        "id": id,
-        // "login": login,
-        "alias": alias,
-        "fullname": fullname,
-        "avatarUrl": avatarUrl,
-        "speciality": speciality,
-      };
+  Map<String, dynamic> toMap() => _$HubAuthorRefToJson(this);
 }
 
+@JsonSerializable()
 class HubShort {
   HubShort({
     required this.id,
@@ -99,25 +59,12 @@ class HubShort {
   final String title;
   final String titleHtml;
 
-  factory HubShort.fromJson(String str) => HubShort.fromMap(json.decode(str));
+  factory HubShort.fromJson(Map<String, dynamic> json) => _$HubShortFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory HubShort.fromMap(Map<String, dynamic> json) => HubShort(
-        id: json["id"],
-        alias: json["alias"],
-        title: json["title"],
-        titleHtml: json["titleHtml"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "alias": alias,
-        "title": title,
-        "titleHtml": titleHtml,
-      };
+  Map<String, dynamic> toMap() => _$HubShortToJson(this);
 }
 
+@JsonSerializable()
 class ScoreStats {
   ScoreStats({
     required this.score,
@@ -127,17 +74,7 @@ class ScoreStats {
   final double score;
   final int votesCount;
 
-  factory ScoreStats.fromJson(String str) => ScoreStats.fromMap(json.decode(str));
+  factory ScoreStats.fromJson(Map<String, dynamic> json) => _$ScoreStatsFromJson(json);
 
-  String toJson() => json.encode(toMap());
-
-  factory ScoreStats.fromMap(Map<String, dynamic> json) => ScoreStats(
-        score: json["score"] == null ? 0.0 : json["score"].toDouble(),
-        votesCount: json["votesCount"] ?? 0,
-      );
-
-  Map<String, dynamic> toMap() => {
-        "score": score,
-        "votesCount": votesCount,
-      };
+  Map<String, dynamic> toMap() => _$ScoreStatsToJson(this);
 }

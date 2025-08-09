@@ -1,30 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/util.dart';
-import 'package:habar/model/post.dart';
 import 'package:habar/profile/profile_screen.dart';
 
 import '../costants.dart';
 
 class UserInfoWidget extends StatelessWidget {
   final DateTime publishTime;
-  final Author author;
+  final String alias;
+  final String avatarUrl;
+  final String fullName;
 
   const UserInfoWidget({
     super.key,
     required this.publishTime,
-    required this.author,
+    required this.alias,
+    required this.avatarUrl,
+    required this.fullName,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () async => await Get.to(() => ProfileScreen(login: author.alias)),
+      onTap: () async => await Get.to(() => ProfileScreen(login: alias)),
       child: Row(
         children: [
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
-            child: Util.getAvatar(author.avatarUrl, 30),
+            child: Util.getAvatar(avatarUrl, 30),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,12 +49,12 @@ class UserInfoWidget extends StatelessWidget {
   }
 
   String _getFullname() {
-    if (author.alias.isNotEmpty) {
-      return '${author.alias} ';
+    if (alias.isNotEmpty) {
+      return '${alias} ';
     }
 
-    if (author.fullname.isNotEmpty) {
-      return '${author.fullname} ';
+    if (fullName != null && fullName!.isNotEmpty) {
+      return '${fullName} ';
     }
 
     return '';

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:habar/common/controllers/settings_ctrl.dart';
-import 'package:habar/common/widgets/no_data_widget.dart';
 import 'package:habar/home/home_ctrl.dart';
 import 'package:habar/home/widgets/drawer_widget.dart';
 import 'package:habar/home/widgets/filter_widget.dart';
@@ -88,6 +87,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildBody() {
     switch (_ctrl.homeMode.value) {
       case HomeMode.posts:
+        return PostsWidget();
       case HomeMode.news:
         return PostsWidget();
       case HomeMode.hubs:
@@ -97,8 +97,6 @@ class HomeScreen extends StatelessWidget {
         );
       case HomeMode.saved:
         return SavedWidget();
-      default:
-        return const NoDataWidget();
     }
   }
 
@@ -203,50 +201,54 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _getBottomBar(int index) {
-    return AnimatedContainer(
-      height: _ctrl.isBottomBarVisible.value ? kBottomNavigationBarHeight + 20 : 0,
-      duration: const Duration(milliseconds: 700),
-      curve: Curves.fastLinearToSlowEaseIn,
-      child: NavigationBar(
-        destinations: const <NavigationDestination>[
-          NavigationDestination(
-            icon: Icon(Icons.article),
-            label: 'Статьи',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.article_outlined),
-            label: 'Новости',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.device_hub),
-            label: 'Хабы',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.save),
-            label: 'Сохраненные',
-          ),
-        ],
-        selectedIndex: index,
-        onDestinationSelected: (int index) async {
-          _ctrl.selectedIndex.value = index;
+    return Obx(() {
+      final visible = _ctrl.isBottomBarVisible.value;
+      return AnimatedContainer(
+          height: _ctrl.isBottomBarVisible.value ? kBottomNavigationBarHeight + 20 : 0,
+          duration: const Duration(milliseconds: 700),
+          curve: Curves.fastLinearToSlowEaseIn,
+          child: visible
+              ? NavigationBar(
+                  destinations: const <NavigationDestination>[
+                    NavigationDestination(
+                      icon: Icon(Icons.article),
+                      label: 'Статьи',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.article_outlined),
+                      label: 'Новости',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.device_hub),
+                      label: 'Хабы',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.save),
+                      label: 'Сохраненные',
+                    ),
+                  ],
+                  selectedIndex: index,
+                  onDestinationSelected: (int index) async {
+                    _ctrl.selectedIndex.value = index;
 
-          final mode = _pageMode[index]!;
-          _ctrl.pageMode = mode;
-          _ctrl.homeMode.value = mode;
-          _ctrl.resetPage();
+                    final mode = _pageMode[index]!;
+                    _ctrl.pageMode = mode;
+                    _ctrl.homeMode.value = mode;
+                    _ctrl.resetPage();
 
-          switch (mode) {
-            case HomeMode.hubs:
-              await _ctrl.getHubs();
-              break;
-            case HomeMode.saved:
-              _ctrl.getSaved();
-              break;
-            default:
-              await _ctrl.getAll(_settingsCtrl.settings.value.filters!.filterKey);
-          }
-        },
-      ),
-    );
+                    switch (mode) {
+                      case HomeMode.hubs:
+                        await _ctrl.getHubs();
+                        break;
+                      case HomeMode.saved:
+                        _ctrl.getSaved();
+                        break;
+                      default:
+                        await _ctrl.getAll(_settingsCtrl.settings.value.filters!.filterKey);
+                    }
+                  },
+                )
+              : SizedBox.shrink());
+    });
   }
 }

@@ -60,9 +60,9 @@ class PostsWidget extends StatelessWidget {
         physics: physics,
         shrinkWrap: shrinkWrap,
         controller: _ctrl.scrollCtrl,
-        itemCount: shrinkWrap ? _ctrl.posts.value.articleIds.length : _ctrl.posts.value.articleIds.length + 1,
+        itemCount: shrinkWrap ? _ctrl.posts.value.publicationIds.length : _ctrl.posts.value.publicationIds.length + 1,
         itemBuilder: (BuildContext context, int index) {
-          if (index >= _ctrl.posts.value.articleIds.length) {
+          if (index >= _ctrl.posts.value.publicationIds.length) {
             return const SizedBox(
               height: 48,
               child: Align(
@@ -76,22 +76,23 @@ class PostsWidget extends StatelessWidget {
             );
           }
 
-          final postId = _ctrl.posts.value.articleIds[index];
+          final postId = _ctrl.posts.value.publicationIds[index];
 
-          if (!_ctrl.posts.value.articleRefs.containsKey(postId)) {
+          if (!_ctrl.posts.value.publicationRefs.containsKey(postId)) {
             return Container();
           }
 
-          final articleRef = _ctrl.posts.value.articleRefs[postId]!;
+          final articleRef = _ctrl.posts.value.publicationRefs[postId]!;
 
           return Container(
-            margin: const EdgeInsets.symmetric(vertical: 4),
+            // margin: const EdgeInsets.symmetric(vertical: 4),
+            margin: const EdgeInsets.only(top: 4),
             child: Obx(() => PostWidget(
                   article: articleRef,
                   isSaved: _savedPostService.isSaved(articleRef.id),
                   imageUrl: Util.getImgUrl(
-                    articleRef.leadData.imageUrl,
-                    articleRef.textHtml,
+                    articleRef.leadData.imageUrl ?? '',
+                    articleRef.textHtml ?? '',
                   ),
                 )),
           );

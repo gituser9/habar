@@ -121,7 +121,7 @@ class SearchScreen extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               String postId = postResponse.publicationIds[index];
               final post = postResponse.publicationRefs[postId]!;
-              final imgUrl = Util.getImgUrl(post.leadData.imageUrl, post.textHtml);
+              final imgUrl = Util.getImgUrl(post.leadData.imageUrl ?? '', post.textHtml ?? '');
 
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 4),

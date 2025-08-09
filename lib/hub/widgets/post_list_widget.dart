@@ -29,11 +29,11 @@ class PostListWidget extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8),
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: ctrl.posts.value.articleIds.length,
+                itemCount: ctrl.posts.value.publicationIds.length,
                 itemBuilder: (ctx, index) {
-                  String postId = ctrl.posts.value.articleIds[index];
-                  final articleRef = ctrl.posts.value.articleRefs[postId]!;
-                  final imgUrl = Util.getImgUrl(articleRef.leadData.imageUrl, articleRef.textHtml);
+                  String postId = ctrl.posts.value.publicationIds[index];
+                  final articleRef = ctrl.posts.value.publicationRefs[postId]!;
+                  final imgUrl = Util.getImgUrl(articleRef.leadData.imageUrl ?? '', articleRef.textHtml ?? '');
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),

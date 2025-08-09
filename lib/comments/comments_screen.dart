@@ -6,15 +6,15 @@ import 'package:habar/common/widgets/empty_screen_widget.dart';
 import 'package:habar/common/widgets/footer_item_widget.dart';
 import 'package:habar/common/widgets/user_info_widget.dart';
 import 'package:habar/home/widgets/loading_widget.dart';
+import 'package:habar/model/ICommnatble.dart';
 import 'package:habar/model/comment.dart';
-import 'package:habar/model/post.dart';
 
 class CommentsScreen extends StatelessWidget {
   final _ctrl = Get.put(CommentsCtrl());
-  final Post post;
+  final ICommentable post;
 
   CommentsScreen({super.key, required this.post}) {
-    _ctrl.getAll(post.id);
+    _ctrl.getAll(post.itemId());
   }
 
   @override
@@ -26,14 +26,19 @@ class CommentsScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 16.0, top: 8, bottom: 8),
-                child: UserInfoWidget(publishTime: post.timePublished, author: post.author),
+                child: UserInfoWidget(
+                  publishTime: post.publishTime(),
+                  alias: post.authorAlias(),
+                  avatarUrl: post.avatarUrl(),
+                  fullName: post.fullName(),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    post.titleHtml,
+                    post.title(),
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                 ),
@@ -53,15 +58,14 @@ class CommentsScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         )),
-                    if (post.statistics.commentsCount > 0)
-                      Text(
-                        ' ${post.statistics.commentsCount}',
-                        style: TextStyle(
-                          color: Colors.blue.shade600,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                      ' ${post.commentsCount()}',
+                      style: TextStyle(
+                        color: Colors.blue.shade600,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
                   ],
                 ),
               ),
@@ -104,15 +108,15 @@ class CommentsScreen extends StatelessWidget {
     );
   }
 
-  // todo: common widget
+  // todo: common widgets
   Widget _buildFooterRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        FooterItemWidget(icon: Icons.thumbs_up_down, value: post.statistics.votesCount),
-        FooterItemWidget(icon: Icons.visibility, value: post.statistics.readingCount),
-        FooterItemWidget(icon: Icons.bookmark, value: post.statistics.favoritesCount),
-        FooterItemWidget(icon: Icons.mode_comment_rounded, value: post.statistics.commentsCount),
+        FooterItemWidget(icon: Icons.thumbs_up_down, value: post.votesCount()),
+        FooterItemWidget(icon: Icons.visibility, value: post.readingCount()),
+        FooterItemWidget(icon: Icons.bookmark, value: post.favoritesCount()),
+        FooterItemWidget(icon: Icons.mode_comment_rounded, value: post.commentsCount()),
       ],
     );
   }

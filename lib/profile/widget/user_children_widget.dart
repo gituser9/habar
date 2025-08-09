@@ -41,16 +41,16 @@ class InvitedWidget extends StatelessWidget {
           itemCount: profiles.length,
           itemBuilder: (ctx, index) {
             final profile = profiles[index];
-            final fullName = profile.flullname.isEmpty ? '' : ' ${profile.flullname}';
+            final fullName = profile.flullname == null ? '' : ' ${profile.flullname}';
 
             return ListTile(
-              leading: Util.getAvatar(profile.avatarUrl, 40),
+              leading: Util.getAvatar(profile.avatarUrl ?? '', 40),
               title: Text(
                 '$fullName@${profile.alias}',
                 style: const TextStyle(color: Colors.blue),
               ),
               subtitle: Text(
-                profile.speciality,
+                profile.speciality ?? '',
                 style: TextStyle(color: Colors.grey.shade400),
               ),
               // onTap: () async {

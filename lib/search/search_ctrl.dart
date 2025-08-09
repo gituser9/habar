@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:habar/model/search.dart';
 import 'package:habar/model/search_post.dart';
 import 'package:habar/model/search_user.dart';
-import 'package:habar/search/search_repository.dart';
+import 'package:habar/repositories/search_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SearchCtrl extends GetxController {

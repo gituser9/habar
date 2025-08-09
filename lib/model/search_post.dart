@@ -1,12 +1,9 @@
-// To parse this JSON data, do
-//
-//     final welcome = welcomeFromMap(jsonString);
-
-import 'dart:convert';
-
-import 'package:habar/model/author.dart';
 import 'package:habar/model/post.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'search_post.g.dart';
+
+@JsonSerializable()
 class SearchPostResponse {
   SearchPostResponse({
     required this.searchStatistics,
@@ -27,27 +24,12 @@ class SearchPostResponse {
         publicationRefs: {},
       );
 
-  factory SearchPostResponse.fromJson(String str) => SearchPostResponse.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory SearchPostResponse.fromMap(Map<String, dynamic> json) => SearchPostResponse(
-        searchStatistics: SearchStatistics.fromMap(json["searchStatistics"]),
-        pagesCount: json["pagesCount"] ?? 0,
-        publicationIds: json["publicationIds"] == null ? [] : List<String>.from(json["publicationIds"].map((x) => x)),
-        publicationRefs: json["publicationRefs"] == null ? {} : Map.from(json["publicationRefs"]).map((k, v) => MapEntry<String, Post>(k, Post.fromMap(v))),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "searchStatistics": searchStatistics.toMap(),
-        "pagesCount": pagesCount,
-        "publicationIds": List<dynamic>.from(publicationIds.map((x) => x)),
-        "publicationRefs": Map.from(publicationRefs).map((k, v) => MapEntry<String, dynamic>(k, v.toMap())),
-      };
+  factory SearchPostResponse.fromJson(Map<String, dynamic> json) => _$SearchPostResponseFromJson(json);
 }
 
 // todo: delete?
-class ArticleRef extends BasePost {
+@JsonSerializable()
+class ArticleRef {
   ArticleRef({
     required this.id,
     required this.timePublished,
@@ -59,49 +41,20 @@ class ArticleRef extends BasePost {
     required this.leadData,
   });
 
-  @override
   String id;
-  @override
   DateTime timePublished;
   bool isCorporative;
-  @override
   String titleHtml;
-  @override
-  BaseAuthor author;
-  @override
-  BaseStatistic statistics;
-  List<Hub> hubs;
-  @override
+  Author author;
+  Statistics statistics;
+  List<SearchPostHub> hubs;
   final String textHtml = '';
   final LeadData leadData;
 
-  factory ArticleRef.fromJson(String str) => ArticleRef.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory ArticleRef.fromMap(Map<String, dynamic> json) => ArticleRef(
-        id: json["id"] ?? 0,
-        timePublished: DateTime.parse(json["timePublished"]),
-        isCorporative: json["isCorporative"] ?? false,
-        titleHtml: json["titleHtml"] ?? '',
-        author: Author.fromMap(json["author"]),
-        statistics: Statistics.fromMap(json["statistics"]),
-        leadData: LeadData.fromMap(json["leadData"]),
-        hubs: json["hubs"] == null ? [] : List<Hub>.from(json["hubs"].map((x) => Hub.fromMap(x))),
-      );
-
-  @override
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "timePublished": timePublished.toIso8601String(),
-        "isCorporative": isCorporative,
-        "titleHtml": titleHtml,
-        "author": author.toMap(),
-        "statistics": statistics.toMap(),
-        "hubs": List<dynamic>.from(hubs.map((x) => x.toMap())),
-      };
+  factory ArticleRef.fromJson(Map<String, dynamic> json) => _$ArticleRefFromJson(json);
 }
 
+@JsonSerializable()
 class LeadData {
   LeadData({
     required this.textHtml,
@@ -111,22 +64,11 @@ class LeadData {
   final String textHtml;
   final String imageUrl;
 
-  factory LeadData.fromJson(String str) => LeadData.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory LeadData.fromMap(Map<String, dynamic> json) => LeadData(
-        textHtml: json["textHtml"] ?? '',
-        imageUrl: json["imageUrl"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "textHtml": textHtml,
-        "imageUrl": imageUrl,
-      };
+  factory LeadData.fromJson(Map<String, dynamic> json) => _$LeadDataFromJson(json);
 }
 
-class Author extends BaseAuthor {
+@JsonSerializable()
+class Author {
   Author({
     required this.id,
     required this.login,
@@ -136,40 +78,14 @@ class Author extends BaseAuthor {
     required this.speciality,
   });
 
-  @override
   String id;
   String login;
-  @override
   String alias;
-  @override
   String fullname;
-  @override
   String avatarUrl;
-  @override
   String speciality;
 
-  factory Author.fromJson(String str) => Author.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Author.fromMap(Map<String, dynamic> json) => Author(
-        id: json["id"] ?? '',
-        login: json["login"] ?? '',
-        alias: json["alias"] ?? '',
-        fullname: json["fullname"] ?? '',
-        avatarUrl: json["avatarUrl"] ?? '',
-        speciality: json["speciality"] ?? '',
-      );
-
-  @override
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "login": login,
-        "alias": alias,
-        "fullname": fullname,
-        "avatarUrl": avatarUrl,
-        "speciality": speciality,
-      };
+  factory Author.fromJson(Map<String, dynamic> json) => _$AuthorFromJson(json);
 }
 
 enum Alias {
@@ -204,8 +120,9 @@ final titleValues = EnumValues({
   "Разработка": Title.TITLE,
 });
 
-class Hub {
-  Hub({
+@JsonSerializable()
+class SearchPostHub {
+  SearchPostHub({
     required this.id,
     required this.alias,
     required this.title,
@@ -217,23 +134,7 @@ class Hub {
   String title;
   String titleHtml;
 
-  factory Hub.fromJson(String str) => Hub.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Hub.fromMap(Map<String, dynamic> json) => Hub(
-        id: json["id"] ?? '',
-        alias: json["alias"] ?? '',
-        title: json["title"] ?? '',
-        titleHtml: json["titleHtml"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "alias": alias,
-        "title": title,
-        "titleHtml": titleHtml,
-      };
+  factory SearchPostHub.fromJson(Map<String, dynamic> json) => _$SearchPostHubFromJson(json);
 }
 
 enum Type {
@@ -250,6 +151,7 @@ enum Lang { RU }
 
 final langValues = EnumValues({"ru": Lang.RU});
 
+@JsonSerializable()
 class PostImage {
   PostImage({
     required this.url,
@@ -257,20 +159,11 @@ class PostImage {
 
   String url;
 
-  factory PostImage.fromJson(String str) => PostImage.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory PostImage.fromMap(Map<String, dynamic> json) => PostImage(
-        url: json["url"] ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "url": url,
-      };
+  factory PostImage.fromJson(Map<String, dynamic> json) => _$PostImageFromJson(json);
 }
 
-class Statistics extends BaseStatistic {
+@JsonSerializable()
+class Statistics {
   Statistics({
     required this.commentsCount,
     required this.favoritesCount,
@@ -279,43 +172,20 @@ class Statistics extends BaseStatistic {
     required this.votesCount,
   });
 
-  @override
   int commentsCount;
-  @override
   int favoritesCount;
-  @override
   int readingCount;
-  @override
   int score;
-  @override
   int votesCount;
 
-  factory Statistics.fromJson(String str) => Statistics.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Statistics.fromMap(Map<String, dynamic> json) => Statistics(
-        commentsCount: json["commentsCount"] ?? 0,
-        favoritesCount: json["favoritesCount"] ?? 0,
-        readingCount: json["readingCount"] ?? 0,
-        score: json["score"] ?? 0,
-        votesCount: json["votesCount"] ?? 0,
-      );
-
-  @override
-  Map<String, dynamic> toMap() => {
-        "commentsCount": commentsCount,
-        "favoritesCount": favoritesCount,
-        "readingCount": readingCount,
-        "score": score,
-        "votesCount": votesCount,
-      };
+  factory Statistics.fromJson(Map<String, dynamic> json) => _$StatisticsFromJson(json);
 }
 
 enum Status { PUBLISHED }
 
 final statusValues = EnumValues({"published": Status.PUBLISHED});
 
+@JsonSerializable()
 class SearchStatistics {
   SearchStatistics({
     required this.articlesCount,
@@ -339,25 +209,7 @@ class SearchStatistics {
         companiesCount: 0,
       );
 
-  factory SearchStatistics.fromJson(String str) => SearchStatistics.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory SearchStatistics.fromMap(Map<String, dynamic> json) => SearchStatistics(
-        articlesCount: json["articlesCount"] ?? 0,
-        commentsCount: json["commentsCount"] ?? 0,
-        hubsCount: json["hubsCount"] ?? 0,
-        usersCount: json["usersCount"] ?? 0,
-        companiesCount: json["companiesCount"] ?? 0,
-      );
-
-  Map<String, dynamic> toMap() => {
-        "articlesCount": articlesCount,
-        "commentsCount": commentsCount,
-        "hubsCount": hubsCount,
-        "usersCount": usersCount,
-        "companiesCount": companiesCount,
-      };
+  factory SearchStatistics.fromJson(Map<String, dynamic> json) => _$SearchStatisticsFromJson(json);
 }
 
 class EnumValues<T> {

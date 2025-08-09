@@ -23,11 +23,11 @@ class PostAdapter extends TypeAdapter<Post> {
       lang: fields[3] as String,
       titleHtml: fields[4] as String,
       postType: fields[5] as String,
-      postLabels: (fields[6] as List).cast<PostLabel>(),
-      author: fields[7] as Author,
-      statistics: fields[8] as Statistics,
-      hubs: (fields[9] as List).cast<HubData>(),
-      textHtml: fields[12] as String,
+      postLabels: (fields[6] as List?)?.cast<PostLabel>(),
+      author: fields[7] as Author?,
+      statistics: fields[8] as Statistics?,
+      hubs: (fields[9] as List?)?.cast<HubData>(),
+      textHtml: fields[12] as String?,
       status: fields[11] as String,
       tags: (fields[10] as List).cast<Tag>(),
       leadData: fields[13] as LeadData,
@@ -96,13 +96,13 @@ class AuthorAdapter extends TypeAdapter<Author> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Author(
-      scoreStats: fields[0] as ScoreStats,
+      scoreStats: fields[0] as ScoreStats?,
       id: fields[1] as String,
-      login: fields[2] as String,
+      login: fields[2] as String?,
       alias: fields[3] as String,
-      fullname: fields[4] as String,
-      avatarUrl: fields[5] as String,
-      speciality: fields[6] as String,
+      fullname: fields[4] as String?,
+      avatarUrl: fields[5] as String?,
+      speciality: fields[6] as String?,
     );
   }
 
@@ -346,7 +346,7 @@ class LeadDataAdapter extends TypeAdapter<LeadData> {
     };
     return LeadData(
       textHtml: fields[0] as String,
-      imageUrl: fields[1] as String,
+      imageUrl: fields[1] as String?,
     );
   }
 
@@ -370,3 +370,155 @@ class LeadDataAdapter extends TypeAdapter<LeadData> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Post _$PostFromJson(Map<String, dynamic> json) => Post(
+      id: json['id'] as String,
+      timePublished: DateTime.parse(json['timePublished'] as String),
+      isCorporative: json['isCorporative'] as bool,
+      lang: json['lang'] as String,
+      titleHtml: json['titleHtml'] as String,
+      postType: json['postType'] as String,
+      postLabels: (json['postLabels'] as List<dynamic>?)
+          ?.map((e) => PostLabel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      author: json['author'] == null
+          ? null
+          : Author.fromJson(json['author'] as Map<String, dynamic>),
+      statistics: json['statistics'] == null
+          ? null
+          : Statistics.fromJson(json['statistics'] as Map<String, dynamic>),
+      hubs: (json['hubs'] as List<dynamic>?)
+          ?.map((e) => HubData.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      textHtml: json['textHtml'] as String?,
+      status: json['status'] as String,
+      tags: (json['tags'] as List<dynamic>)
+          .map((e) => Tag.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      leadData: LeadData.fromJson(json['leadData'] as Map<String, dynamic>),
+      readingTime: (json['readingTime'] as num?)?.toInt(),
+      complexity: json['complexity'] as String?,
+    );
+
+Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
+      'id': instance.id,
+      'timePublished': instance.timePublished.toIso8601String(),
+      'isCorporative': instance.isCorporative,
+      'lang': instance.lang,
+      'titleHtml': instance.titleHtml,
+      'postType': instance.postType,
+      'postLabels': instance.postLabels,
+      'author': instance.author,
+      'statistics': instance.statistics,
+      'hubs': instance.hubs,
+      'tags': instance.tags,
+      'status': instance.status,
+      'textHtml': instance.textHtml,
+      'leadData': instance.leadData,
+      'readingTime': instance.readingTime,
+      'complexity': instance.complexity,
+    };
+
+Author _$AuthorFromJson(Map<String, dynamic> json) => Author(
+      scoreStats: json['scoreStats'] == null
+          ? null
+          : ScoreStats.fromJson(json['scoreStats'] as Map<String, dynamic>),
+      id: json['id'] as String,
+      login: json['login'] as String?,
+      alias: json['alias'] as String,
+      fullname: json['fullname'] as String?,
+      avatarUrl: json['avatarUrl'] as String?,
+      speciality: json['speciality'] as String?,
+    );
+
+Map<String, dynamic> _$AuthorToJson(Author instance) => <String, dynamic>{
+      'scoreStats': instance.scoreStats,
+      'id': instance.id,
+      'login': instance.login,
+      'alias': instance.alias,
+      'fullname': instance.fullname,
+      'avatarUrl': instance.avatarUrl,
+      'speciality': instance.speciality,
+    };
+
+ScoreStats _$ScoreStatsFromJson(Map<String, dynamic> json) => ScoreStats(
+      score: (json['score'] as num).toDouble(),
+      votesCount: (json['votesCount'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$ScoreStatsToJson(ScoreStats instance) =>
+    <String, dynamic>{
+      'score': instance.score,
+      'votesCount': instance.votesCount,
+    };
+
+HubData _$HubDataFromJson(Map<String, dynamic> json) => HubData(
+      id: json['id'] as String,
+      alias: json['alias'] as String,
+      type: json['type'] as String,
+      title: json['title'] as String,
+      titleHtml: json['titleHtml'] as String,
+    );
+
+Map<String, dynamic> _$HubDataToJson(HubData instance) => <String, dynamic>{
+      'id': instance.id,
+      'alias': instance.alias,
+      'type': instance.type,
+      'title': instance.title,
+      'titleHtml': instance.titleHtml,
+    };
+
+Img _$ImgFromJson(Map<String, dynamic> json) => Img(
+      url: json['url'] as String,
+    );
+
+Map<String, dynamic> _$ImgToJson(Img instance) => <String, dynamic>{
+      'url': instance.url,
+    };
+
+PostLabel _$PostLabelFromJson(Map<String, dynamic> json) => PostLabel(
+      type: json['type'] as String,
+    );
+
+Map<String, dynamic> _$PostLabelToJson(PostLabel instance) => <String, dynamic>{
+      'type': instance.type,
+    };
+
+Statistics _$StatisticsFromJson(Map<String, dynamic> json) => Statistics(
+      commentsCount: (json['commentsCount'] as num).toInt(),
+      favoritesCount: (json['favoritesCount'] as num).toInt(),
+      readingCount: (json['readingCount'] as num).toInt(),
+      score: (json['score'] as num).toInt(),
+      votesCount: (json['votesCount'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$StatisticsToJson(Statistics instance) =>
+    <String, dynamic>{
+      'commentsCount': instance.commentsCount,
+      'favoritesCount': instance.favoritesCount,
+      'readingCount': instance.readingCount,
+      'score': instance.score,
+      'votesCount': instance.votesCount,
+    };
+
+Tag _$TagFromJson(Map<String, dynamic> json) => Tag(
+      titleHtml: json['titleHtml'] as String,
+    );
+
+Map<String, dynamic> _$TagToJson(Tag instance) => <String, dynamic>{
+      'titleHtml': instance.titleHtml,
+    };
+
+LeadData _$LeadDataFromJson(Map<String, dynamic> json) => LeadData(
+      textHtml: json['textHtml'] as String,
+      imageUrl: json['imageUrl'] as String?,
+    );
+
+Map<String, dynamic> _$LeadDataToJson(LeadData instance) => <String, dynamic>{
+      'textHtml': instance.textHtml,
+      'imageUrl': instance.imageUrl,
+    };

@@ -4,7 +4,7 @@ import 'package:habar/common/services/post_position_service.dart';
 import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/model/post.dart';
 import 'package:habar/model/post_position.dart';
-import 'package:habar/post/post_repository.dart';
+import 'package:habar/repositories/post_repository.dart';
 
 class PostCtrl extends GetxController {
   final _repo = PostRepo();
@@ -84,7 +84,7 @@ class PostCtrl extends GetxController {
       return;
     }
 
-    if (post.value.textHtml.isEmpty) {
+    if (post.value.textHtml != null && post.value.textHtml!.isEmpty) {
       return;
     }
 
@@ -95,5 +95,4 @@ class PostCtrl extends GetxController {
       scrollCtrl.jumpTo(position.value);
     });
   }
-
 }

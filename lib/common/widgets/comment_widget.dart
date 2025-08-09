@@ -25,7 +25,12 @@ class CommentWidget extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: UserInfoWidget(publishTime: comment.publishTime, author: comment.author),
+              child: UserInfoWidget(
+                publishTime: comment.publishTime,
+                alias: comment.author.alias,
+                avatarUrl: comment.author.avatarUrl ?? '',
+                fullName: comment.author.fullname ?? '',
+              ),
             ),
           ),
         ),

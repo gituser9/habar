@@ -26,6 +26,8 @@ class Constant {
     InfoFlow(title: 'Маркетинг', alias: 'marketing'),
     InfoFlow(title: 'Научпоп', alias: 'popsci'),
   ];
+  static const pageSize = 20;
+  static const hubPageSize = 20;
 }
 
 class AppColors {

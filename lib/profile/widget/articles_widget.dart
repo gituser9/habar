@@ -37,11 +37,11 @@ class PostsWidget extends StatelessWidget {
         ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: postList.articleIds.length,
+            itemCount: postList.publicationIds.length,
             itemBuilder: (BuildContext context, int index) {
-              String postId = postList.articleIds[index];
-              final articleRef = postList.articleRefs[postId]!;
-              final imgUrl = Util.getImgUrl(articleRef.leadData.imageUrl, articleRef.textHtml);
+              String postId = postList.publicationIds[index];
+              final articleRef = postList.publicationRefs[postId]!;
+              final imgUrl = Util.getImgUrl(articleRef.leadData.imageUrl ?? '', articleRef.textHtml ?? '');
 
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 4),

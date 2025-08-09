@@ -4,17 +4,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
-import 'package:habar/common/http_request.dart';
 import 'package:habar/common/services/pin_hub_service.dart';
 import 'package:habar/common/services/post_position_service.dart';
 import 'package:habar/common/services/saved_post_service.dart';
 import 'package:habar/common/services/settings_service.dart';
-import 'package:habar/home/home_repository.dart';
 import 'package:habar/model/filter.dart';
 import 'package:habar/model/home.dart';
 import 'package:habar/model/hub_list.dart';
+import 'package:habar/model/news.dart';
 import 'package:habar/model/post.dart';
 import 'package:habar/model/post_list.dart';
+import 'package:habar/repositories/home_repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
@@ -27,6 +27,7 @@ class HomeCtrl extends GetxController {
   final SettingsService _settingsService = Get.find();
 
   final posts = PostList.empty().obs;
+  final news = NewsList.empty().obs;
   final hubs = HubList.empty().obs;
   final pinnedHubs = HubList.empty().obs;
   final filter = ListFilter.all.obs;
@@ -121,7 +122,6 @@ class HomeCtrl extends GetxController {
     super.onClose();
 
     _repo.dispose();
-    HttpRequest.close();
   }
 
   Future setup(Filter filters) async {
@@ -254,7 +254,7 @@ class HomeCtrl extends GetxController {
 
   void loadSavedSearchData() {
     for (Post post in savedPosts) {
-      savedSearchHubs.addAll(post.hubs.map((e) => e.title));
+      savedSearchHubs.addAll(post.hubs?.map((e) => e.title) ?? []);
       savedSearchTags.addAll(post.tags.map((e) => e.titleHtml));
     }
   }
@@ -272,7 +272,7 @@ class HomeCtrl extends GetxController {
       }
 
       if (filter.hub.isNotEmpty) {
-        if (post.hubs.any((hub) => hub.title == filter.hub)) {
+        if (post.hubs?.any((hub) => hub.title == filter.hub) ?? false) {
           filtered.add(post);
           continue;
         }
